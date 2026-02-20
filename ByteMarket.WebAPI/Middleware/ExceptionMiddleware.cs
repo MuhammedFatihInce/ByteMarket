@@ -23,7 +23,6 @@ namespace ByteMarket.WebAPI.Middleware
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError($"Beklenmedik bir hata oluştu: {ex.Message}");
 				await HandleExceptionAsync(httpContext, ex);
 			}
 		}
@@ -32,6 +31,8 @@ namespace ByteMarket.WebAPI.Middleware
 		{
 			context.Response.ContentType = "application/json";
 			context.Response.StatusCode = (int)HttpStatusCode.InternalServerError; // 500
+
+			_logger.LogError($"Beklenmedik bir hata oluştu: {exception.Message}");
 
 			var response = new ErrorDataResult<string>(
 				 "Sunucu tarafında beklenmedik bir hata oluştu."

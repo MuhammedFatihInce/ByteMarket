@@ -1,4 +1,6 @@
 ﻿using ByteMarket.WebUI.Models;
+using ByteMarket.WebUI.Models.ProductViewModels;
+using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,16 +8,24 @@ namespace ByteMarket.WebUI.Controllers
 {
 	public class HomeController : Controller
 	{
-		private readonly ILogger<HomeController> _logger;
 
-		public HomeController(ILogger<HomeController> logger)
+		private readonly IApiService _apiService;
+		public HomeController(IApiService apiService)
 		{
-			_logger = logger;
+			_apiService = apiService;
 		}
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
-			return View();
+			var result = await _apiService.GetAllAsync<ProductListViewModel>("Products/GetAll");
+
+			if (result.Success)
+			{
+				return View(result.Data);
+			}
+
+			TempData["Error"] = result.Message;
+			return View(new List<ProductListViewModel>());
 		}
 
 		public IActionResult Privacy()

@@ -1,3 +1,20 @@
+:root {
+    --ty-orange: #f27a1a;
+    --ty-grey: #333333;
+    --ty-light-grey: #999999;
+    --ty-bg-grey: #fafafa;
+}
+
+body {
+    font-family: 'Source Sans Pro', sans-serif;
+    background-color: #fff;
+    color: var(--ty-grey);
+}
+
+.bg-ty-orange { background-color: var(--ty-orange) !important; }
+.text-ty-orange { color: var(--ty-orange) !important; }
+
+
 html {
   font-size: 14px;
 }

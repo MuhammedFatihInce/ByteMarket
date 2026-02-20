@@ -12,7 +12,7 @@ namespace ByteMarket.WebAPI.Controllers
 			_productService = productService;
 		}
 
-		[HttpGet]
+		[HttpGet("GetAll")]
 		public async Task<IActionResult> GetAll()
 		{
 			var result = await _productService.GetAllProductsAsync();
@@ -20,7 +20,7 @@ namespace ByteMarket.WebAPI.Controllers
 			return CreateActionResult(result);
 		}
 
-		[HttpGet("{id}")]
+		[HttpGet("GetById/{id}")]
 		public async Task<IActionResult> GetById(string id)
 		{
 			var result = await _productService.GetProductByIdAsync(id);
@@ -28,7 +28,7 @@ namespace ByteMarket.WebAPI.Controllers
 			return CreateActionResult(result);
 		}
 
-		[HttpPost]
+		[HttpPost("Add")]
 		public async Task<IActionResult> Add(CreateProductDto createProductDto)
 		{
 			var result = await _productService.CreateProductAsync(createProductDto);
