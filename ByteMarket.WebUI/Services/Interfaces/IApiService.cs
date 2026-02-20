@@ -9,5 +9,6 @@ namespace ByteMarket.WebUI.Services.Interfaces
 		Task<ApiDataResponse<T>> PostAsync<T>(string endpoint, object data);
 		Task<ApiDataResponse<T>> PutAsync<T>(string endpoint, object data);
 		Task<ApiDataResponse<bool>> DeleteAsync(string endpoint, string id);
+		Task<ApiDataResponse<T>> PostMultipartAsync<T>(string endpoint, MultipartFormDataContent content);
 	}
 }

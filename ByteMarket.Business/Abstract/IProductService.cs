@@ -1,6 +1,8 @@
 ﻿
 using ByteMarket.Business.DTOs.Product;
 using ByteMarket.Business.Utilities.Results;
+using Microsoft.AspNetCore.Http;
+using IResult = ByteMarket.Business.Utilities.Results.IResult;
 
 namespace ByteMarket.Business.Abstract
 {
@@ -8,8 +10,8 @@ namespace ByteMarket.Business.Abstract
 	{
 		Task<IDataResult<List<ListProductDto>>> GetAllProductsAsync();
 		Task<IDataResult<SingleProductDto>> GetProductByIdAsync(string id);
-		Task<IResult> CreateProductAsync(CreateProductDto createProductDto);
+		Task<IDataResult<string>> CreateProductAsync(CreateProductDto createProductDto);
+		Task<IResult> AddProductImagesAsync(string productId, IFormFileCollection files);
 
-		// İleride buraya StockUpdate veya PriceChange gibi iş mantıkları gelecek
 	}
 }

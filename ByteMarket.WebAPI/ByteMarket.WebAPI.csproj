@@ -23,4 +23,8 @@
     <ProjectReference Include="..\ByteMarket.DataAccess\ByteMarket.DataAccess.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

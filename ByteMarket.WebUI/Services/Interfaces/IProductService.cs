@@ -6,5 +6,6 @@ namespace ByteMarket.WebUI.Services.Interfaces
 	{
 		Task<bool> AddProductAsync(CreateProductViewModel model);
 		Task<List<ProductListViewModel>> GetProductsForAdminAsync();
+		Task<bool> UploadProductImagesAsync(string productId, IFormFileCollection files);
 	}
 }

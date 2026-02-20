@@ -1,15 +1,18 @@
 ﻿using ByteMarket.Business.Abstract;
-using Microsoft.AspNetCore.Mvc;
+using ByteMarket.Business.Abstract.Storage;
 using ByteMarket.Business.DTOs.Product;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ByteMarket.WebAPI.Controllers
 {
 	public class ProductsController : BaseController
 	{
 		private readonly IProductService _productService;
-		public ProductsController(IProductService productService)
+		private readonly IStorageService _storageService;
+		public ProductsController(IProductService productService, IStorageService storageService)
 		{
 			_productService = productService;
+			_storageService = storageService;
 		}
 
 		[HttpGet("GetAll")]
@@ -34,6 +37,14 @@ namespace ByteMarket.WebAPI.Controllers
 			var result = await _productService.CreateProductAsync(createProductDto);
 
 			return CreateActionResult(result, 201);
+		}
+
+		[HttpPost("UploadImage/{id}")]
+		public async Task<IActionResult> UploadImage(string id)
+		{
+			var result = await _productService.AddProductImagesAsync(id, Request.Form.Files);
+
+			return CreateActionResult(result);
 		}
 	}
 }

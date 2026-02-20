@@ -9,7 +9,8 @@
                 </div>
                 <div class="card-body p-4">
 
-                    <form asp-action="Create" method="post">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        @* Ürün Bilgileri *@
                         <div class="mb-4">
                             <label asp-for="Name" class="form-label fw-semibold"></label>
                             <input asp-for="Name" class="form-control bg-light border-0 shadow-none py-2" placeholder="Ürün adını giriniz">
@@ -33,8 +34,25 @@
                             </div>
                         </div>
 
+                        @* Görsel Seçim ve Ön İzleme Alanı *@
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Ürün Fotoğrafları</label>
+                            <div class="border-2 border-dashed rounded-3 p-4 text-center bg-light position-relative mb-3">
+                                <i class="bi bi-cloud-arrow-up fs-2 text-ty-orange"></i>
+                                <p class="mb-0 small fw-bold">Tıklayarak fotoğrafları seçin</p>
+                                <input type="file" asp-for="Files" id="image-input" multiple class="position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer" accept="image/*">
+                            </div>
+
+                            @* Ön İzleme Konteynırı *@
+                            <div id="image-preview-container" class="row g-2">
+                                @* Resimler buraya JS ile dolacak *@
+                            </div>
+
+                            <span asp-validation-for="Files" class="text-danger small"></span>
+                        </div>
+
                         <div class="d-grid mt-3">
-                            <button type="submit" class="btn btn-primary py-2 fw-bold bg-ty-orange border-0 shadow-sm">
+                            <button type="submit" class="btn btn-primary py-2 fw-bold bg-ty-orange border-0 shadow-sm text-white">
                                 ÜRÜNÜ YAYINLA
                             </button>
                         </div>
@@ -48,4 +66,6 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script src="~/js/admin/product/product-create.js"></script>
 }

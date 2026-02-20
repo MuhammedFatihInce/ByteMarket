@@ -24,14 +24,15 @@ namespace ByteMarket.WebUI.Controllers
 		{
 			if (!ModelState.IsValid) return View(model);
 
-			var success = await _productService.AddProductAsync(model);
-			if (success)
+			var result = await _productService.AddProductAsync(model);
+
+			if (result)
 			{
 				TempData["SuccessMessage"] = "Ürün başarıyla listeye eklendi!";
-				return RedirectToAction("AdminIndex", "Product");
+				return RedirectToAction("AdminIndex");
 			}
 
-			ViewBag.ErrorMessage = "Ürün eklenirken bir hata oluştu.";
+			ModelState.AddModelError("", "Ekleme işlemi sırasında bir sorun oluştu.");
 			return View(model);
 		}
 

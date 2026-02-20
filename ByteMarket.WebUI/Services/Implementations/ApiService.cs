@@ -63,5 +63,11 @@ namespace ByteMarket.WebUI.Services.Implementations
 			var response = await _client.DeleteAsync($"{endpoint}/{id}");
 			return await ProcessResponse<bool>(response);
 		}
+
+		public async Task<ApiDataResponse<T>> PostMultipartAsync<T>(string endpoint, MultipartFormDataContent content)
+		{
+			var response = await _client.PostAsync(endpoint, content);
+			return await ProcessResponse<T>(response);
+		}
 	}
 }
