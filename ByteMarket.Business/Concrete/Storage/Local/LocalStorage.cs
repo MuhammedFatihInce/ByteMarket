@@ -22,7 +22,11 @@ namespace ByteMarket.Business.Concrete.Storage.Local
 		}
 
 		public bool HasFile(string path, string fileName)
-			=> File.Exists($"{path}\\{fileName}");
+		{
+			string fullPath = Path.Combine(_webHostEnvironment.WebRootPath, path, fileName);
+
+			return File.Exists(fullPath);
+		}
 		async Task<bool> CopyFileAsync(string path, IFormFile file)
 		{
 			try
@@ -48,7 +52,7 @@ namespace ByteMarket.Business.Concrete.Storage.Local
 			List<(string fileName, string path)> datas = new();
 			foreach (IFormFile file in files)
 			{
-				string fileNewName = await FileRenameAsync(path, file.Name, HasFile);
+				string fileNewName = await FileRenameAsync(path, file.FileName, HasFile);
 
 				await CopyFileAsync($"{uploadPath}\\{fileNewName}", file);
 				datas.Add((fileNewName, $"{path}\\{fileNewName}"));

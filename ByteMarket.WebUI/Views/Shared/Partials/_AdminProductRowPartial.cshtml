@@ -1,8 +1,23 @@
 ﻿@model ByteMarket.WebUI.Models.ProductViewModels.ProductListViewModel
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 
+@{
+    var apiBaseUrl = Configuration["ApiSettings:BaseStorageAdress"];
+    string noImageUrl = "https://placehold.co/600x400?text=Resim+Yok";
+    var fullImagePath = !string.IsNullOrEmpty(Model.ImagePath)
+                        ? $"{apiBaseUrl}{Model.ImagePath.Replace("\\", "/")}"
+                        : noImageUrl;
+    Console.WriteLine(fullImagePath);
+}
 <tr>
     <td class="py-3 ps-3">
         <div class="d-flex align-items-center">
+            <div class="me-3">
+                <img src="@fullImagePath"
+                     alt="@Model.Name"
+                     class="rounded border shadow-sm product-thumb" />
+            </div>
             <div>
                 <h6 class="mb-0 small fw-bold">@Model.Name</h6>
                 <code class="text-muted" style="font-size: 10px;">ID: @Model.Id.ToString().Substring(0, 8)</code>

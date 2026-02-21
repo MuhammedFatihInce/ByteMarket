@@ -7,6 +7,7 @@ using ByteMarket.DataAccess.Abstract.Product;
 using ByteMarket.DataAccess.Abstract.ProductImageFile;
 using ByteMarket.Entities.Concrete;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using IResult = ByteMarket.Business.Utilities.Results.IResult;
 
 namespace ByteMarket.Business.Concrete
@@ -30,7 +31,9 @@ namespace ByteMarket.Business.Concrete
 
 		public async Task<IDataResult<List<ListProductDto>>> GetAllProductsAsync()
 		{
-			var products = _productReadRepository.GetAll(false).ToList();
+			var products = _productReadRepository.GetAll(false)
+				.Include(p => p.ProductImageFiles)
+				.ToList();
 
 			if (products == null || !products.Any())
 			{

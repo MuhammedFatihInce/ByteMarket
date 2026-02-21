@@ -34,7 +34,6 @@
                             </div>
                         </div>
 
-                        @* Görsel Seçim ve Ön İzleme Alanı *@
                         <div class="mb-4">
                             <label class="form-label fw-semibold">Ürün Fotoğrafları</label>
                             <div class="border-2 border-dashed rounded-3 p-4 text-center bg-light position-relative mb-3">
@@ -43,9 +42,7 @@
                                 <input type="file" asp-for="Files" id="image-input" multiple class="position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer" accept="image/*">
                             </div>
 
-                            @* Ön İzleme Konteynırı *@
                             <div id="image-preview-container" class="row g-2">
-                                @* Resimler buraya JS ile dolacak *@
                             </div>
 
                             <span asp-validation-for="Files" class="text-danger small"></span>

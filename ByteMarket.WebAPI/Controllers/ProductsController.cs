@@ -40,9 +40,9 @@ namespace ByteMarket.WebAPI.Controllers
 		}
 
 		[HttpPost("UploadImage/{id}")]
-		public async Task<IActionResult> UploadImage(string id)
+		public async Task<IActionResult> UploadImage(string id, IFormFileCollection files)
 		{
-			var result = await _productService.AddProductImagesAsync(id, Request.Form.Files);
+			var result = await _productService.AddProductImagesAsync(id, files);
 
 			return CreateActionResult(result);
 		}
