@@ -14,5 +14,6 @@ namespace ByteMarket.Business.Abstract
 		Task<IResult> AddProductImagesAsync(string productId, IFormFileCollection files);
 		Task<IResult> UpdateProductAsync(UpdateProductDto updateProductDto);
 		Task<IResult> DeleteProductImageAsync(string imageId);
+		Task<IResult> DeleteProductAsync(string id);
 	}
 }

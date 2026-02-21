@@ -9,7 +9,7 @@
                         ? $"{apiBaseUrl}{Model.ImagePath.Replace("\\", "/")}"
                         : noImageUrl;
 }
-<tr>
+<tr id="row-@Model.Id">
     <td class="py-3 ps-3">
         <div class="d-flex align-items-center">
             <div class="me-3">
@@ -53,3 +53,4 @@
         </div>
     </td>
 </tr>
+

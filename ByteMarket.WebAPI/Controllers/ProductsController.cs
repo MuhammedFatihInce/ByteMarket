@@ -60,5 +60,12 @@ namespace ByteMarket.WebAPI.Controllers
 			var result = await _productService.DeleteProductImageAsync(id);
 			return CreateActionResult(result);
 		}
+
+		[HttpDelete("Delete/{id}")]
+		public async Task<IActionResult> Delete(string id)
+		{
+			var result = await _productService.DeleteProductAsync(id);
+			return CreateActionResult(result);
+		}
 	}
 }

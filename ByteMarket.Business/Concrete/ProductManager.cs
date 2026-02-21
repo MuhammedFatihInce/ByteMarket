@@ -8,6 +8,7 @@ using ByteMarket.DataAccess.Abstract.ProductImageFile;
 using ByteMarket.Entities.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
 using IResult = ByteMarket.Business.Utilities.Results.IResult;
 
 namespace ByteMarket.Business.Concrete
@@ -128,6 +129,28 @@ namespace ByteMarket.Business.Concrete
 			await _productImageFileWriteRepository.SaveAsync();
 
 			return new SuccessResult("Resim hem diskten hem veritabanından başarıyla silindi.");
+		}
+
+		public async Task<IResult> DeleteProductAsync(string id)
+		{
+			var product = await _productReadRepository.GetAll()
+				.Include(p => p.ProductImageFiles)
+				.FirstOrDefaultAsync(p => p.Id == Guid.Parse(id));
+
+			if (product == null) return new ErrorResult("Ürün bulunamadı.");
+
+			if (product.ProductImageFiles != null && product.ProductImageFiles.Any())
+			{
+				foreach (var image in product.ProductImageFiles)
+				{
+					await DeleteProductImageAsync(image.Id.ToString());
+				}
+			}
+
+			await _productWriteRepository.RemoveAsync(id);
+			await _productWriteRepository.SaveAsync();
+
+			return new SuccessResult("Ürün ve bağlı tüm görseller başarıyla temizlendi.");
 		}
 	}
 }
