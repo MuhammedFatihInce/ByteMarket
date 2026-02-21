@@ -33,3 +33,26 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.btn-delete-image {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #dc3545;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 10;
+    transition: all 0.2s ease;
+}
+
+    .btn-delete-image:hover {
+        background-color: #c82333;
+        transform: scale(1.1);
+    }
