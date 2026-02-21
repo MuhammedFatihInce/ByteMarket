@@ -16,10 +16,13 @@ fileInput.addEventListener('change', function (e) {
     for (let i = 0; i < newFiles.length; i++) {
         const file = newFiles[i];
 
+        const existingCount = document.querySelectorAll('#existing-images-container .position-relative').length;
+        const newlyAddedCount = dataTransfer.items.length;
+
         if (!file.type.startsWith('image/')) continue;
 
-        if (dataTransfer.items.length >= MAX_FILE_COUNT) {
-            alert(`Daha fazla resim ekleyemezsiniz! Maksimum sınır: ${MAX_FILE_COUNT}`);
+        if (existingCount + newlyAddedCount >= MAX_FILE_COUNT) {
+            alert(`Toplam resim sınırı ${MAX_FILE_COUNT} adettir. Daha fazla ekleyemezsiniz!`);
             break;
         }
 

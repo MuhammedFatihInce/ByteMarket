@@ -1,4 +1,5 @@
 ﻿using ByteMarket.WebUI.Models.ProductViewModels;
+using ByteMarket.WebUI.Services.Implementations;
 using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,10 +8,12 @@ namespace ByteMarket.WebUI.Controllers
 	public class ProductController : Controller
 	{
 		private readonly IProductService _productService;
+		private readonly IApiService _apiService;
 
-		public ProductController(IProductService productService)
+		public ProductController(IProductService productService, IApiService apiService)
 		{
 			_productService = productService;
+			_apiService = apiService;
 		}
 
 		[HttpGet]
@@ -42,5 +45,29 @@ namespace ByteMarket.WebUI.Controllers
 			return View(products);
 		}
 
+		[HttpGet]
+		public async Task<IActionResult> Edit(string id)
+		{
+			var response = await _apiService.GetByIdAsync<UpdateProductViewModel>("Products/GetById", id);
+			if (!response.Success) return RedirectToAction("AdminIndex");
+
+			return View(response.Data);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Edit(UpdateProductViewModel model)
+		{
+			if (!ModelState.IsValid) return View(model);
+
+			var result = await _productService.UpdateProductWithImagesAsync(model);
+			if (result)
+			{
+				TempData["Success"] = "Ürün başarıyla güncellendi.";
+				return RedirectToAction("AdminIndex");
+			}
+
+			ModelState.AddModelError("", "Güncelleme sırasında bir hata oluştu.");
+			return View(model);
+		}
 	}
 }

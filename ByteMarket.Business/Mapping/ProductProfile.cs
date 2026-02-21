@@ -8,6 +8,8 @@ namespace ByteMarket.Business.Mapping
 	{
 		public ProductProfile()
 		{
+			CreateMap<ProductImageFile, DTOs.ProductImageDto.ProductImageDto>().ReverseMap();
+
 			CreateMap<CreateProductDto, Product>().ReverseMap();
 
 			CreateMap<Product, ListProductDto>()
@@ -18,6 +20,8 @@ namespace ByteMarket.Business.Mapping
 				));
 
 			CreateMap<Product, SingleProductDto>().ReverseMap();
+
+			CreateMap<UpdateProductDto, Product>().ReverseMap();
 		}
 	}
 }

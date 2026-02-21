@@ -12,8 +12,14 @@ namespace ByteMarket.Business.Concrete.Storage.Local
 		{
 			_webHostEnvironment = webHostEnvironment;
 		}
+
 		public async Task DeleteAsync(string path, string fileName)
-			=> File.Delete($"{path}\\{fileName}");
+		{
+			string fullPath = Path.Combine(_webHostEnvironment.WebRootPath, path);
+
+			File.Delete(fullPath);
+		}
+			
 
 		public List<string> GetFiles(string path)
 		{

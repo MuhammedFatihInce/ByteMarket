@@ -12,6 +12,7 @@ namespace ByteMarket.Business.Abstract
 		Task<IDataResult<SingleProductDto>> GetProductByIdAsync(string id);
 		Task<IDataResult<string>> CreateProductAsync(CreateProductDto createProductDto);
 		Task<IResult> AddProductImagesAsync(string productId, IFormFileCollection files);
-
+		Task<IResult> UpdateProductAsync(UpdateProductDto updateProductDto);
+		Task<IResult> DeleteProductImageAsync(string imageId);
 	}
 }

@@ -18,14 +18,16 @@ namespace ByteMarket.Business.Concrete
 		private readonly IProductWriteRepository _productWriteRepository;
 		private readonly IMapper _mapper;
 		private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
+		private readonly IProductImageFileReadRepository _productImageFileReadRepository;
 		private readonly IStorageService _storageService;
 
-		public ProductManager(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IMapper mapper, IProductImageFileWriteRepository productImageFileWriteRepository, IStorageService storageService)
+		public ProductManager(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IMapper mapper, IProductImageFileWriteRepository productImageFileWriteRepository, IStorageService storageService, IProductImageFileReadRepository productImageFileReadRepository)
 		{
 			_productReadRepository = productReadRepository;
 			_productWriteRepository = productWriteRepository;
 			_mapper = mapper;
 			_productImageFileWriteRepository = productImageFileWriteRepository;
+			_productImageFileReadRepository = productImageFileReadRepository;
 			_storageService = storageService;
 		}
 
@@ -47,7 +49,9 @@ namespace ByteMarket.Business.Concrete
 
 		public async Task<IDataResult<SingleProductDto>> GetProductByIdAsync(string id)
 		{
-			Product product = await _productReadRepository.GetByIdAsync(id, false);
+			var product = await _productReadRepository.GetAll(false)
+				.Include(p =>p.ProductImageFiles)
+				.FirstOrDefaultAsync(p=> p.Id == Guid.Parse(id));
 
 			if (product == null)
 			{
@@ -95,6 +99,35 @@ namespace ByteMarket.Business.Concrete
 			}
 
 			return new ErrorResult("Ürün görselleri yüklenirken bir hata oluştu.");
+		}
+
+		public async Task<IResult> UpdateProductAsync(UpdateProductDto updateProductDto)
+		{
+			var product = await _productReadRepository.GetByIdAsync(updateProductDto.Id);
+
+			if (product == null) return new ErrorResult("Ürün bulunamadı.");
+
+			product.Name = updateProductDto.Name;
+			product.Price = updateProductDto.Price;
+			product.Stock = updateProductDto.Stock;
+
+			_productWriteRepository.Update(product);
+			await _productWriteRepository.SaveAsync();
+
+			return new SuccessResult("Ürün bilgileri güncellendi.");
+		}
+
+		public async Task<IResult> DeleteProductImageAsync(string imageId)
+		{
+			var productImage = await _productImageFileReadRepository.GetByIdAsync(imageId);
+			if (productImage == null) return new ErrorResult("Resim kaydı bulunamadı.");
+
+			await _storageService.DeleteAsync(productImage.Path, productImage.FileName);
+
+			await _productImageFileWriteRepository.RemoveAsync(imageId);
+			await _productImageFileWriteRepository.SaveAsync();
+
+			return new SuccessResult("Resim hem diskten hem veritabanından başarıyla silindi.");
 		}
 	}
 }

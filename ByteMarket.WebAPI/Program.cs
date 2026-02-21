@@ -20,6 +20,16 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreateProductValidator>();
 
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("AllowWebUI", policy =>
+	{
+		policy.WithOrigins("https://localhost:44380") // WebUI portun tam olarak bu olmalý
+			.AllowAnyHeader()
+			.AllowAnyMethod(); // DELETE, PUT, POST hepsine izin veriyoruz
+	});
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -37,6 +47,8 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowWebUI");
 
 app.UseAuthorization();
 

@@ -46,5 +46,19 @@ namespace ByteMarket.WebAPI.Controllers
 
 			return CreateActionResult(result);
 		}
+
+		[HttpPut("Update")]
+		public async Task<IActionResult> Update([FromBody] UpdateProductDto updateProductDto)
+		{
+			var result = await _productService.UpdateProductAsync(updateProductDto);
+			return CreateActionResult(result);
+		}
+
+		[HttpDelete("DeleteImage/{id}")]
+		public async Task<IActionResult> DeleteImage(string id)
+		{
+			var result = await _productService.DeleteProductImageAsync(id);
+			return CreateActionResult(result);
+		}
 	}
 }

@@ -14,21 +14,8 @@ namespace ByteMarket.WebUI.Services.Implementations
 
 			if (!productResponse.Success) return false;
 
-			string newProductId = productResponse.Data;
-
 			if (model.Files != null && model.Files.Any())
-			{
-				var content = new MultipartFormDataContent();
-				foreach (var file in model.Files)
-				{
-					var streamContent = new StreamContent(file.OpenReadStream());
-					content.Add(streamContent, "files", file.FileName);
-				}
-
-				var imageResponse = await _apiService.PostMultipartAsync<object>($"Products/UploadImage/{newProductId}", content);
-
-				return imageResponse.Success;
-			}
+				return await UploadImagesInternalAsync(productResponse.Data, model.Files);
 
 			return true;
 		}
@@ -40,18 +27,38 @@ namespace ByteMarket.WebUI.Services.Implementations
 			return response.Success ? response.Data : new List<ProductListViewModel>();
 		}
 
-		public async Task<bool> UploadProductImagesAsync(string productId, IFormFileCollection files)
+		public async Task<bool> UpdateProductWithImagesAsync(UpdateProductViewModel model)
+		{
+			var updateResponse = await _apiService.PutAsync<object>("Products/Update", new
+			{
+				model.Id,
+				model.Name,
+				model.Price,
+				model.Stock
+			});
+
+			if (!updateResponse.Success) return false;
+
+			
+			if (model.Files != null && model.Files.Any())
+				return await UploadImagesInternalAsync(model.Id, model.Files);
+
+			return true;
+		}
+
+		private async Task<bool> UploadImagesInternalAsync(string productId, IEnumerable<IFormFile> files)
 		{
 			var content = new MultipartFormDataContent();
-
 			foreach (var file in files)
 			{
 				var streamContent = new StreamContent(file.OpenReadStream());
+				streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
 				content.Add(streamContent, "files", file.FileName);
 			}
 
-			var response = await _apiService.PostMultipartAsync<bool>($"Products/UploadImage/{productId}", content);
+			var response = await _apiService.PostMultipartAsync<object>($"Products/UploadImage/{productId}", content);
 			return response.Success;
 		}
+
 	}
 }
