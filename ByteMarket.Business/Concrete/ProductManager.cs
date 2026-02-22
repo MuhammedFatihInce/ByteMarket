@@ -1,14 +1,10 @@
 ﻿using AutoMapper;
 using ByteMarket.Business.Abstract;
-using ByteMarket.Business.Abstract.Storage;
 using ByteMarket.Business.DTOs.Product;
 using ByteMarket.Business.Utilities.Results;
 using ByteMarket.DataAccess.Abstract.Product;
-using ByteMarket.DataAccess.Abstract.ProductImageFile;
 using ByteMarket.Entities.Concrete;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using static System.Net.Mime.MediaTypeNames;
 using IResult = ByteMarket.Business.Utilities.Results.IResult;
 
 namespace ByteMarket.Business.Concrete
@@ -18,18 +14,14 @@ namespace ByteMarket.Business.Concrete
 		private readonly IProductReadRepository _productReadRepository;
 		private readonly IProductWriteRepository _productWriteRepository;
 		private readonly IMapper _mapper;
-		private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
-		private readonly IProductImageFileReadRepository _productImageFileReadRepository;
-		private readonly IStorageService _storageService;
+		private readonly IProductImageService _productImageService;
 
-		public ProductManager(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IMapper mapper, IProductImageFileWriteRepository productImageFileWriteRepository, IStorageService storageService, IProductImageFileReadRepository productImageFileReadRepository)
+		public ProductManager(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IMapper mapper, IProductImageService productImageService)
 		{
 			_productReadRepository = productReadRepository;
 			_productWriteRepository = productWriteRepository;
 			_mapper = mapper;
-			_productImageFileWriteRepository = productImageFileWriteRepository;
-			_productImageFileReadRepository = productImageFileReadRepository;
-			_storageService = storageService;
+			_productImageService = productImageService;
 		}
 
 		public async Task<IDataResult<List<ListProductDto>>> GetAllProductsAsync()
@@ -78,39 +70,13 @@ namespace ByteMarket.Business.Concrete
 			return new ErrorDataResult<string>("Ürün eklenirken bir hata oluştu.");
 		}
 
-		public async Task<IResult> AddProductImagesAsync(string productId, IFormFileCollection files)
-		{
-			List<(string fileName, string pathOrContainerName)> fileResult = await _storageService.UploadAsync("photo-images", files);
-
-			var product = await _productReadRepository.GetByIdAsync(productId);
-
-			var result = await _productImageFileWriteRepository.AddRangeAsync(fileResult.Select(r => new ProductImageFile
-			{
-				FileName = r.fileName,
-				Path = r.pathOrContainerName,
-				Storage = _storageService.StorageName,
-				Products = new List<Product>() { product }
-			}).ToList());
-
-
-			if (result)
-			{
-				await _productImageFileWriteRepository.SaveAsync();
-				return new SuccessResult("Ürün görselleri başarıyla yüklendi.");
-			}
-
-			return new ErrorResult("Ürün görselleri yüklenirken bir hata oluştu.");
-		}
-
 		public async Task<IResult> UpdateProductAsync(UpdateProductDto updateProductDto)
 		{
 			var product = await _productReadRepository.GetByIdAsync(updateProductDto.Id);
 
 			if (product == null) return new ErrorResult("Ürün bulunamadı.");
 
-			product.Name = updateProductDto.Name;
-			product.Price = updateProductDto.Price;
-			product.Stock = updateProductDto.Stock;
+			_mapper.Map(updateProductDto, product);
 
 			_productWriteRepository.Update(product);
 			await _productWriteRepository.SaveAsync();
@@ -118,34 +84,9 @@ namespace ByteMarket.Business.Concrete
 			return new SuccessResult("Ürün bilgileri güncellendi.");
 		}
 
-		public async Task<IResult> DeleteProductImageAsync(string imageId)
-		{
-			var productImage = await _productImageFileReadRepository.GetByIdAsync(imageId);
-			if (productImage == null) return new ErrorResult("Resim kaydı bulunamadı.");
-
-			await _storageService.DeleteAsync(productImage.Path, productImage.FileName);
-
-			await _productImageFileWriteRepository.RemoveAsync(imageId);
-			await _productImageFileWriteRepository.SaveAsync();
-
-			return new SuccessResult("Resim hem diskten hem veritabanından başarıyla silindi.");
-		}
-
 		public async Task<IResult> DeleteProductAsync(string id)
 		{
-			var product = await _productReadRepository.GetAll()
-				.Include(p => p.ProductImageFiles)
-				.FirstOrDefaultAsync(p => p.Id == Guid.Parse(id));
-
-			if (product == null) return new ErrorResult("Ürün bulunamadı.");
-
-			if (product.ProductImageFiles != null && product.ProductImageFiles.Any())
-			{
-				foreach (var image in product.ProductImageFiles)
-				{
-					await DeleteProductImageAsync(image.Id.ToString());
-				}
-			}
+			await _productImageService.DeleteImagesByProductIdAsync(id);
 
 			await _productWriteRepository.RemoveAsync(id);
 			await _productWriteRepository.SaveAsync();

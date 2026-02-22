@@ -69,3 +69,9 @@ body {
     .product-thumb:hover {
         transform: scale(1.2); /* Üstüne gelince hafif büyüme efekti */
     }
+
+.fade-out {
+    opacity: 0; 
+    transition: 0.3s; 
+    pointer-events: none;
+}

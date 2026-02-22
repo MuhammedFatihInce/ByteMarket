@@ -28,20 +28,20 @@ namespace ByteMarket.WebUI.Controllers
 
 			var result = await _productService.AddProductAsync(model);
 
-			if (result)
+			if (result.Success)
 			{
-				TempData["SuccessMessage"] = "Ürün başarıyla listeye eklendi!";
+				TempData["SuccessMessage"] = result.Message;
 				return RedirectToAction("AdminIndex");
 			}
 
-			ModelState.AddModelError("", "Ekleme işlemi sırasında bir sorun oluştu.");
+			ModelState.AddModelError(String.Empty, result.Message);
 			return View(model);
 		}
 
 		public async Task<IActionResult> AdminIndex()
 		{
 			var products = await _productService.GetProductsForAdminAsync();
-			return View(products);
+			return View(products.Data);
 		}
 
 		[HttpGet]
@@ -59,13 +59,13 @@ namespace ByteMarket.WebUI.Controllers
 			if (!ModelState.IsValid) return View(model);
 
 			var result = await _productService.UpdateProductWithImagesAsync(model);
-			if (result)
+			if (result.Success)
 			{
-				TempData["Success"] = "Ürün başarıyla güncellendi.";
+				TempData["Success"] = result.Message;
 				return RedirectToAction("AdminIndex");
 			}
 
-			ModelState.AddModelError("", "Güncelleme sırasında bir hata oluştu.");
+			ModelState.AddModelError(String.Empty, result.Message);
 			return View(model);
 		}
 	}

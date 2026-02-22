@@ -1,11 +1,12 @@
 ﻿using ByteMarket.WebUI.Models.ProductViewModels;
+using ByteMarket.WebUI.Models.ResultModels;
 
 namespace ByteMarket.WebUI.Services.Interfaces
 {
 	public interface IProductService
 	{
-		Task<bool> AddProductAsync(CreateProductViewModel model);
-		Task<List<ProductListViewModel>> GetProductsForAdminAsync();
-		Task<bool> UpdateProductWithImagesAsync(UpdateProductViewModel model);
+		Task<ApiDataResponse<string>> AddProductAsync(CreateProductViewModel model);
+		Task<ApiDataResponse<List<ProductListViewModel>>> GetProductsForAdminAsync();
+		Task<ApiDataResponse<object>> UpdateProductWithImagesAsync(UpdateProductViewModel model);
 	}
 }

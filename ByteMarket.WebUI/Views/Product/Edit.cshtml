@@ -2,7 +2,7 @@
 @model ByteMarket.WebUI.Models.ProductViewModels.UpdateProductViewModel
 @inject IConfiguration Configuration
 @{
-    var apiBaseUrl = Configuration["ApiSettings:BaseStorageAdress"];
+    var apiBaseStorageUrl = Configuration["ApiSettings:BaseStorageAdress"];
 }
 
 <div class="container mt-5">
@@ -26,7 +26,7 @@
                                     {
                                         <div class="col-3 col-md-2 position-relative" id="img-wrapper-@img.Id">
                                             <div class="ratio ratio-1x1 border rounded overflow-hidden shadow-sm bg-white">
-                                                <img src="@(apiBaseUrl + img.Path.Replace("\\", "/"))" class="img-fluid object-fit-cover">
+                                                <img src="@(apiBaseStorageUrl + img.Path.Replace("\\", "/"))" class="img-fluid object-fit-cover">
                                             </div>
                                             <button type="button" class="btn-delete-image" onclick="removeExistingImage('@img.Id')">
                                                 <i class="bi bi-trash"></i>
@@ -84,24 +84,6 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/js/admin/product/product-create.js"></script>
-
-    <script>
-        async function removeExistingImage(imageId) {
-            if (confirm("Bu görseli kalıcı olarak silmek istediğinize emin misiniz?")) {
-                const response = await fetch(`https://localhost:44367/api/Products/DeleteImage/${imageId}`, {
-                    method: 'DELETE'
-                });
-
-                if (response.ok) {
-                    document.getElementById(`img-wrapper-${imageId}`).classList.add('fade-out');
-                    setTimeout(() => {
-                        document.getElementById(`img-wrapper-${imageId}`).remove();
-                    }, 300);
-                } else {
-                    alert("Resim silinirken teknik bir hata oluştu.");
-                }
-            }
-        }
-    </script>
+    <script src="~/js/admin/product/product-image-management.js"></script>
+    <script src="~/js/admin/product/product-edit.js"></script>
 }

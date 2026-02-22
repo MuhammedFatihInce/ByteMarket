@@ -1,4 +1,5 @@
 ﻿using ByteMarket.WebUI.Models.ProductViewModels;
+using ByteMarket.WebUI.Models.ResultModels;
 using ByteMarket.WebUI.Services.Interfaces;
 
 namespace ByteMarket.WebUI.Services.Implementations
@@ -8,26 +9,34 @@ namespace ByteMarket.WebUI.Services.Implementations
 		private readonly IApiService _apiService;
 		public ProductService(IApiService apiService) => _apiService = apiService;
 
-		public async Task<bool> AddProductAsync(CreateProductViewModel model)
+		public async Task<ApiDataResponse<string>> AddProductAsync(CreateProductViewModel model)
 		{
 			var productResponse = await _apiService.PostAsync<string>("Products/Add", new {model.Name, model.Price, model.Stock});
 
-			if (!productResponse.Success) return false;
+			if (!productResponse.Success) return productResponse;
+
+			string newProductId = productResponse.Data;
 
 			if (model.Files != null && model.Files.Any())
-				return await UploadImagesInternalAsync(productResponse.Data, model.Files);
+			{
+				var imageResponse = await UploadImagesInternalAsync(newProductId, model.Files);
 
-			return true;
+				if (!imageResponse.Success)
+				{
+					imageResponse.Message = $"Ürün eklendi fakat resimler yüklenemedi: {imageResponse.Message}";
+					return new ApiDataResponse<string> { Success = false, Message = imageResponse.Message, Data = newProductId };
+				}
+			}
+
+			return productResponse;
 		}
 
-		public async Task<List<ProductListViewModel>> GetProductsForAdminAsync()
+		public async Task<ApiDataResponse<List<ProductListViewModel>>> GetProductsForAdminAsync()
 		{
-			var response = await _apiService.GetAllAsync<ProductListViewModel>("Products/GetAll");
-
-			return response.Success ? response.Data : new List<ProductListViewModel>();
+			return await _apiService.GetAllAsync<ProductListViewModel>("Products/GetAll");
 		}
 
-		public async Task<bool> UpdateProductWithImagesAsync(UpdateProductViewModel model)
+		public async Task<ApiDataResponse<object>> UpdateProductWithImagesAsync(UpdateProductViewModel model)
 		{
 			var updateResponse = await _apiService.PutAsync<object>("Products/Update", new
 			{
@@ -37,16 +46,18 @@ namespace ByteMarket.WebUI.Services.Implementations
 				model.Stock
 			});
 
-			if (!updateResponse.Success) return false;
-
+			if (!updateResponse.Success) return updateResponse;
 			
 			if (model.Files != null && model.Files.Any())
-				return await UploadImagesInternalAsync(model.Id, model.Files);
+			{
+				var imageResponse = await UploadImagesInternalAsync(model.Id, model.Files);
+				if (!imageResponse.Success) return imageResponse;
+			}
 
-			return true;
+			return updateResponse;
 		}
 
-		private async Task<bool> UploadImagesInternalAsync(string productId, IEnumerable<IFormFile> files)
+		private async Task<ApiDataResponse<object>> UploadImagesInternalAsync(string productId, IEnumerable<IFormFile> files)
 		{
 			var content = new MultipartFormDataContent();
 			foreach (var file in files)
@@ -56,8 +67,7 @@ namespace ByteMarket.WebUI.Services.Implementations
 				content.Add(streamContent, "files", file.FileName);
 			}
 
-			var response = await _apiService.PostMultipartAsync<object>($"Products/UploadImage/{productId}", content);
-			return response.Success;
+			return await _apiService.PostMultipartAsync<object>($"ProductImages/Upload/{productId}", content);
 		}
 
 	}

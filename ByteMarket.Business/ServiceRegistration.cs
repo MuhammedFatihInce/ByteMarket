@@ -15,6 +15,7 @@ namespace ByteMarket.Business
 		public static void AddBusinessServices(this IServiceCollection services)
 		{
 			services.AddScoped<IProductService, ProductManager>();
+			services.AddScoped<IProductImageService, ProductImageManager>();
 
 			services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

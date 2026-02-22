@@ -9,7 +9,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 
 fileInput.addEventListener('change', function (e) {
- 
+
     const newFiles = e.target.files;
     let rejectedFiles = [];
 
@@ -22,7 +22,14 @@ fileInput.addEventListener('change', function (e) {
         if (!file.type.startsWith('image/')) continue;
 
         if (existingCount + newlyAddedCount >= MAX_FILE_COUNT) {
-            alert(`Toplam resim sınırı ${MAX_FILE_COUNT} adettir. Daha fazla ekleyemezsiniz!`);
+            Alert.fire({
+                title: 'Limit Doldu!',
+                text: `Toplam resim sınırı ${MAX_FILE_COUNT} adettir.`,
+                icon: 'info',
+                showCancelButton: false,
+                confirmButtonText: 'Anladım',
+                showSuccessAlert: false
+            });
             break;
         }
 
@@ -35,7 +42,14 @@ fileInput.addEventListener('change', function (e) {
     }
 
     if (rejectedFiles.length > 0) {
-        alert("Şu dosyalar 5MB'dan büyük olduğu için eklenmedi:\n" + rejectedFiles.join(", "));
+        Alert.fire({
+            title: 'Büyük Dosya!',
+            text: `Bazı dosyalar 5MB'dan büyük olduğu için eklenmedi: ${rejectedFiles.join(", ")}`,
+            icon: 'error',
+            showCancelButton: false,
+            confirmButtonText: 'Tamam',
+            showSuccessAlert: false
+        });
     }
 
     fileInput.files = dataTransfer.files
