@@ -1,0 +1,56 @@
+﻿@using ByteMarket.WebUI.Models.CategoryViewModels
+@model List<ListCategoryViewModel>
+
+<div id="category-list-container" data-success="@TempData["SuccessMessage"]" class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="bg-white rounded shadow-sm p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h5 class="mb-0 fw-bold text-dark">Kategori Yönetimi</h5>
+                        <small class="text-muted">Mağazanızdaki ürün gruplarını buradan organize edebilirsiniz.</small>
+                    </div>
+                    <a asp-action="Create" class="btn btn-ty-orange text-white shadow-sm fw-bold px-4 py-2">
+                        <i class="bi bi-plus-circle me-2"></i>YENİ KATEGORİ EKLE
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table text-start align-middle table-hover mb-0 border-top">
+                        <thead>
+                            <tr class="text-secondary small text-uppercase" style="background-color: #fafafa;">
+                                <th scope="col" class="py-3 ps-3">Kategori Bilgisi</th>
+                                <th scope="col" class="py-3">İkon</th>
+                                <th scope="col" class="py-3">Ürün Sayısı</th>
+                                <th scope="col" class="py-3">Durum</th>
+                                <th scope="col" class="py-3 text-end pe-3">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    @await Html.PartialAsync("/Views/Shared/Partials/_AdminCategoryRowPartial.cshtml", item)
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="bi bi-folder-x display-4 d-block mb-3"></i>
+                                        Henüz hiç kategori eklenmemiş.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin/category/category-list.js" asp-append-version="true"></script>
+}

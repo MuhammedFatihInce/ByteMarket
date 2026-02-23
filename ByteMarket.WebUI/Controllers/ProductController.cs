@@ -1,6 +1,8 @@
-﻿using ByteMarket.WebUI.Models.ProductViewModels;
+﻿using ByteMarket.WebUI.Models.CategoryViewModels;
+using ByteMarket.WebUI.Models.ProductViewModels;
 using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ByteMarket.WebUI.Controllers
 {
@@ -16,15 +18,37 @@ namespace ByteMarket.WebUI.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult Create()
+		public async Task<IActionResult> Create()
 		{
-			return View();
+			var categories = await _apiService.GetAllAsync<ListCategoryViewModel>("Category/GetAll");
+
+			var model = new CreateProductViewModel
+			{
+				CategoryList = categories.Data.Select(c => new SelectListItem
+				{
+					Value = c.Id.ToString(),
+					Text = c.Name
+				}).ToList()
+			};
+
+			return View(model);
 		} 
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(CreateProductViewModel model)
 		{
-			if (!ModelState.IsValid) return View(model);
+			if (!ModelState.IsValid)
+			{
+				var categories = await _apiService.GetAllAsync<ListCategoryViewModel>("Category/GetAll");
+				model.CategoryList = categories.Data.Select(c => new SelectListItem
+				{
+					Value = c.Id.ToString(),
+					Text = c.Name
+				}).ToList();
+
+				return View(model);
+			}
 
 			var result = await _productService.AddProductAsync(model);
 
@@ -47,13 +71,37 @@ namespace ByteMarket.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Edit(string id)
 		{
-			var response = await _apiService.GetByIdAsync<UpdateProductViewModel>("Products/GetById", id);
-			if (!response.Success) return RedirectToAction("AdminIndex");
+			var productResult = await _apiService.GetByIdAsync<SingleProductViewModel>("Product/GetById", id);
+			if (!productResult.Success) return RedirectToAction("AdminIndex");
 
-			return View(response.Data);
+			var product = productResult.Data;
+
+			var allCategories = await _apiService.GetAllAsync<ListCategoryViewModel>("Category/GetAll");
+
+			var model = new UpdateProductViewModel
+			{
+				Id = product.Id.ToString(),
+				Name = product.Name,
+				Stock = product.Stock,
+				Price = product.Price,
+				
+				CategoryIds = product.Categories.Select(c => c.Id.ToString()).ToList(),
+
+				CategoryList = allCategories.Data.Select(c => new SelectListItem
+				{
+					Value = c.Id.ToString(),
+					Text = c.Name
+				}).ToList(),
+
+				ProductImageFiles = product.ProductImageFiles
+				
+			};
+
+			return View(model);
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(UpdateProductViewModel model)
 		{
 			if (!ModelState.IsValid) return View(model);
@@ -61,7 +109,7 @@ namespace ByteMarket.WebUI.Controllers
 			var result = await _productService.UpdateProductWithImagesAsync(model);
 			if (result.Success)
 			{
-				TempData["Success"] = result.Message;
+				TempData["SuccessMessage"] = result.Message;
 				return RedirectToAction("AdminIndex");
 			}
 

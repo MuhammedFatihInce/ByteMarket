@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace ByteMarket.WebUI.Models.ProductViewModels
 {
@@ -17,6 +18,10 @@ namespace ByteMarket.WebUI.Models.ProductViewModels
 		[Range(0, 100000, ErrorMessage = "Stok 0 ile 100.000 arasında olmalıdır.")]
 		[Display(Name = "Stok Miktarı")]
 		public int Stock { get; set; }
+
+		public List<string> CategoryIds { get; set; }
+
+		public List<SelectListItem>? CategoryList { get; set; }
 
 		public IFormFileCollection? Files { get; set; }
 	}

@@ -5,11 +5,12 @@
         <div class="col-md-7">
             <div class="card shadow-sm border-0 rounded-3">
                 <div class="card-header bg-white py-3 border-bottom-0">
-                    <h4 class="mb-0 fw-bold text-ty-orange"><i class="bi bi-box-seam me-2"></i>Yeni Ürün Listele</h4>
+                    <h4 class="mb-0 fw-bold text-ty-orange"><i class="bi bi-box-seam me-2"></i>Yeni Ürün Ekle</h4>
                 </div>
                 <div class="card-body p-4">
 
                     <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
                         @* Ürün Bilgileri *@
                         <div class="mb-4">
                             <label asp-for="Name" class="form-label fw-semibold"></label>
@@ -48,6 +49,19 @@
                             <span asp-validation-for="Files" class="text-danger small"></span>
                         </div>
 
+                        <div class="mb-4">
+                            <label asp-for="CategoryIds" class="form-label fw-semibold mb-2">
+                                <i class="bi bi-grid-3x3-gap me-1 text-ty-orange"></i> Ürün Kategorileri
+                            </label>
+                            <select asp-for="CategoryIds" 
+                                    asp-items="Model.CategoryList" 
+                                    class="form-control select2-multiple" 
+                                    multiple="multiple" 
+                                    data-placeholder="Kategori arayın veya seçin...">
+                            </select>
+                            <span asp-validation-for="CategoryIds" class="text-danger small"></span>
+                        </div>
+
                         <div class="d-grid mt-3">
                             <button type="submit" class="btn btn-primary py-2 fw-bold bg-ty-orange border-0 shadow-sm text-white">
                                 ÜRÜNÜ YAYINLA
@@ -64,5 +78,20 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
-    <script src="~/js/admin/product/product-image-management.js"></script>
+    <script src="~/js/admin/product/product-image-management.js" asp-append-version="true"></script>
+
+    <script>
+                $(document).ready(function() {
+            $('.select2-multiple').select2({
+                theme: "default",
+                allowClear: true,
+                closeOnSelect: false,
+                language: {
+                    noResults: function() {
+                        return "Kategori bulunamadı";
+                    }
+                }
+            });
+        });
+    </script>
 }

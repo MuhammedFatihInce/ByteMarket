@@ -1,0 +1,87 @@
+﻿.btn-delete-image {
+	position: absolute;
+	top: -8px;
+	right: -8px;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background-color: #dc3545;
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+	z-index: 10;
+	transition: all 0.2s ease;
+}
+
+	.btn-delete-image:hover {
+		background-color: #c82333;
+		transform: scale(1.1);
+	}
+
+.product-thumb {
+	width: 48px;
+	height: 48px;
+	object-fit: cover; /* Resmi ezmeden kutuya sığdırır */
+	display: block;
+	background-color: #f8f9fa;
+	transition: transform 0.2s;
+}
+
+	.product-thumb:hover {
+		transform: scale(1.2); /* Üstüne gelince hafif büyüme efekti */
+	}
+
+.fade-out {
+	opacity: 0;
+	transition: 0.3s;
+	pointer-events: none;
+}
+
+.btn-ty-orange {
+	background-color: #f27a1a !important;
+	border: none;
+}
+
+	.btn-ty-orange:hover {
+		background-color: #e66e15 !important;
+	}
+
+.text-ty-orange {
+	color: #f27a1a !important;
+}
+
+.btn-white {
+	background-color: #fff;
+}
+
+	.btn-white:hover {
+		background-color: #f8f9fa;
+	}
+
+.select2-container--default .select2-selection--multiple {
+	border: none !important;
+	background-color: #f8f9fa !important; /* bg-light rengi */
+	min-height: 45px;
+	padding: 5px;
+}
+
+	.select2-container--default .select2-selection--multiple .select2-selection__choice {
+		background-color: #f27a1a !important; /* Trendyol Turuncusu */
+		border: none !important;
+		color: white !important;
+		border-radius: 4px;
+		padding: 2px 8px;
+		font-size: 0.9rem;
+	}
+
+	.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+		color: white !important;
+		margin-right: 5px;
+	}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+	background-color: #f27a1a !important;
+}

@@ -11,7 +11,7 @@ namespace ByteMarket.WebUI.Services.Implementations
 
 		public async Task<ApiDataResponse<string>> AddProductAsync(CreateProductViewModel model)
 		{
-			var productResponse = await _apiService.PostAsync<string>("Products/Add", new {model.Name, model.Price, model.Stock});
+			var productResponse = await _apiService.PostAsync<string>("Product/Add", new {model.Name, model.Price, model.Stock, model.CategoryIds});
 
 			if (!productResponse.Success) return productResponse;
 
@@ -33,17 +33,18 @@ namespace ByteMarket.WebUI.Services.Implementations
 
 		public async Task<ApiDataResponse<List<ProductListViewModel>>> GetProductsForAdminAsync()
 		{
-			return await _apiService.GetAllAsync<ProductListViewModel>("Products/GetAll");
+			return await _apiService.GetAllAsync<ProductListViewModel>("Product/GetAll");
 		}
 
 		public async Task<ApiDataResponse<object>> UpdateProductWithImagesAsync(UpdateProductViewModel model)
 		{
-			var updateResponse = await _apiService.PutAsync<object>("Products/Update", new
+			var updateResponse = await _apiService.PutAsync<object>("Product/Update", new
 			{
 				model.Id,
 				model.Name,
 				model.Price,
-				model.Stock
+				model.Stock,
+				model.CategoryIds
 			});
 
 			if (!updateResponse.Success) return updateResponse;

@@ -1,4 +1,6 @@
-﻿namespace ByteMarket.WebUI.Models.ProductViewModels
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace ByteMarket.WebUI.Models.ProductViewModels
 {
 	public class UpdateProductViewModel
 	{
@@ -6,6 +8,9 @@
 		public string Name { get; set; }
 		public decimal Price { get; set; }
 		public int Stock { get; set; }
+
+		public List<string> CategoryIds { get; set; } = new();
+		public List<SelectListItem>? CategoryList { get; set; }
 
 		public List<ProductImageViewModels.ProductImageViewModel>? ProductImageFiles { get; set; }
 

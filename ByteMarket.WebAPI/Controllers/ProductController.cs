@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ByteMarket.WebAPI.Controllers
 {
-	public class ProductsController : BaseController
+	public class ProductController : BaseController
 	{
 		private readonly IProductService _productService;
-		public ProductsController(IProductService productService)
+		public ProductController(IProductService productService)
 		{
 			_productService = productService;
 		}

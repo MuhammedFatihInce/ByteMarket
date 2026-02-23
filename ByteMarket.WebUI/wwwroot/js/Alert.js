@@ -1,7 +1,31 @@
 ﻿const Alert = {
+
+    _toastMixin: Swal.mixin({
+        toast: true,
+        position: 'top-end', // Sağ üstten kayar
+        showConfirmButton: false,
+        timer: 3000, // 3 saniye sonra kaybolur
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    }),
+
     /**
      * @param {Object} options - Özelleştirme seçenekleri
      */
+
+    toast: function (options) {
+        const defaults = {
+            icon: 'success', // success, error, warning, info
+            title: 'İşlem başarılı!',
+            iconColor: '#ff6000' // Senin turuncun
+        };
+        const settings = { ...defaults, ...options };
+        return this._toastMixin.fire(settings);
+    },
+
     fire: async function (options) {
         // 1. VARSAYILAN AYARLAR (Şablon)
         const defaults = {
@@ -17,7 +41,8 @@
             successTitle: 'Başarılı!',
             successMessage: 'İşlem başarıyla tamamlandı.',
             onConfirm: async () => { }, 
-            showSuccessAlert: true
+            showSuccessAlert: true,
+            successAsToast: true
         };
 
         const settings = { ...defaults, ...options };
@@ -39,7 +64,13 @@
                 await settings.onConfirm();
 
                 if (settings.showSuccessAlert) {
-                    Swal.fire(settings.successTitle, settings.successMessage, 'success');
+
+                    if (settings.successAsToast) {
+                        this.toast({ title: settings.successMessage, icon: 'success' });
+                    } else {
+                        Swal.fire(settings.successTitle, settings.successMessage, 'success');
+                    }
+                    
                 }
 
                 return true;

@@ -1,5 +1,4 @@
-﻿
-using AutoMapper;
+﻿using AutoMapper;
 using ByteMarket.Business.Abstract;
 using ByteMarket.Business.Abstract.Storage;
 using ByteMarket.Business.Concrete;
@@ -16,6 +15,7 @@ namespace ByteMarket.Business
 		{
 			services.AddScoped<IProductService, ProductManager>();
 			services.AddScoped<IProductImageService, ProductImageManager>();
+			services.AddScoped<ICategoryService, CategoryManager>();
 
 			services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

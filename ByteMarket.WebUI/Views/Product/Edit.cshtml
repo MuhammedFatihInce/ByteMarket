@@ -15,6 +15,7 @@
                 </div>
                 <div class="card-body p-4">
                     <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="Id" />
 
                         <div class="mb-4">
@@ -70,6 +71,18 @@
                             <div id="image-preview-container" class="row g-2"></div>
                         </div>
 
+                        <div class="mb-4">
+                            <label asp-for="CategoryIds" class="form-label fw-semibold mb-2">
+                                <i class="bi bi-grid-3x3-gap me-1 text-ty-orange"></i> Ürün Kategorileri
+                            </label>
+                            <select asp-for="CategoryIds" 
+                                    asp-items="Model.CategoryList" 
+                                    class="form-control select2-multiple" 
+                                    multiple="multiple">
+                            </select>
+                            <span asp-validation-for="CategoryIds" class="text-danger small"></span>
+                        </div>
+
                         <div class="d-grid pt-3">
                             <button type="submit" class="btn btn-primary py-2 fw-bold bg-ty-orange border-0 shadow-sm text-white">
                                 DEĞİŞİKLİKLERİ KAYDET
@@ -84,6 +97,21 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/js/admin/product/product-image-management.js"></script>
-    <script src="~/js/admin/product/product-edit.js"></script>
+    <script src="~/js/admin/product/product-image-management.js" asp-append-version="true"></script>
+    <script src="~/js/admin/product/product-edit.js" asp-append-version="true"></script>
+
+    <script>
+                $(document).ready(function() {
+            $('.select2-multiple').select2({
+                theme: "default",
+                allowClear: true,
+                closeOnSelect: false,
+                language: {
+                    noResults: function() {
+                        return "Kategori bulunamadı";
+                    }
+                }
+            });
+        });
+    </script>
 }

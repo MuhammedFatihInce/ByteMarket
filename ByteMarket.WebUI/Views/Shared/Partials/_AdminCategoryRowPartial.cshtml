@@ -1,0 +1,36 @@
+﻿@model ByteMarket.WebUI.Models.CategoryViewModels.ListCategoryViewModel
+
+<tr id="row-@Model.Id">
+    <td class="py-3 ps-3">
+        <div>
+            <h6 class="mb-0 small fw-bold">@Model.Name</h6>
+            <code class="text-muted" style="font-size: 10px;">ID: @Model.Id.ToString().Substring(0, 8)</code>
+        </div>
+    </td>
+    <td>
+        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+            <i class="bi @(string.IsNullOrEmpty(Model.Icon) ? "bi-tag" : Model.Icon) text-ty-orange fs-5"></i>
+        </div>
+    </td>
+    <td>
+        <span class="fw-semibold">@Model.ProductCount</span> <small class="text-muted">Ürün</small>
+    </td>
+    <td>
+        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2">
+            Aktif
+        </span>
+    </td>
+    <td class="text-end pe-3">
+        <div class="btn-group shadow-sm">
+            <a class="btn btn-sm btn-white border text-primary" title="Düzenle" href="/Category/Edit/@Model.Id">
+                <i class="bi bi-pencil-square"></i>
+            </a>
+            <button class="btn btn-sm btn-white border text-danger btn-delete"
+                    data-id="@Model.Id"
+                    data-name="@Model.Name"
+                    title="Sil">
+                <i class="bi bi-trash3"></i>
+            </button>
+        </div>
+    </td>
+</tr>

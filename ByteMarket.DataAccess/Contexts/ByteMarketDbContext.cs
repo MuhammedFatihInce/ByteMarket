@@ -19,6 +19,7 @@ namespace ByteMarket.DataAccess.Contexts
 		public DbSet<Customer> Customers { get; set; }
 		public DbSet<Basket> Baskets { get; set; }
 		public DbSet<BasketItem> BasketItems { get; set; }
+		public DbSet<Category> Categories { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{

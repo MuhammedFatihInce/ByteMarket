@@ -12,12 +12,11 @@
             const row = document.getElementById(`row-${productId}`);
 
             if (row) {
-                row.style.transition = "all 0.4s ease";
-                row.style.opacity = "0";
-                row.style.transform = "translateX(20px)";
+                row.classList.add('fade-out');
                 setTimeout(() => row.remove(), 400);
             }
-        }
+        },
+        successMessage: 'Ürün başarıyla silindi.'
     });
 
 });

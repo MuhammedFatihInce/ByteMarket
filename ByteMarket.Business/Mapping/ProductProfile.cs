@@ -10,7 +10,9 @@ namespace ByteMarket.Business.Mapping
 		{
 			CreateMap<ProductImageFile, DTOs.ProductImageDto.ProductImageDto>().ReverseMap();
 
-			CreateMap<CreateProductDto, Product>().ReverseMap();
+			CreateMap<CreateProductDto, Product>()
+				.ForMember(dest => dest.Categories, opt => opt.Ignore())
+				.ReverseMap(); 
 
 			CreateMap<Product, ListProductDto>()
 				.ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src =>
@@ -21,7 +23,8 @@ namespace ByteMarket.Business.Mapping
 
 			CreateMap<Product, SingleProductDto>().ReverseMap();
 
-			CreateMap<UpdateProductDto, Product>().ReverseMap();
+			CreateMap<UpdateProductDto, Product>().ForMember(dest => dest.Categories, opt => opt.Ignore())
+				.ReverseMap();
 		}
 	}
 }

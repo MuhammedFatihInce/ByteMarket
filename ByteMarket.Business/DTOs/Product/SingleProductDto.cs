@@ -1,4 +1,6 @@
 ﻿
+using ByteMarket.Business.DTOs.Category;
+
 namespace ByteMarket.Business.DTOs.Product
 {
 	public class SingleProductDto
@@ -8,5 +10,6 @@ namespace ByteMarket.Business.DTOs.Product
 		public int Stock { get; set; }
 		public decimal Price { get; set; }
 		public List<ProductImageDto.ProductImageDto> ProductImageFiles { get; set; }
+		public List<SingleCategoryDto> Categories { get; set; }
 	}
 }

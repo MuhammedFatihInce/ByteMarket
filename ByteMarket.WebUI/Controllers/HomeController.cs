@@ -17,7 +17,7 @@ namespace ByteMarket.WebUI.Controllers
 
 		public async Task<IActionResult> Index()
 		{
-			var result = await _apiService.GetAllAsync<ProductListViewModel>("Products/GetAll");
+			var result = await _apiService.GetAllAsync<ProductListViewModel>("Product/GetAll");
 
 			if (result.Success)
 			{

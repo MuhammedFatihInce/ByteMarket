@@ -2,6 +2,7 @@
 using ByteMarket.Business.Abstract;
 using ByteMarket.Business.DTOs.Product;
 using ByteMarket.Business.Utilities.Results;
+using ByteMarket.DataAccess.Abstract.Category;
 using ByteMarket.DataAccess.Abstract.Product;
 using ByteMarket.Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
@@ -15,13 +16,15 @@ namespace ByteMarket.Business.Concrete
 		private readonly IProductWriteRepository _productWriteRepository;
 		private readonly IMapper _mapper;
 		private readonly IProductImageService _productImageService;
+		private readonly ICategoryReadRepository _categoryReadRepository;
 
-		public ProductManager(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IMapper mapper, IProductImageService productImageService)
+		public ProductManager(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IMapper mapper, IProductImageService productImageService, ICategoryReadRepository categoryReadRepository)
 		{
 			_productReadRepository = productReadRepository;
 			_productWriteRepository = productWriteRepository;
 			_mapper = mapper;
 			_productImageService = productImageService;
+			_categoryReadRepository = categoryReadRepository;
 		}
 
 		public async Task<IDataResult<List<ListProductDto>>> GetAllProductsAsync()
@@ -44,6 +47,7 @@ namespace ByteMarket.Business.Concrete
 		{
 			var product = await _productReadRepository.GetAll(false)
 				.Include(p =>p.ProductImageFiles)
+				.Include(p=> p.Categories)
 				.FirstOrDefaultAsync(p=> p.Id == Guid.Parse(id));
 
 			if (product == null)
@@ -59,6 +63,13 @@ namespace ByteMarket.Business.Concrete
 		{
 			var product = _mapper.Map<Product>(createProductDto);
 
+			if (createProductDto.CategoryIds != null && createProductDto.CategoryIds.Any())
+			{
+				var categories = _categoryReadRepository.GetWhere(c => createProductDto.CategoryIds.Contains(c.Id.ToString())).ToList();
+
+				product.Categories = categories;
+			}
+
 			bool result = await _productWriteRepository.AddAsync(product);
 
 			if (result)
@@ -72,11 +83,24 @@ namespace ByteMarket.Business.Concrete
 
 		public async Task<IResult> UpdateProductAsync(UpdateProductDto updateProductDto)
 		{
-			var product = await _productReadRepository.GetByIdAsync(updateProductDto.Id);
+			var product = await _productReadRepository
+				.GetWhere(p => p.Id == Guid.Parse(updateProductDto.Id))
+				.Include(p => p.Categories).FirstOrDefaultAsync();
 
 			if (product == null) return new ErrorResult("Ürün bulunamadı.");
 
 			_mapper.Map(updateProductDto, product);
+
+			if (updateProductDto.CategoryIds != null && updateProductDto.CategoryIds.Any())
+			{
+				var newCategories = _categoryReadRepository.GetWhere(c => updateProductDto.CategoryIds.Contains(c.Id.ToString())).ToList();
+
+				product.Categories = newCategories;
+			}
+			else
+			{
+				product.Categories.Clear();
+			}
 
 			_productWriteRepository.Update(product);
 			await _productWriteRepository.SaveAsync();

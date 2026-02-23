@@ -12,6 +12,12 @@
 
 </head>
 <body>
+    <div id="temp-data-radar"
+         data-success="@TempData["SuccessMessage"]"
+         data-error="@TempData["ErrorMessage"]"
+         data-warning="@TempData["WarningMessage"]">
+    </div>
+
     @await Component.InvokeAsync("Header")
 
     <div class="container">
