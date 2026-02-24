@@ -1,40 +1,26 @@
 ﻿@using ByteMarket.WebUI.Models.ProductViewModels
 @model List<ProductListViewModel>
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 
 @{
     ViewData["Title"] = "Ürün Listesi";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">ByteMarket Ürün Vitrini</h2>
+<div class="container mt-5">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h3 class="fw-bold mb-0 text-dark">
+            <i class="bi bi-stars text-ty-orange me-2"></i>Tüm Ürünler
+        </h3>
+        <span class="badge bg-light text-dark border p-2">Toplam @Model.Count Ürün</span>
+    </div>
 
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">
-            @TempData["Error"]
-        </div>
-    }
-
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        @foreach (var item in Model)
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var product in Model)
         {
             <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title text-primary">@item.Name</h5>
-                        <p class="card-text text-muted">Stok Adedi: <strong>@item.Stock</strong></p>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between align-items-center bg-white border-top-0">
-                        <span class="fs-4 fw-bold text-success">@item.Price.ToString("C2")</span>
-                        <button class="btn btn-outline-primary btn-sm">Sepete Ekle</button>
-                    </div>
-                </div>
+                @await Html.PartialAsync("~/Views/Shared/Partials/_ProductCardPartial.cshtml", product)
             </div>
         }
     </div>
-
-    @if (!Model.Any())
-    {
-        <div class="alert alert-info mt-4">Henüz listelenecek bir ürün bulunamadı.</div>
-    }
 </div>

@@ -18,8 +18,10 @@ namespace ByteMarket.Business.Mapping
 				.ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src =>
 						src.ProductImageFiles != null && src.ProductImageFiles.Any()
 							? $"{src.ProductImageFiles.FirstOrDefault().Path}"
-							: null 
-				));
+							: null
+				))
+				.ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Categories.FirstOrDefault().Name))
+				;
 
 			CreateMap<Product, SingleProductDto>().ReverseMap();
 

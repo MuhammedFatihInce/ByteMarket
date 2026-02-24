@@ -7,7 +7,7 @@
         text: `"${productName}" isimli ürün ve bağlı tüm görseller kalıcı olarak silinecek!`,
         confirmButtonText: 'Evet, Sil!',
         onConfirm: async () => {
-            await HttpClient.delete(`Products/Delete/${productId}`);
+            await HttpClient.delete(`Product/Delete/${productId}`);
 
             const row = document.getElementById(`row-${productId}`);
 

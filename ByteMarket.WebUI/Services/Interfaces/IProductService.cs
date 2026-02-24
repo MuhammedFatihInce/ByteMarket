@@ -7,6 +7,7 @@ namespace ByteMarket.WebUI.Services.Interfaces
 	{
 		Task<ApiDataResponse<string>> AddProductAsync(CreateProductViewModel model);
 		Task<ApiDataResponse<List<ProductListViewModel>>> GetProductsForAdminAsync();
+		Task<ApiDataResponse<List<ProductListViewModel>>> GetProductsForCustomerAsync();
 		Task<ApiDataResponse<object>> UpdateProductWithImagesAsync(UpdateProductViewModel model);
 	}
 }

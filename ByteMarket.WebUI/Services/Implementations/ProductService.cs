@@ -36,6 +36,11 @@ namespace ByteMarket.WebUI.Services.Implementations
 			return await _apiService.GetAllAsync<ProductListViewModel>("Product/GetAll");
 		}
 
+		public async Task<ApiDataResponse<List<ProductListViewModel>>> GetProductsForCustomerAsync()
+		{
+			return await _apiService.GetAllAsync<ProductListViewModel>("Product/GetAll");
+		}
+
 		public async Task<ApiDataResponse<object>> UpdateProductWithImagesAsync(UpdateProductViewModel model)
 		{
 			var updateResponse = await _apiService.PutAsync<object>("Product/Update", new

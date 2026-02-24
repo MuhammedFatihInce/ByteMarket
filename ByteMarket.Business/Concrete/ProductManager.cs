@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using ByteMarket.Business.Abstract;
 using ByteMarket.Business.DTOs.Product;
 using ByteMarket.Business.Utilities.Results;
@@ -29,18 +30,16 @@ namespace ByteMarket.Business.Concrete
 
 		public async Task<IDataResult<List<ListProductDto>>> GetAllProductsAsync()
 		{
-			var products = _productReadRepository.GetAll(false)
-				.Include(p => p.ProductImageFiles)
-				.ToList();
+			var products = await _productReadRepository.GetAll(false)
+				.ProjectTo<ListProductDto>(_mapper.ConfigurationProvider)
+				.ToListAsync();
 
 			if (products == null || !products.Any())
 			{
 				return new ErrorDataResult<List<ListProductDto>>("Listelenecek ürün bulunamadı.");
 			}
 
-			var productDtos = _mapper.Map<List<ListProductDto>>(products);
-
-			return new SuccessDataResult<List<ListProductDto>>(productDtos, "Ürünler başarıyla listelendi.");
+			return new SuccessDataResult<List<ListProductDto>>(products, "Ürünler başarıyla listelendi.");
 		}
 
 		public async Task<IDataResult<SingleProductDto>> GetProductByIdAsync(string id)
