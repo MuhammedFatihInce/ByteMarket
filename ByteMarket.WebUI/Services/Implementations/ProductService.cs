@@ -76,5 +76,10 @@ namespace ByteMarket.WebUI.Services.Implementations
 			return await _apiService.PostMultipartAsync<object>($"ProductImages/Upload/{productId}", content);
 		}
 
+		public async Task<ApiDataResponse<SingleProductViewModel>> GetProductDetailsAsync(string id)
+		{
+			return await _apiService.GetByIdAsync<SingleProductViewModel>("Product/GetById", id);
+		}
+
 	}
 }

@@ -44,10 +44,11 @@ namespace ByteMarket.Business.Concrete
 
 		public async Task<IDataResult<SingleProductDto>> GetProductByIdAsync(string id)
 		{
-			var product = await _productReadRepository.GetAll(false)
+			var product = await _productReadRepository
+				.GetWhere(p => p.Id == Guid.Parse(id), false)
 				.Include(p =>p.ProductImageFiles)
 				.Include(p=> p.Categories)
-				.FirstOrDefaultAsync(p=> p.Id == Guid.Parse(id));
+				.FirstOrDefaultAsync();
 
 			if (product == null)
 			{

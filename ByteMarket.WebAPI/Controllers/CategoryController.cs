@@ -1,6 +1,5 @@
 ﻿using ByteMarket.Business.Abstract;
 using ByteMarket.Business.DTOs.Category;
-using ByteMarket.Business.DTOs.Product;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ByteMarket.WebAPI.Controllers

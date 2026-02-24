@@ -98,5 +98,15 @@ namespace ByteMarket.WebUI.Controllers
 			ModelState.AddModelError(String.Empty, result.Message);
 			return View(model);
 		}
+
+		[HttpGet]
+		public async Task<IActionResult> Detail(string id)
+		{
+			var result = await _productService.GetProductDetailsAsync(id);
+
+			if (!result.Success) return RedirectToAction("Index", "Home");
+
+			return View(result.Data);
+		}
 	}
 }

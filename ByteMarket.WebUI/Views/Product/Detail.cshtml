@@ -1,0 +1,126 @@
+﻿@model ByteMarket.WebUI.Models.ProductViewModels.SingleProductViewModel
+@inject IConfiguration Configuration
+@{
+    ViewData["Title"] = Model.Name;
+    var apiBaseUrl = Configuration["ApiSettings:BaseStorageAdress"];
+    string noImageUrl = "https://placehold.co/600x400?text=Resim+Yok";
+}
+
+<div class="container mt-5 mb-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">ByteMarket</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Categories.FirstOrDefault()?.Name</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <div class="col-lg-6">
+            <div id="productCarousel" class="carousel slide carousel-dark border rounded-3 bg-white shadow-sm" data-bs-ride="carousel">
+                <div class="carousel-inner p-4" style="height: 500px;">
+                    @if (Model.ProductImageFiles != null && Model.ProductImageFiles.Any())
+                    {
+                        @for (int i = 0; i < Model.ProductImageFiles.Count; i++)
+                        {
+                            <div class="carousel-item @(i == 0 ? "active" : "") h-100">
+                                <div class="img-zoom-container h-100 w-100 d-flex justify-content-center">
+
+                                    <div class="img-zoom-lens" id="lens-@i"></div>
+
+                                    <img id="image-@i" src="@($"{apiBaseUrl}{Model.ProductImageFiles[i].Path.Replace("\\", "/")}")"
+                                         class="d-block w-100 h-100 object-fit-contain" alt="@Model.Name">
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="carousel-item active h-100">
+                            <img src="@noImageUrl" class="d-block w-100 h-100 object-fit-contain" alt="Resim Yok">
+                        </div>
+                    }
+                </div>
+
+                <div id="zoom-result"></div>
+
+                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
+            </div>
+
+            <div class="product-thumbnails d-flex flex-wrap gap-2 mt-3">
+                @if (Model.ProductImageFiles != null && Model.ProductImageFiles.Any())
+                {
+                    @for (int i = 0; i < Model.ProductImageFiles.Count; i++)
+                    {
+                        <div class="thumb-item @(i == 0 ? "active" : "")" 
+                             data-bs-target="#productCarousel" 
+                             data-bs-slide-to="@i">
+                            <img src="@($"{apiBaseUrl}{Model.ProductImageFiles[i].Path.Replace("\\", "/")}")" 
+                                 class="img-fluid object-fit-contain" 
+                                 alt="@Model.Name">
+                        </div>
+                    }
+                }
+            </div>
+
+            
+
+        </div>
+
+        <div class="col-lg-6">
+            <div class="product-info-card p-4 border rounded-3 shadow-sm bg-white">
+                <div class="mb-2">
+                    @foreach (var cat in Model.Categories)
+                    {
+                        <span class="badge bg-light text-ty-orange border me-1">@cat.Name</span>
+                    }
+                </div>
+                <h2 class="fw-bold text-dark mb-3">@Model.Name</h2>
+
+                <div class="price-section mb-4">
+                    <h3 class="fw-bold text-ty-orange mb-0">@Model.Price.ToString("C2")</h3>
+                    <small class="text-muted">KDV Dahil</small>
+                </div>
+
+                <div class="stock-status mb-4 p-3 bg-light rounded-3 d-flex align-items-center">
+                    <i class="bi bi-box-seam fs-4 text-ty-orange me-3"></i>
+                    <div>
+                        <span class="fw-bold d-block">Stok Durumu</span>
+                        <small class="@(Model.Stock > 0 ? "text-success" : "text-danger")">
+                            @(Model.Stock > 0 ? $"Şu an stokta {Model.Stock} adet var!" : "Tükendi")
+                        </small>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 mt-4">
+                    <button class="btn btn-outline-ty-orange flex-grow-1 fw-bold py-3 shadow-sm @(Model.Stock <= 0 ? "disabled" : "")">
+                        HEMEN SATIN AL
+                    </button>
+
+                    <button class="btn btn-ty-orange flex-grow-1 text-white fw-bold py-3 shadow-sm @(Model.Stock <= 0 ? "disabled" : "")">
+                         SEPETE EKLE
+                    </button>
+
+                    <button class="btn wishlist-detail-btn shadow-sm rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-heart fs-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/customer/product/product-detail.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            initProductDetailCarousel('productCarousel');
+            imageZoom("image-0", "zoom-result", "lens-0");
+        });
+    </script>
+}
+

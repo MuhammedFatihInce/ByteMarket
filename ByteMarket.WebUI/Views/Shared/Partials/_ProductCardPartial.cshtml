@@ -13,7 +13,10 @@
 }
 
 <div class="card h-100 border shadow-sm product-card transition-up position-relative p-2">
-    <button class="wishlist-btn border shadow-sm rounded-circle position-absolute">
+
+    <a asp-controller="Product" asp-action="Detail" asp-route-id="@Model.Id" class="stretched-link"></a>
+
+    <button class="wishlist-btn border shadow-sm rounded-circle position-absolute" style="z-index: 10;">
         <i class="bi bi-heart"></i>
     </button>
 
@@ -42,7 +45,7 @@
             @Model.Name
         </h6>
 
-        <div class="mt-auto px-1">
+        <div class="mt-auto px-1 position-relative" style="z-index: 10;">
             <div class="d-flex align-items-center justify-content-between mb-3">
                 <h5 class="fw-bold text-ty-orange mb-0">
                     @Model.Price.ToString("N0") <span style="font-size: 0.85rem">TL</span>

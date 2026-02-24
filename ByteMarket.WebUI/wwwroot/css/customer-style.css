@@ -2,6 +2,7 @@
 .product-card {
 	border-radius: 12px;
 	border: 1px solid #eee !important;
+	cursor: pointer;
 }
 
 .image-box {
@@ -82,3 +83,142 @@
 	display: flex;
 	flex-direction: column;
 }
+
+.product-card .wishlist-btn,
+.product-card .btn,
+.product-card .mt-auto {
+	position: relative;
+	z-index: 10; 
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+	content: var(--bs-breadcrumb-divider, ">") !important;
+	color: #f27a1a;
+}
+
+/* Thumbnail Konteynırı */
+.product-thumbnails {
+	margin-top: 15px;
+}
+.thumb-item {
+	width: 70px;
+	height: 80px;
+	padding: 5px;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	cursor: pointer;
+	background-color: #fff;
+	transition: all 0.2s ease-in-out;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+	.thumb-item:hover {
+		border-color: #f27a1a;
+	}
+
+	.thumb-item.active {
+		border: 2px solid #f27a1a !important;
+	}
+
+	.thumb-item img {
+		max-width: 100%;
+		max-height: 100%;
+	}
+
+
+#productCarousel {
+	overflow: visible !important;
+	position: relative;
+}
+
+/* Carousel Kontrol Butonları Özelleştirme */
+	#productCarousel .carousel-control-prev,
+	#productCarousel .carousel-control-next {
+		background-color: #ffffff;
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		top: 50%;
+		transform: translateY(-50%);
+		opacity: 1;
+		box-shadow: 0 4px 12px rgba(0,0,0,0.30);
+		margin: 0 15px;
+		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		border: 1px solid #f1f1f1;
+		z-index: 5;
+	}
+
+	#productCarousel .carousel-control-prev {
+		left: -50px;
+	}
+
+	#productCarousel .carousel-control-next {
+		right: -50px;
+	}
+
+	/* Mouse üzerine gelince (Hover) */
+		#productCarousel .carousel-control-prev:hover,
+		#productCarousel .carousel-control-next:hover {
+			background-color: #ffffff;
+			box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+			transform: translateY(-50%) scale(1.1);
+		}
+
+#productCarousel .carousel-control-prev-icon,
+#productCarousel .carousel-control-next-icon {
+	width: 20px;
+	height: 20px;
+}
+
+/* Ana resmin olduğu konteynır */
+.img-zoom-container {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Fareyle gezdiğimiz şeffaf mercek */
+.img-zoom-lens {
+	position: absolute;
+	border: 1px solid #d4d4d4;
+	width: 250px; /* Mercek boyutu */
+	height: 250px;
+	background-color: rgba(255, 255, 255, 0.4);
+	cursor: crosshair;
+	display: none; /* Mouse yokken görünmesin */
+	z-index: 100;
+}
+
+/* Yandaki büyük sonuç penceresi */
+#zoom-result {
+	border: 1px solid #d4d4d4;
+	width: 500px; /* Sonuç penceresi genişliği */
+	height: 500px; /* Sonuç penceresi yüksekliği */
+	position: absolute;
+	left: 105%; /* Ana resmin hemen sağında başlasın */
+	top: 0;
+	z-index: 1000;
+	background-color: #fff;
+	background-repeat: no-repeat;
+	display: none; /* Mouse yokken gizli */
+	box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+	pointer-events: none;
+}
+
+.wishlist-detail-btn {
+	width: 56px; /* Ana butonların yüksekliğiyle (py-3) uyumlu */
+	height: 56px;
+	border: 1px solid #dee2e6 !important;
+	background-color: #ffffff !important;
+	color: #6c757d !important;
+	transition: all 0.3s ease;
+}
+
+	.wishlist-detail-btn:hover {
+		border-color: #f27a1a !important;
+		color: #f27a1a !important;
+		background-color: #fff4ec !important;
+		transform: scale(1.05);
+	}
