@@ -28,9 +28,16 @@ namespace ByteMarket.Business.Concrete
 			_categoryReadRepository = categoryReadRepository;
 		}
 
-		public async Task<IDataResult<List<ListProductDto>>> GetAllProductsAsync()
+		public async Task<IDataResult<List<ListProductDto>>> GetAllProductsAsync(string? categoryId = null)
 		{
-			var products = await _productReadRepository.GetAll(false)
+			var query = _productReadRepository.GetAll(false);
+
+			if (!string.IsNullOrEmpty(categoryId))
+			{
+				query = query.Where(p => p.Categories.Any(c => c.Id.ToString() == categoryId));
+			}
+
+			var products = await query
 				.ProjectTo<ListProductDto>(_mapper.ConfigurationProvider)
 				.ToListAsync();
 
@@ -117,5 +124,7 @@ namespace ByteMarket.Business.Concrete
 
 			return new SuccessResult("Ürün ve bağlı tüm görseller başarıyla temizlendi.");
 		}
+
+
 	}
 }

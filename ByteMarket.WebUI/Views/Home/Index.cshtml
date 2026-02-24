@@ -4,13 +4,14 @@
 @inject IConfiguration Configuration
 
 @{
-    ViewData["Title"] = "Ürün Listesi";
+    var categoryId = ViewBag.ActiveCategoryId;
+    ViewData["Title"] = string.IsNullOrEmpty(categoryId) ? "Tüm Ürünler" : "Kategori Ürünleri";
 }
 
 <div class="container mt-5">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h3 class="fw-bold mb-0 text-dark">
-            <i class="bi bi-stars text-ty-orange me-2"></i>Tüm Ürünler
+            <i class="bi bi-stars text-ty-orange me-2"></i>@ViewData["Title"]
         </h3>
         <span class="badge bg-light text-dark border p-2">Toplam @Model.Count Ürün</span>
     </div>

@@ -6,7 +6,7 @@ namespace ByteMarket.Business.Abstract
 {
 	public interface IProductService
 	{
-		Task<IDataResult<List<ListProductDto>>> GetAllProductsAsync();
+		Task<IDataResult<List<ListProductDto>>> GetAllProductsAsync(string? categoryId = null);
 		Task<IDataResult<SingleProductDto>> GetProductByIdAsync(string id);
 		Task<IDataResult<string>> CreateProductAsync(CreateProductDto createProductDto);
 		Task<IResult> UpdateProductAsync(UpdateProductDto updateProductDto);

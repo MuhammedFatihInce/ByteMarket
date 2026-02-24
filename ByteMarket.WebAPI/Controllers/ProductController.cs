@@ -13,9 +13,9 @@ namespace ByteMarket.WebAPI.Controllers
 		}
 
 		[HttpGet("GetAll")]
-		public async Task<IActionResult> GetAll()
+		public async Task<IActionResult> GetAll([FromQuery] string? categoryId)
 		{
-			var result = await _productService.GetAllProductsAsync();
+			var result = await _productService.GetAllProductsAsync(categoryId);
 
 			return CreateActionResult(result);
 		}

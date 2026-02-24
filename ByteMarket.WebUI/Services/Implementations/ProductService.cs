@@ -31,14 +31,22 @@ namespace ByteMarket.WebUI.Services.Implementations
 			return productResponse;
 		}
 
-		public async Task<ApiDataResponse<List<ProductListViewModel>>> GetProductsForAdminAsync()
+		public async Task<ApiDataResponse<List<ProductListViewModel>>> GetProductsForAdminAsync(string? categoryId = null)
 		{
-			return await _apiService.GetAllAsync<ProductListViewModel>("Product/GetAll");
+			var endpoint = string.IsNullOrEmpty(categoryId)
+				? "Product/GetAll"
+				: $"Product/GetAll?categoryId={categoryId}";
+
+			return await _apiService.GetAllAsync<ProductListViewModel>(endpoint);
 		}
 
-		public async Task<ApiDataResponse<List<ProductListViewModel>>> GetProductsForCustomerAsync()
+		public async Task<ApiDataResponse<List<ProductListViewModel>>> GetProductsForCustomerAsync(string? categoryId = null)
 		{
-			return await _apiService.GetAllAsync<ProductListViewModel>("Product/GetAll");
+			var endpoint = string.IsNullOrEmpty(categoryId)
+				? "Product/GetAll"
+				: $"Product/GetAll?categoryId={categoryId}";
+
+			return await _apiService.GetAllAsync<ProductListViewModel>(endpoint);
 		}
 
 		public async Task<ApiDataResponse<object>> UpdateProductWithImagesAsync(UpdateProductViewModel model)

@@ -21,6 +21,11 @@ namespace ByteMarket.WebUI.Services.Implementations
 			return await _apiService.GetAllAsync<ListCategoryViewModel>("Category/GetAll");
 		}
 
+		public async Task<ApiDataResponse<List<ListCategoryViewModel>>> GetCategoriesAsync()
+		{
+			return await _apiService.GetAllAsync<ListCategoryViewModel>("Category/GetAll");
+		}
+
 		public async Task<ApiDataResponse<object>> UpdateCategoriesAsync(UpdateCategoryViewModel model)
 		{
 			var updateResponse = await _apiService.PutAsync<object>("Category/Update", new

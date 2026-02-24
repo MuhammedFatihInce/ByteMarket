@@ -1,4 +1,7 @@
-﻿<header class="border-bottom shadow-sm sticky-top bg-white">
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model List<ByteMarket.WebUI.Models.CategoryViewModels.ListCategoryViewModel>
+
+<header class="border-bottom shadow-sm sticky-top bg-white">
     <div class="bg-light py-1 border-bottom d-none d-lg-block">
         <div class="container d-flex justify-content-end gap-3" style="font-size: 12px;">
             <a href="#" class="text-secondary text-decoration-none">İndirim Kuponlarım</a>
@@ -68,14 +71,17 @@
 
     <nav class="container d-none d-lg-block">
         <ul class="nav justify-content-center gap-4 py-2" style="font-size: 14px; font-weight: 600;">
-            <li class="nav-item"><a href="#" class="nav-link text-dark p-0 border-bottom-orange">KADIN</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-dark p-0">ERKEK</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-dark p-0">ANNE & BEBEK</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-dark p-0">EV & YAŞAM</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-dark p-0 text-ty-orange">SÜPERMARKET</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-dark p-0">KOZMETİK</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-dark p-0">AYAKKABI & ÇANTA</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-dark p-0">ELEKTRONİK</a></li>
+            @foreach (var category in Model)
+            {
+                <li class="nav-item">
+                    <a asp-controller="Home" 
+                       asp-action="Index" 
+                       asp-route-categoryId="@category.Id"
+                       class="nav-link text-dark p-0 category-link @(Context.Request.Query["categoryId"] == category.Id.ToString() ? "active" : "")">
+                        @category.Name
+                    </a>
+                </li>
+            }
         </ul>
     </nav>
 </header>

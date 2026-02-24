@@ -33,3 +33,16 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.category-link {
+    color: #212529; 
+    text-decoration: none !important; 
+    transition: color 0.2s ease-in-out;
+    padding-bottom: 0;
+}
+
+    .category-link:hover,
+    .category-link.active {
+        color: #f27a1a !important;
+        text-decoration: none !important; 
+    }

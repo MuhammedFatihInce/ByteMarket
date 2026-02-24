@@ -10,5 +10,6 @@ namespace ByteMarket.WebUI.Services.Interfaces
 		Task<ApiDataResponse<List<ListCategoryViewModel>>> GetCategoriesForAdminAsync();
 		Task<ApiDataResponse<object>> UpdateCategoriesAsync(UpdateCategoryViewModel model);
 		Task<List<SelectListItem>> GetCategorySelectListAsync();
+		Task<ApiDataResponse<List<ListCategoryViewModel>>> GetCategoriesAsync();
 	}
 }

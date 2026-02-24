@@ -14,12 +14,13 @@ namespace ByteMarket.WebUI.Controllers
 			_productService = productService;
 		}
 
-		public async Task<IActionResult> Index()
+		public async Task<IActionResult> Index(string? categoryId)
 		{
-			var result = await _productService.GetProductsForCustomerAsync();
+			var result = await _productService.GetProductsForCustomerAsync(categoryId);
 
 			if (result.Success)
 			{
+				ViewBag.ActiveCategoryId = categoryId;
 				return View(result.Data);
 			}
 
