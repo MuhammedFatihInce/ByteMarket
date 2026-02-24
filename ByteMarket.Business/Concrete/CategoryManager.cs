@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using ByteMarket.Business.Abstract;
 using ByteMarket.Business.DTOs.Category;
-using ByteMarket.Business.DTOs.Product;
 using ByteMarket.Business.Utilities.Results;
 using ByteMarket.DataAccess.Abstract.Category;
 using ByteMarket.Entities.Concrete;

@@ -1,8 +1,6 @@
-﻿using ByteMarket.WebUI.Models.CategoryViewModels;
-using ByteMarket.WebUI.Models.ProductViewModels;
+﻿using ByteMarket.WebUI.Models.ProductViewModels;
 using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ByteMarket.WebUI.Controllers
 {
@@ -10,25 +8,21 @@ namespace ByteMarket.WebUI.Controllers
 	{
 		private readonly IProductService _productService;
 		private readonly IApiService _apiService;
+		private readonly ICategoryService _categoryService;
 
-		public ProductController(IProductService productService, IApiService apiService)
+		public ProductController(IProductService productService, IApiService apiService, ICategoryService categoryService)
 		{
 			_productService = productService;
 			_apiService = apiService;
+			_categoryService = categoryService;
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> Create()
 		{
-			var categories = await _apiService.GetAllAsync<ListCategoryViewModel>("Category/GetAll");
-
 			var model = new CreateProductViewModel
 			{
-				CategoryList = categories.Data.Select(c => new SelectListItem
-				{
-					Value = c.Id.ToString(),
-					Text = c.Name
-				}).ToList()
+				CategoryList = await _categoryService.GetCategorySelectListAsync()
 			};
 
 			return View(model);
@@ -40,13 +34,7 @@ namespace ByteMarket.WebUI.Controllers
 		{
 			if (!ModelState.IsValid)
 			{
-				var categories = await _apiService.GetAllAsync<ListCategoryViewModel>("Category/GetAll");
-				model.CategoryList = categories.Data.Select(c => new SelectListItem
-				{
-					Value = c.Id.ToString(),
-					Text = c.Name
-				}).ToList();
-
+				model.CategoryList = await _categoryService.GetCategorySelectListAsync();
 				return View(model);
 			}
 
@@ -76,25 +64,15 @@ namespace ByteMarket.WebUI.Controllers
 
 			var product = productResult.Data;
 
-			var allCategories = await _apiService.GetAllAsync<ListCategoryViewModel>("Category/GetAll");
-
 			var model = new UpdateProductViewModel
 			{
 				Id = product.Id.ToString(),
 				Name = product.Name,
 				Stock = product.Stock,
 				Price = product.Price,
-				
 				CategoryIds = product.Categories.Select(c => c.Id.ToString()).ToList(),
-
-				CategoryList = allCategories.Data.Select(c => new SelectListItem
-				{
-					Value = c.Id.ToString(),
-					Text = c.Name
-				}).ToList(),
-
+				CategoryList = await _categoryService.GetCategorySelectListAsync(),
 				ProductImageFiles = product.ProductImageFiles
-				
 			};
 
 			return View(model);
@@ -104,8 +82,12 @@ namespace ByteMarket.WebUI.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(UpdateProductViewModel model)
 		{
-			if (!ModelState.IsValid) return View(model);
-
+			if (!ModelState.IsValid)
+			{
+				model.CategoryList = await _categoryService.GetCategorySelectListAsync();
+				return View(model);
+			}
+			
 			var result = await _productService.UpdateProductWithImagesAsync(model);
 			if (result.Success)
 			{

@@ -1,7 +1,7 @@
 ﻿using ByteMarket.WebUI.Models.CategoryViewModels;
-using ByteMarket.WebUI.Models.ProductViewModels;
 using ByteMarket.WebUI.Models.ResultModels;
 using ByteMarket.WebUI.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ByteMarket.WebUI.Services.Implementations
 {
@@ -31,6 +31,19 @@ namespace ByteMarket.WebUI.Services.Implementations
 			});
 
 			return updateResponse;
+		}
+
+		public async Task<List<SelectListItem>> GetCategorySelectListAsync()
+		{
+			var result = await _apiService.GetAllAsync<ListCategoryViewModel>("Category/GetAll");
+
+			if (result?.Data == null) return new List<SelectListItem>();
+
+			return result.Data.Select(c => new SelectListItem
+			{
+				Value = c.Id.ToString(),
+				Text = c.Name
+			}).ToList();
 		}
 	}
 }

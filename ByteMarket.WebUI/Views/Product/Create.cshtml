@@ -77,21 +77,6 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
     <script src="~/js/admin/product/product-image-management.js" asp-append-version="true"></script>
-
-    <script>
-                $(document).ready(function() {
-            $('.select2-multiple').select2({
-                theme: "default",
-                allowClear: true,
-                closeOnSelect: false,
-                language: {
-                    noResults: function() {
-                        return "Kategori bulunamadı";
-                    }
-                }
-            });
-        });
-    </script>
+    <script src="~/js/admin/product/product-form.js" asp-append-version="true"></script>
 }
