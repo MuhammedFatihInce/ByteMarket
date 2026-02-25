@@ -1,4 +1,5 @@
 ﻿using ByteMarket.WebUI.Models.CategoryViewModels;
+using ByteMarket.WebUI.Models.ProductViewModels;
 using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,10 +48,21 @@ namespace ByteMarket.WebUI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Edit(string id)
 		{
-			var response = await _apiService.GetByIdAsync<UpdateCategoryViewModel>("Category/GetById", id);
-			if (!response.Success) return RedirectToAction("AdminIndex");
+			var categoryResult = await _apiService.GetByIdAsync<SingleCategoryViewModel>("Category/GetById", id);
 
-			return View(response.Data);
+			if (!categoryResult.Success) return RedirectToAction("AdminIndex");
+
+			var category = categoryResult.Data;
+
+			var model = new UpdateCategoryViewModel
+			{
+				Id = category.Id.ToString(),
+				Name = category.Name,
+				Icon = category.Icon,
+				CategoryImageFile = category.CategoryImageFile
+			};
+			
+			return View(model);
 		}
 
 		[HttpPost]

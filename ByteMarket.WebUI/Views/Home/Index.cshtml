@@ -1,13 +1,10 @@
 ﻿@using ByteMarket.WebUI.Models.ProductViewModels
 @model List<ProductListViewModel>
-@using Microsoft.Extensions.Configuration
-@inject IConfiguration Configuration
 
 @{
     var categoryId = ViewBag.ActiveCategoryId;
     ViewData["Title"] = string.IsNullOrEmpty(categoryId) ? "Tüm Ürünler" : "Kategori Ürünleri";
 }
-
 <div class="container mt-5">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h3 class="fw-bold mb-0 text-dark">

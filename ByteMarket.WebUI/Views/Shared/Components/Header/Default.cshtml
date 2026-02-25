@@ -1,5 +1,12 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model List<ByteMarket.WebUI.Models.CategoryViewModels.ListCategoryViewModel>
+@inject IConfiguration Configuration
+
+@{
+    var apiBaseUrl = Configuration["ApiSettings:BaseStorageAdress"];
+    string noImageUrl = "https://placehold.co/600x400?text=Resim+Yok";
+}
+
 
 <header class="border-bottom shadow-sm sticky-top bg-white">
     <div class="bg-light py-1 border-bottom d-none d-lg-block">
@@ -68,20 +75,41 @@
             </div>
         </div>
     </div>
-
-    <nav class="container d-none d-lg-block">
-        <ul class="nav justify-content-center gap-4 py-2" style="font-size: 14px; font-weight: 600;">
-            @foreach (var category in Model)
-            {
-                <li class="nav-item">
-                    <a asp-controller="Home" 
-                       asp-action="Index" 
-                       asp-route-categoryId="@category.Id"
-                       class="nav-link text-dark p-0 category-link @(Context.Request.Query["categoryId"] == category.Id.ToString() ? "active" : "")">
-                        @category.Name
-                    </a>
-                </li>
-            }
-        </ul>
-    </nav>
 </header>
+
+<nav class="container d-none d-lg-block">
+    <ul class="nav justify-content-center gap-2 category-nav-list">
+        @foreach (var category in Model)
+        {
+            string currentImagePath = noImageUrl; 
+            if (!string.IsNullOrEmpty(category.ImagePath))
+            {
+                var sanitizedPath = category.ImagePath.Replace("\\", "/");
+                currentImagePath = $"{apiBaseUrl}{sanitizedPath}";
+            }
+
+            <li class="nav-item">
+                <a asp-controller="Home" 
+                   asp-action="Index" 
+                   asp-route-categoryId="@category.Id"
+                   class="category-item-link @(Context.Request.Query["categoryId"] == category.Id.ToString() ? "active" : "")">
+                    
+                    <div class="category-img-wrapper">
+                        @if (!string.IsNullOrEmpty(category.ImagePath))
+                        {
+                            <img src="@currentImagePath" alt="@category.Name" loading="lazy">
+                        }
+                        else
+                        {
+                            <div class="text-muted d-flex align-items-center justify-content-center h-100">
+                                <i class="bi bi-tag" style="font-size: 24px;"></i>
+                            </div>
+                        }
+                    </div>
+
+                    <span class="category-name">@category.Name</span>
+                </a>
+            </li>
+        }
+    </ul>
+</nav>

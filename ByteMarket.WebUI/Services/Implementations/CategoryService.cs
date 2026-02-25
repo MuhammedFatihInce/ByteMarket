@@ -10,9 +10,29 @@ namespace ByteMarket.WebUI.Services.Implementations
 		private readonly IApiService _apiService;
 		public CategoryService(IApiService apiService) => _apiService = apiService;
 
-		public async Task<ApiDataResponse<object>> AddCategoryAsync(CreateCategoryViewModel model)
+		public async Task<ApiDataResponse<string>> AddCategoryAsync(CreateCategoryViewModel model)
 		{
-			var categoryResponse = await _apiService.PostAsync<object>("Category/Add", model);
+			var categoryResponse = await _apiService.PostAsync<string>("Category/Add", new
+			{
+				model.Name, 
+				model.Icon
+			});
+
+			if (!categoryResponse.Success) return categoryResponse;
+
+			string newCategoryId = categoryResponse.Data;
+
+			if (model.File != null)
+			{
+				var imageResponse = await UploadImageInternalAsync(newCategoryId, model.File);
+
+				if (!imageResponse.Success)
+				{
+					imageResponse.Message = $"Kategori eklendi fakat resimler yüklenemedi: {imageResponse.Message}";
+					return new ApiDataResponse<string> { Success = false, Message = imageResponse.Message, Data = newCategoryId };
+				}
+			}
+
 			return categoryResponse;
 		}
 
@@ -35,6 +55,14 @@ namespace ByteMarket.WebUI.Services.Implementations
 				model.Icon
 			});
 
+			if (!updateResponse.Success) return updateResponse;
+
+			if (model.File != null)
+			{
+				var imageResponse = await UploadImageInternalAsync(model.Id, model.File);
+				if (!imageResponse.Success) return imageResponse;
+			}
+
 			return updateResponse;
 		}
 
@@ -49,6 +77,17 @@ namespace ByteMarket.WebUI.Services.Implementations
 				Value = c.Id.ToString(),
 				Text = c.Name
 			}).ToList();
+		}
+
+		private async Task<ApiDataResponse<object>> UploadImageInternalAsync(string categoryId, IFormFile file)
+		{
+			var content = new MultipartFormDataContent();
+
+			var streamContent = new StreamContent(file.OpenReadStream());
+			streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+			content.Add(streamContent, "file", file.FileName);
+
+			return await _apiService.PostMultipartAsync<object>($"CategoryImage/Upload/{categoryId}", content);
 		}
 	}
 }

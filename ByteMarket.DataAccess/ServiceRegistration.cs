@@ -3,6 +3,7 @@
 using ByteMarket.DataAccess.Abstract.Basket;
 using ByteMarket.DataAccess.Abstract.BasketItem;
 using ByteMarket.DataAccess.Abstract.Category;
+using ByteMarket.DataAccess.Abstract.CategoryImageFile;
 using ByteMarket.DataAccess.Abstract.Customer;
 using ByteMarket.DataAccess.Abstract.File;
 using ByteMarket.DataAccess.Abstract.Order;
@@ -11,6 +12,7 @@ using ByteMarket.DataAccess.Abstract.ProductImageFile;
 using ByteMarket.DataAccess.Concrete.EntityFramework.Basket;
 using ByteMarket.DataAccess.Concrete.EntityFramework.BasketItem;
 using ByteMarket.DataAccess.Concrete.EntityFramework.Category;
+using ByteMarket.DataAccess.Concrete.EntityFramework.CategoryImageFile;
 using ByteMarket.DataAccess.Concrete.EntityFramework.Customer;
 using ByteMarket.DataAccess.Concrete.EntityFramework.File;
 using ByteMarket.DataAccess.Concrete.EntityFramework.Order;
@@ -54,11 +56,14 @@ namespace ByteMarket.DataAccess
 			services.AddScoped<IFileWriteRepository, FileWriteRepository>();
 			services.AddScoped<IProductImageFileReadRepository, ProductImageFileReadRepository>();
 			services.AddScoped<IProductImageFileWriteRepository, ProductImageFileWriteRepository>();
-
+			services.AddScoped<ICategoryImageFileReadRepository, CategoryImageFileReadRepository>();
+			services.AddScoped<ICategoryImageFileWriteRepository, CategoryImageFileWriteRepository>();
 
 			// Kategoriler
 			services.AddScoped<ICategoryReadRepository, CategoryReadRepository>();
 			services.AddScoped<ICategoryWriteRepository, CategoryWriteRepository>();
+
+			
 		}
 	}
 }

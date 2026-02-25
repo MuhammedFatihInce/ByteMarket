@@ -35,6 +35,19 @@ namespace ByteMarket.DataAccess.Contexts
 				.WithOne(o => o.Basket)
 				.HasForeignKey<Order>(b => b.Id);
 
+			builder.Entity<Category>()
+				.HasOne(c => c.CategoryImageFile) 
+				.WithOne(ci => ci.Category)       
+				.HasForeignKey<Category>("CategoryImageFileId");
+
+			builder.Entity<Category>()
+				.Property<Guid?>("CategoryImageFileId") 
+				.IsRequired(false);
+
+			builder.Entity<Category>()
+				.HasIndex("CategoryImageFileId")
+				.IsUnique();
+
 			base.OnModelCreating(builder);
 		}
 

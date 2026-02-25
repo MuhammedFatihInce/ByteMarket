@@ -1,36 +1,60 @@
-﻿/* ByteMarket Ürün Kartı Stilleri */
+﻿:root {
+	--ty-orange: #f27a1a;
+	--ty-orange-light: rgba(242, 122, 26, 0.2);
+	--ty-orange-bg: #fff4ec;
+	--border-color: #eee;
+	--text-dark: #333;
+	--text-gray: #666;
+	--transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+	content: var(--bs-breadcrumb-divider, ">") !important;
+	color: var(--ty-orange);
+}
+
+/* --- ÜRÜN KARTI TASARIMI --- */
+.card-divider {
+	height: 1px;
+	background-color: #f1f1f1;
+	margin: 0 15px;
+	opacity: 0.8;
+}
+
+.card-body {
+	display: flex;
+	flex-direction: column;
+}
+
 .product-card {
 	border-radius: 12px;
-	border: 1px solid #eee !important;
 	cursor: pointer;
+	transition: var(--transition);
+	overflow: hidden;
 }
+
+	.product-card:hover {
+		box-shadow: 0 20px 40px -5px rgba(242, 122, 26, 0.15);
+		border-color: #ddd !important;
+	}
 
 .image-box {
 	height: 200px;
 	background-color: #fff;
+	position: relative;
 }
 
-/* Favori Butonu */
-.wishlist-btn {
-	top: 15px;
-	right: 15px;
-	width: 35px;
-	height: 35px;
-	background: #fff;
-	z-index: 10;
-	color: #666;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	transition: 0.3s;
+.product-title {
+	font-size: 0.9rem;
+	color: var(--text-dark);
+	line-height: 1.2;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	height: 2.4em;
 }
 
-	.wishlist-btn:hover {
-		color: #f27a1a;
-		transform: scale(1.1);
-	}
-
-/* Carousel Noktaları */
 .dot {
 	height: 6px;
 	width: 6px;
@@ -41,65 +65,209 @@
 }
 
 	.dot.active {
-		background-color: #666;
+		background-color: var(--text-gray:);
 		width: 12px;
 		border-radius: 4px;
 	}
 
-/* Başlık ve Metinler */
-.product-title {
-	font-size: 0.9rem;
-	line-height: 1.2;
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
+/* --- BUTONLAR VE ETKİLEŞİMLER --- */
+
+.wishlist-btn {
+	line-height: 0;
+	top: 15px;
+	right: 15px;
+	width: 35px;
+	height: 35px;
+	z-index: 10;
+	color: var(--text-gray);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: var(--transition);
+	box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* ByteMarket Buton */
+	.wishlist-btn:hover {
+		color: var(--ty-orange);
+		transform: scale(1.1);
+	}
+
 .btn-outline-ty-orange {
-	border: 1px solid #f27a1a;
-	color: #f27a1a;
+	border: 1px solid var(--ty-orange);
+	color: var(--ty-orange);
 	background-color: #fff;
 	border-radius: 8px;
-	transition: all 0.3s ease;
+	transition: var(--transition);
 	font-weight: 600;
 }
 
 	.btn-outline-ty-orange:hover {
-		background-color: #f27a1a !important;
+		background-color: var(--ty-orange) !important;
 		color: #ffffff !important;
 		border-color: #f27a1a;
-		box-shadow: 0 4px 8px rgba(242, 122, 26, 0.2);
+		box-shadow: 0 4px 8px var(--ty-orange-light);
 	}
-
-.card-divider {
-	height: 1px;
-	background-color: #f1f1f1; 
-	margin: 0 15px; 
-	opacity: 0.8;
-}
-.card-body {
-	display: flex;
-	flex-direction: column;
-}
 
 .product-card .wishlist-btn,
 .product-card .btn,
 .product-card .mt-auto {
 	position: relative;
-	z-index: 10; 
+	z-index: 10;
 }
 
-.breadcrumb-item + .breadcrumb-item::before {
-	content: var(--bs-breadcrumb-divider, ">") !important;
-	color: #f27a1a;
+.wishlist-detail-btn {
+	width: 56px;
+	height: 56px;
+	border: 1px solid #dee2e6 !important;
+	background-color: #ffffff !important;
+	color: #6c757d !important;
+	transition: all 0.3s ease;
 }
 
-/* Thumbnail Konteynırı */
+	.wishlist-detail-btn:hover {
+		border-color: #f27a1a !important;
+		color: #f27a1a !important;
+		background-color: #fff4ec !important;
+		transform: scale(1.05);
+	}
+
+/* --- CAROUSEL VE ZOOM SİSTEMİ --- */
+#productCarousel {
+	overflow: visible !important;
+	position: relative;
+}
+
+	#productCarousel .carousel-control-prev,
+	#productCarousel .carousel-control-next {
+		background-color: #ffffff;
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		top: 50%;
+		transform: translateY(-50%);
+		opacity: 1;
+		box-shadow: 0 4px 12px rgba(0,0,0,0.30);
+		margin: 0 15px;
+		transition: var(--transition);
+		border: 1px solid #eee;
+		z-index: 5;
+	}
+
+	#productCarousel .carousel-control-prev { left: -50px; }
+	#productCarousel .carousel-control-next { right: -50px; }
+
+		#productCarousel .carousel-control-prev:hover,
+		#productCarousel .carousel-control-next:hover {
+			background-color: #ffffff;
+			box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+			transform: translateY(-50%) scale(1.1);
+		}
+
+	#productCarousel .carousel-control-prev-icon,
+	#productCarousel .carousel-control-next-icon {
+		width: 20px;
+		height: 20px;
+	}
+
+/* Zoom Merceği */
+.img-zoom-container {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.img-zoom-lens {
+	position: absolute;
+	border: 1px solid #d4d4d4;
+	width: 250px;
+	height: 250px;
+	background-color: rgba(255, 255, 255, 0.4);
+	cursor: crosshair;
+	display: none;
+	z-index: 100;
+}
+
+#zoom-result {
+	border: 1px solid #d4d4d4;
+	width: 500px;
+	height: 500px;
+	position: absolute;
+	left: 105%;
+	top: 0;
+	z-index: 1000;
+	background-color: #fff;
+	background-repeat: no-repeat;
+	display: none;
+	box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+	pointer-events: none;
+}
+
+/* --- KATEGORİ NAVİGASYONU --- */
+.category-nav-list {
+	display: flex;
+	align-items: flex-start;
+	padding: 15px 0;
+	overflow-x: auto;
+	scrollbar-width: none;
+}
+	.category-nav-list::-webkit-scrollbar { display: none; }
+
+.category-item-link {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-decoration: none !important;
+	transition: var(--transition);
+	min-width: 80px;
+}
+.category-img-wrapper {
+	width: 65px;
+	height: 65px;
+	border-radius: 50%;
+	border: 2px solid var(--border-color);
+	padding: 3px;
+	background-color: #fff;
+	transition: var(--transition);
+	overflow: hidden;
+	margin-bottom: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+	.category-img-wrapper img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		border-radius: 50%;
+	}
+
+.category-item-link:hover .category-img-wrapper,
+.category-item-link.active .category-img-wrapper {
+	border-color: var(--ty-orange);
+	transform: translateY(-3px);
+	box-shadow: 0 4px 10px rgba(242, 122, 26, 0.2);
+}
+
+.category-item-link:hover .category-name,
+.category-item-link.active .category-name {
+	color: var(--ty-orange) !important;
+}
+
+.category-name {
+	font-size: 12px;
+	color: var(--text-dark);
+	text-align: center;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+/* --- THUMBNAIL KONTEYNIRI --- */
 .product-thumbnails {
 	margin-top: 15px;
 }
+
 .thumb-item {
 	width: 70px;
 	height: 80px;
@@ -113,6 +281,7 @@
 	align-items: center;
 	justify-content: center;
 }
+
 	.thumb-item:hover {
 		border-color: #f27a1a;
 	}
@@ -127,98 +296,5 @@
 	}
 
 
-#productCarousel {
-	overflow: visible !important;
-	position: relative;
-}
 
-/* Carousel Kontrol Butonları Özelleştirme */
-	#productCarousel .carousel-control-prev,
-	#productCarousel .carousel-control-next {
-		background-color: #ffffff;
-		width: 48px;
-		height: 48px;
-		border-radius: 50%;
-		top: 50%;
-		transform: translateY(-50%);
-		opacity: 1;
-		box-shadow: 0 4px 12px rgba(0,0,0,0.30);
-		margin: 0 15px;
-		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-		border: 1px solid #f1f1f1;
-		z-index: 5;
-	}
 
-	#productCarousel .carousel-control-prev {
-		left: -50px;
-	}
-
-	#productCarousel .carousel-control-next {
-		right: -50px;
-	}
-
-	/* Mouse üzerine gelince (Hover) */
-		#productCarousel .carousel-control-prev:hover,
-		#productCarousel .carousel-control-next:hover {
-			background-color: #ffffff;
-			box-shadow: 0 6px 16px rgba(0,0,0,0.18);
-			transform: translateY(-50%) scale(1.1);
-		}
-
-#productCarousel .carousel-control-prev-icon,
-#productCarousel .carousel-control-next-icon {
-	width: 20px;
-	height: 20px;
-}
-
-/* Ana resmin olduğu konteynır */
-.img-zoom-container {
-	position: relative;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-/* Fareyle gezdiğimiz şeffaf mercek */
-.img-zoom-lens {
-	position: absolute;
-	border: 1px solid #d4d4d4;
-	width: 250px; /* Mercek boyutu */
-	height: 250px;
-	background-color: rgba(255, 255, 255, 0.4);
-	cursor: crosshair;
-	display: none; /* Mouse yokken görünmesin */
-	z-index: 100;
-}
-
-/* Yandaki büyük sonuç penceresi */
-#zoom-result {
-	border: 1px solid #d4d4d4;
-	width: 500px; /* Sonuç penceresi genişliği */
-	height: 500px; /* Sonuç penceresi yüksekliği */
-	position: absolute;
-	left: 105%; /* Ana resmin hemen sağında başlasın */
-	top: 0;
-	z-index: 1000;
-	background-color: #fff;
-	background-repeat: no-repeat;
-	display: none; /* Mouse yokken gizli */
-	box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-	pointer-events: none;
-}
-
-.wishlist-detail-btn {
-	width: 56px; /* Ana butonların yüksekliğiyle (py-3) uyumlu */
-	height: 56px;
-	border: 1px solid #dee2e6 !important;
-	background-color: #ffffff !important;
-	color: #6c757d !important;
-	transition: all 0.3s ease;
-}
-
-	.wishlist-detail-btn:hover {
-		border-color: #f27a1a !important;
-		color: #f27a1a !important;
-		background-color: #fff4ec !important;
-		transform: scale(1.05);
-	}

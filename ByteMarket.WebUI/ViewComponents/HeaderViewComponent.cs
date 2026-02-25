@@ -1,5 +1,4 @@
-﻿using ByteMarket.Business.DTOs.Category;
-using ByteMarket.WebUI.Models.CategoryViewModels;
+﻿using ByteMarket.WebUI.Models.CategoryViewModels;
 using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

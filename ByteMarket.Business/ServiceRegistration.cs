@@ -16,6 +16,7 @@ namespace ByteMarket.Business
 			services.AddScoped<IProductService, ProductManager>();
 			services.AddScoped<IProductImageService, ProductImageManager>();
 			services.AddScoped<ICategoryService, CategoryManager>();
+			services.AddScoped<ICategoryImageFileService, CategoryImageFileManager>();
 
 			services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

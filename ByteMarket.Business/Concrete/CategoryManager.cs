@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using ByteMarket.Business.Abstract;
 using ByteMarket.Business.DTOs.Category;
+using ByteMarket.Business.DTOs.Product;
 using ByteMarket.Business.Utilities.Results;
 using ByteMarket.DataAccess.Abstract.Category;
 using ByteMarket.Entities.Concrete;
@@ -13,14 +15,16 @@ namespace ByteMarket.Business.Concrete
 		private readonly ICategoryWriteRepository _categoryWriteRepository;
 		private readonly ICategoryReadRepository _categoryReadRepository;
 		private readonly IMapper _mapper;
+		private readonly ICategoryImageFileService _categoryImageFileService;
 
-		public CategoryManager(ICategoryWriteRepository categoryWriteRepository, IMapper mapper, ICategoryReadRepository categoryReadRepository)
+		public CategoryManager(ICategoryWriteRepository categoryWriteRepository, IMapper mapper, ICategoryReadRepository categoryReadRepository, ICategoryImageFileService categoryImageFileService)
 		{
 			_categoryWriteRepository = categoryWriteRepository;
 			_mapper = mapper;
 			_categoryReadRepository = categoryReadRepository;
+			_categoryImageFileService = categoryImageFileService;
 		}
-		public async Task<IResult> AddAsync(CreateCategoryDto categoryDto)
+		public async Task<IDataResult<string>> AddAsync(CreateCategoryDto categoryDto)
 		{
 			var category = _mapper.Map<Category>(categoryDto);
 
@@ -29,30 +33,29 @@ namespace ByteMarket.Business.Concrete
 			if (result)
 			{
 				await _categoryWriteRepository.SaveAsync();
-				return new SuccessResult("Kategori başarılıyla eklendi.");
+				return new SuccessDataResult<string>(category.Id.ToString(),"Kategori başarılıyla eklendi.");
 			}
 
-			return new ErrorResult("Kategori eklenirken bir hata oluştu.");
+			return new ErrorDataResult<string>("Kategori eklenirken bir hata oluştu.");
 		}
 
 		public async Task<IDataResult<List<ListCategoryDto>>> GetAllAsync()
 		{
-			var category = _categoryReadRepository.GetAll(false)
-				.Include(c => c.Products)
-				.ToList();
+			var categoryDtos = await _categoryReadRepository.GetAll(false)
+				.ProjectTo<ListCategoryDto>(_mapper.ConfigurationProvider)
+				.ToListAsync();
 
-			if (category == null || !category.Any())
+			if (categoryDtos == null || !categoryDtos.Any())
 			{
 				return new ErrorDataResult<List<ListCategoryDto>>("Listelenecek kategori bulunamadı.");
 			}
-
-			var categoryDtos = _mapper.Map<List<ListCategoryDto>>(category);
 
 			return new SuccessDataResult<List<ListCategoryDto>>(categoryDtos, "Kategoriler başarıyla listelendi.");
 		}
 
 		public async Task<IResult> DeleteAsync(string id)
 		{
+			await _categoryImageFileService.DeleteImageByCategoryIdAsync(id);
 			await _categoryWriteRepository.RemoveAsync(id);
 			await _categoryWriteRepository.SaveAsync();
 
@@ -77,6 +80,7 @@ namespace ByteMarket.Business.Concrete
 		{
 			var category = await _categoryReadRepository.GetAll(false)
 				.Include(c => c.Products)
+				.Include(c=> c.CategoryImageFile)
 				.FirstOrDefaultAsync(c => c.Id == Guid.Parse(id));
 
 			if (category == null)
