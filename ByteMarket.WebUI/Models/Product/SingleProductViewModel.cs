@@ -1,7 +1,8 @@
-﻿using ByteMarket.WebUI.Models.CategoryViewModels;
-using ByteMarket.WebUI.Models.ProductImageViewModels;
+﻿using ByteMarket.WebUI.Models.Category;
+using ByteMarket.WebUI.Models.ProductImage;
 
-namespace ByteMarket.WebUI.Models.ProductViewModels
+
+namespace ByteMarket.WebUI.Models.Product
 {
 	public class SingleProductViewModel
 	{

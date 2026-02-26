@@ -1,4 +1,5 @@
-﻿using ByteMarket.WebUI.Models.CategoryViewModels;
+﻿
+using ByteMarket.WebUI.Models.Category;
 using ByteMarket.WebUI.Models.ResultModels;
 using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;

@@ -1,10 +1,12 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model List<ByteMarket.WebUI.Models.CategoryViewModels.ListCategoryViewModel>
+﻿@using ByteMarket.WebUI.Models.User
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model List<ByteMarket.WebUI.Models.Category.ListCategoryViewModel>
 @inject IConfiguration Configuration
 
 @{
     var apiBaseUrl = Configuration["ApiSettings:BaseStorageAdress"];
     string noImageUrl = "https://placehold.co/600x400?text=Resim+Yok";
+    var user = ViewBag.UserInfo as UserHeaderViewModel;
 }
 
 
@@ -36,29 +38,44 @@
 
             <div class="col-lg-4 col-md-4 col-6">
                 <div class="d-flex justify-content-end align-items-center gap-4">
+
                     <div class="dropdown">
-                        <div class="d-flex align-items-center gap-1 cursor-pointer dropdown-toggle" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="d-flex align-items-center gap-2 cursor-pointer dropdown-toggle no-caret" id="userMenu" data-bs-toggle="dropdown">
                             <i class="bi bi-person fs-4"></i>
-                            <span class="d-none d-lg-inline fw-semibold small">Giriş Yap</span>
+                            <div class="user-text-wrapper d-none d-lg-flex flex-column">
+                                <span class="small text-muted lh-1">@(user?.IsAuthenticated == true ? "Hesabım" : "Merhaba,")</span>
+                                <span class="fw-bold small">@(user?.IsAuthenticated == true ? user.NameSurname : "Giriş Yap")</span>
+                            </div>
                         </div>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3" aria-labelledby="userMenu" style="min-width: 200px;">
-                            <li><h6 class="dropdown-header">Üye İşlemleri</h6></li>
-                            <li><a class="dropdown-item py-2" href="#"><i class="bi bi-person-fill me-2"></i>Giriş Yap</a></li>
-                            <li><a class="dropdown-item py-2" href="#"><i class="bi bi-person-plus-fill me-2"></i>Üye Ol</a></li>
 
-                            <li><hr class="dropdown-divider"></li>
-
-                            <li><h6 class="dropdown-header text-ty-orange fw-bold">Yönetici Paneli</h6></li>
-                            <li>
-                                <a class="dropdown-item py-2 fw-semibold text-danger" asp-controller="Product" asp-action="AdminIndex">
-                                    <i class="bi bi-grid-fill me-2"></i>Ürün Yönetimi
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item py-2" asp-controller="Category" asp-action="AdminIndex">
-                                    <i class="bi bi-tags-fill me-2"></i>Kategori Yönetimi
-                                </a>
-                            </li>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-5 animate slideIn" aria-labelledby="userMenu">
+                            @if (user?.IsAuthenticated == true)
+                            {
+                                <li><h6 class="dropdown-header">Üye Bilgileri</h6></li>
+                                <li><a class="dropdown-item py-2" href="#"><i class="bi bi-person-circle me-2"></i>Profilim</a></li>
+                                <li><a class="dropdown-item py-2" href="#"><i class="bi bi-box-seam me-2"></i>Siparişlerim</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header text-ty-orange">Yönetim</h6></li>
+                                <li>
+                                    <a class="dropdown-item py-2 fw-semibold text-danger" asp-controller="Product" asp-action="AdminIndex">
+                                        <i class="bi bi-grid-fill me-2"></i>Ürün Yönetimi
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2" asp-controller="Category" asp-action="AdminIndex">
+                                        <i class="bi bi-tags-fill me-2"></i>Kategori Yönetimi
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item py-2 text-danger fw-bold" asp-controller="Account" asp-action="Logout"><i class="bi bi-door-open me-2"></i>Çıkış Yap</a></li>
+                            }
+                            else
+                            {
+                                <li class="p-3">
+                                    <a class="btn btn-primary w-100 bg-ty-orange border-0 fw-bold mb-2" asp-controller="Account" asp-action="Login"><i class="bi bi-person-fill me-2"></i>Giriş Yap</a>
+                                    <a class="btn btn-outline-secondary w-100 fw-bold" asp-controller="Account" asp-action="Register"><i class="bi bi-person-plus-fill me-2"></i>Üye Ol</a>
+                                </li>
+                            }
                         </ul>
                     </div>
 

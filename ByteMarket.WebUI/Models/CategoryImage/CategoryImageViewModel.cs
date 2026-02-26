@@ -1,9 +1,10 @@
-﻿namespace ByteMarket.WebUI.Models.ProductImageViewModels
+﻿namespace ByteMarket.WebUI.Models.CategoryImage	
 {
-	public class ProductImageViewModel
+	public class CategoryImageViewModel
 	{
 		public string Id { get; set; }
 		public string Path { get; set; }
 		public string FileName { get; set; }
+		
 	}
 }

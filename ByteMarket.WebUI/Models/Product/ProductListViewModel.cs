@@ -1,4 +1,4 @@
-﻿namespace ByteMarket.WebUI.Models.ProductViewModels
+﻿namespace ByteMarket.WebUI.Models.Product
 {
 	public class ProductListViewModel
 	{

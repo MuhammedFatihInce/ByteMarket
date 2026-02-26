@@ -1,4 +1,4 @@
-﻿using ByteMarket.WebUI.Models.ProductViewModels;
+﻿using ByteMarket.WebUI.Models.Product;
 using ByteMarket.WebUI.Models.ResultModels;
 
 namespace ByteMarket.WebUI.Services.Interfaces

@@ -16,14 +16,14 @@ namespace ByteMarket.WebAPI.Controllers
 		public async Task<IActionResult> Upload(string id, IFormFileCollection files)
 		{
 			var result = await _productImageService.AddImagesAsync(id, files);
-			return CreateActionResult(result);
+			return CreateActionResult(result, successStatusCode:201);
 		}
 
 		[HttpDelete("Delete/{id}")] 
 		public async Task<IActionResult> Delete(string id)
 		{
 			var result = await _productImageService.DeleteImageAsync(id);
-			return CreateActionResult(result);
+			return CreateActionResult(result, errorStatusCode: 404);
 		}
 	}
 }

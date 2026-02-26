@@ -1,0 +1,60 @@
+﻿@model ByteMarket.WebUI.Models.Auth.RegisterViewModel
+@{
+    ViewData["Title"] = "Üye Ol";
+}
+
+<div class="account-container">
+    <div class="account-card shadow-lg">
+        <div class="text-center">
+            <h2 class="fw-bold">Aramıza Katıl<span class="text-ty-orange">.</span></h2>
+            <p class="text-muted">ByteMarket fırsatları için hemen üye olun.</p>
+        </div>
+
+        <form asp-action="Register" method="post" class="mt-4">
+            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="NameSurname" class="form-control custom-input" placeholder="Ad Soyad">
+                <label asp-for="NameSurname">Ad Soyad</label>
+                <span asp-validation-for="NameSurname" class="text-danger small"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        <input asp-for="Username" class="form-control custom-input" placeholder="Kullanıcı Adı">
+                        <label asp-for="Username">Kullanıcı Adı</label>
+                        <span asp-validation-for="Username" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        <input asp-for="Email" class="form-control custom-input" placeholder="E-posta">
+                        <label asp-for="Email">E-posta</label>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Password" type="password" class="form-control custom-input" placeholder="Şifre">
+                <label asp-for="Password">Şifre</label>
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+
+            <div class="form-floating mb-4">
+                <input asp-for="ConfirmPassword" type="password" class="form-control custom-input" placeholder="Şifre Tekrar">
+                <label asp-for="ConfirmPassword">Şifre Tekrar</label>
+                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn btn-account w-100 py-3 fw-bold shadow-sm">
+                ÜYE OL
+            </button>
+        </form>
+
+        <div class="text-center mt-4">
+            <p class="small text-muted">Zaten üye misiniz? <a asp-action="Login" class="text-ty-orange fw-bold text-decoration-none">Giriş Yap</a></p>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,4 @@
-﻿using ByteMarket.WebUI.Models.ProductViewModels;
+﻿using ByteMarket.WebUI.Models.Product;
 using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

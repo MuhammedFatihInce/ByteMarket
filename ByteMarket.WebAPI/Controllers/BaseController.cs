@@ -9,23 +9,15 @@ namespace ByteMarket.WebAPI.Controllers
 	public class BaseController : ControllerBase
 	{
 		[NonAction]
-		public IActionResult CreateActionResult<T>(IDataResult<T> result, int successStatusCode = 200)
+		public IActionResult CreateActionResult<T>(IDataResult<T> result, int successStatusCode = 200, int errorStatusCode = 400)
 		{
-			if (result.Success)
-				return StatusCode(successStatusCode, result);
-
-			return result.Data == null
-				? NotFound(result)
-				: BadRequest(result);
+			return StatusCode(result.Success ? successStatusCode : errorStatusCode, result);
 		}
 
 		[NonAction]
-		public IActionResult CreateActionResult(IResult result, int successStatusCode = 200)
+		public IActionResult CreateActionResult(IResult result, int successStatusCode = 200, int errorStatusCode = 400)
 		{
-			if (result.Success)
-				return StatusCode(successStatusCode, result);
-
-			return BadRequest(result);
+			return StatusCode(result.Success ? successStatusCode : errorStatusCode, result);
 		}
 	}
 }

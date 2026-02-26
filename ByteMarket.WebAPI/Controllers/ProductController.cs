@@ -25,7 +25,7 @@ namespace ByteMarket.WebAPI.Controllers
 		{
 			var result = await _productService.GetProductByIdAsync(id);
 
-			return CreateActionResult(result);
+			return CreateActionResult(result, errorStatusCode: 404);
 		}
 
 		[HttpPost("Add")]
@@ -33,21 +33,21 @@ namespace ByteMarket.WebAPI.Controllers
 		{
 			var result = await _productService.CreateProductAsync(createProductDto);
 
-			return CreateActionResult(result, 201);
+			return CreateActionResult(result, successStatusCode:201);
 		}
 
 		[HttpPut("Update")]
 		public async Task<IActionResult> Update([FromBody] UpdateProductDto updateProductDto)
 		{
 			var result = await _productService.UpdateProductAsync(updateProductDto);
-			return CreateActionResult(result);
+			return CreateActionResult(result, errorStatusCode: 404);
 		}
 
 		[HttpDelete("Delete/{id}")]
 		public async Task<IActionResult> Delete(string id)
 		{
 			var result = await _productService.DeleteProductAsync(id);
-			return CreateActionResult(result);
+			return CreateActionResult(result, errorStatusCode: 404);
 		}
 	}
 }

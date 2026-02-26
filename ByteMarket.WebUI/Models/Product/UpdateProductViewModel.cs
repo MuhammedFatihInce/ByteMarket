@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace ByteMarket.WebUI.Models.ProductViewModels
+namespace ByteMarket.WebUI.Models.Product
 {
 	public class UpdateProductViewModel
 	{
@@ -12,7 +12,7 @@ namespace ByteMarket.WebUI.Models.ProductViewModels
 		public List<string> CategoryIds { get; set; } = new();
 		public List<SelectListItem>? CategoryList { get; set; }
 
-		public List<ProductImageViewModels.ProductImageViewModel>? ProductImageFiles { get; set; }
+		public List<ProductImage.ProductImageViewModel>? ProductImageFiles { get; set; }
 
 		public IFormFileCollection? Files { get; set; }
 

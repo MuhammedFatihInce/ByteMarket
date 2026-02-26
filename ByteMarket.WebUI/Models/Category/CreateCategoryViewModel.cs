@@ -1,4 +1,4 @@
-﻿namespace ByteMarket.WebUI.Models.CategoryViewModels
+﻿namespace ByteMarket.WebUI.Models.Category
 {
 	public class CreateCategoryViewModel
 	{
