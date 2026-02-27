@@ -2,6 +2,8 @@ using ByteMarket.WebUI.Services.Implementations;
 using ByteMarket.WebUI.Services.Interfaces;
 using ByteMarket.WebUI.Utilities.Handlers;
 using ByteMarket.WebUI.Utilities.Helpers.Auth;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,40 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<AuthTokenHandler>();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+	.AddCookie(options =>
+	{
+		options.LoginPath = "/Account/Login";
+		options.AccessDeniedPath = "/Account/AccessDenied";
+
+		options.Events = new CookieAuthenticationEvents
+		{
+			OnValidatePrincipal = async context =>
+			{
+				var jwt = context.HttpContext.Request.Cookies["jwt"];
+
+				if (!string.IsNullOrEmpty(jwt))
+				{
+					var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+					var token = handler.ReadJwtToken(jwt);
+
+					
+					if (token.ValidTo < DateTime.UtcNow.AddSeconds(5))
+					{
+						var accountService = context.HttpContext.RequestServices.GetRequiredService<IAccountService>();
+						var isRefreshed = await accountService.RefreshTokenAsync();
+
+						if (!isRefreshed)
+						{
+							context.RejectPrincipal();
+							await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+						}
+					}
+				}
+			}
+		};
+	});
 
 var apiBaseAddress = builder.Configuration.GetSection("ApiSettings:BaseAddress").Value;
 
@@ -38,6 +74,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

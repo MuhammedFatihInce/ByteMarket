@@ -1,12 +1,10 @@
-﻿@using ByteMarket.WebUI.Models.User
-@using Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model List<ByteMarket.WebUI.Models.Category.ListCategoryViewModel>
 @inject IConfiguration Configuration
 
 @{
     var apiBaseUrl = Configuration["ApiSettings:BaseStorageAdress"];
     string noImageUrl = "https://placehold.co/600x400?text=Resim+Yok";
-    var user = ViewBag.UserInfo as UserHeaderViewModel;
 }
 
 
@@ -43,13 +41,13 @@
                         <div class="d-flex align-items-center gap-2 cursor-pointer dropdown-toggle no-caret" id="userMenu" data-bs-toggle="dropdown">
                             <i class="bi bi-person fs-4"></i>
                             <div class="user-text-wrapper d-none d-lg-flex flex-column">
-                                <span class="small text-muted lh-1">@(user?.IsAuthenticated == true ? "Hesabım" : "Merhaba,")</span>
-                                <span class="fw-bold small">@(user?.IsAuthenticated == true ? user.NameSurname : "Giriş Yap")</span>
+                                <span class="small text-muted lh-1">@(User.Identity.IsAuthenticated ? "Hesabım" : "Merhaba,")</span>
+                                <span class="fw-bold small">@(User.Identity.IsAuthenticated ? User.Identity.Name : "Giriş Yap")</span>
                             </div>
                         </div>
 
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-5 animate slideIn" aria-labelledby="userMenu">
-                            @if (user?.IsAuthenticated == true)
+                            @if (User.Identity.IsAuthenticated)
                             {
                                 <li><h6 class="dropdown-header">Üye Bilgileri</h6></li>
                                 <li><a class="dropdown-item py-2" href="#"><i class="bi bi-person-circle me-2"></i>Profilim</a></li>

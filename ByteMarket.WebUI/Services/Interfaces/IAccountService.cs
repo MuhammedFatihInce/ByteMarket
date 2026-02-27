@@ -9,5 +9,6 @@ namespace ByteMarket.WebUI.Services.Interfaces
 		Task<ApiDataResponse<JsonElement>> LoginAsync(LoginViewModel loginViewModel);
 		Task Logout();
 		Task<ApiDataResponse<object>> RegisterAsync(RegisterViewModel registerViewModel);
+		Task<bool> RefreshTokenAsync();
 	}
 }

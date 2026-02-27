@@ -2,6 +2,7 @@
 using ByteMarket.Business.Abstract;
 using ByteMarket.Business.DTOs.User;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ByteMarket.WebAPI.Controllers
 {
@@ -32,7 +33,7 @@ namespace ByteMarket.WebAPI.Controllers
 		}
 
 		[HttpPost("refresh-token-login")]
-		public async Task<IActionResult> RefreshTokenLogin([FromForm] string refreshToken)
+		public async Task<IActionResult> RefreshTokenLogin([FromQuery] string refreshToken)
 		{
 			var result = await _authService.RefreshTokenLoginAsync(refreshToken);
 
@@ -42,7 +43,8 @@ namespace ByteMarket.WebAPI.Controllers
 		[HttpPost("logout")]
 		public async Task<IActionResult> Logout([FromQuery] string refreshToken)
 		{
-			var result = await _authService.LogoutAsync(refreshToken);
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var result = await _authService.LogoutAsync(userId, refreshToken);
 			return CreateActionResult(result);
 		}
 	}

@@ -1,9 +1,9 @@
-﻿using ByteMarket.WebUI.Models.User;
-
+﻿
 namespace ByteMarket.WebUI.Utilities.Helpers.Auth
 {
 	public interface IAuthHelper
 	{
-		UserHeaderViewModel GetUserFromCookie();
+		Task SignInUserAsync(string usernameOrEmail, DateTime refreshTokenExpires, bool isPersistent = false);
+		Task SignOutUserAsync();
 	}
 }

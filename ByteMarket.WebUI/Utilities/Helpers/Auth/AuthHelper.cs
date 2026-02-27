@@ -1,6 +1,7 @@
-﻿using ByteMarket.WebUI.Models.User;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace ByteMarket.WebUI.Utilities.Helpers.Auth
 {
@@ -13,33 +14,55 @@ namespace ByteMarket.WebUI.Utilities.Helpers.Auth
 			_httpContextAccessor = httpContextAccessor;
 		}
 
-		public UserHeaderViewModel GetUserFromCookie()
+		public async Task SignInUserAsync(string jwt, DateTime refreshTokenExpires, bool isPersistent = false)
 		{
-			var userViewModel = new UserHeaderViewModel { IsAuthenticated = false };
-			var jwt = _httpContextAccessor.HttpContext?.Request.Cookies["jwt"];
+			var context = _httpContextAccessor.HttpContext;
+			if (context == null || string.IsNullOrEmpty(jwt)) return;
 
-			if (string.IsNullOrEmpty(jwt)) return userViewModel;
+			var handler = new JwtSecurityTokenHandler();
+			var token = handler.ReadJwtToken(jwt);
 
-			try
+			var claims = new List<Claim>();
+
+			var name = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name || c.Type == "unique_name")?.Value;
+			if (!string.IsNullOrEmpty(name)) claims.Add(new Claim(ClaimTypes.Name, name));
+
+			
+			var userId = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier || c.Type == "sub")?.Value;
+			if (!string.IsNullOrEmpty(userId)) claims.Add(new Claim(ClaimTypes.NameIdentifier, userId));
+
+			var email = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email || c.Type == "email")?.Value;
+			if (!string.IsNullOrEmpty(email)) claims.Add(new Claim(ClaimTypes.Email, email));
+
+			var roles = token.Claims.Where(c => c.Type == ClaimTypes.Role || c.Type == "role");
+			foreach (var role in roles)
 			{
-				var handler = new JwtSecurityTokenHandler();
-				var token = handler.ReadJwtToken(jwt);
-
-				var nameClaim = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name || c.Type == "unique_name")?.Value;
-				
-
-				if (nameClaim != null)
-				{
-					userViewModel.IsAuthenticated = true;
-					userViewModel.NameSurname = nameClaim;
-				}
+				claims.Add(new Claim(ClaimTypes.Role, role.Value));
 			}
-			catch
+
+			var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+			var authProperties = new AuthenticationProperties
 			{
-				// ilerde loglanacak
-			}
+				IsPersistent = isPersistent,
+				ExpiresUtc = refreshTokenExpires
+			};
 
-			return userViewModel;
+			
+			await context.SignInAsync(
+				CookieAuthenticationDefaults.AuthenticationScheme,
+				new ClaimsPrincipal(claimsIdentity),
+				authProperties);
+		}
+
+		public async Task SignOutUserAsync()
+		{
+			var context = _httpContextAccessor.HttpContext;
+			if (context != null)
+			{
+				await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+			}
 		}
 	}
 }
+

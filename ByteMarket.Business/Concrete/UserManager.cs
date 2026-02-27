@@ -31,12 +31,12 @@ namespace ByteMarket.Business.Concrete
 			return new ErrorResult(string.Join(", ", result.Errors.Select(e => e.Description)));
 		}
 
-		public async Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime accessTokenDate, int addOnRefreshTokenDate)
+		public async Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime refreshTokenDate)
 		{
 			if (user != null)
 			{
 				user.RefreshToken = refreshToken;
-				user.RefreshTokenEndDate = accessTokenDate.AddSeconds(addOnRefreshTokenDate);
+				user.RefreshTokenEndDate = refreshTokenDate;
 				await _userManager.UpdateAsync(user);
 			}
 		}

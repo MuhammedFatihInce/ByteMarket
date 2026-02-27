@@ -20,7 +20,7 @@ namespace ByteMarket.Business.Concrete
 			_configuration = configuration;
 		}
 
-		public Token CreateAccessToken(int second, AppUser appUser)
+		public Token CreateAccessToken(int second, int refreshTokenAddMinute, AppUser appUser)
 		{
 			Token token = new();
 
@@ -47,6 +47,7 @@ namespace ByteMarket.Business.Concrete
 			JwtSecurityTokenHandler tokenHandler = new();
 			token.AccessToken = tokenHandler.WriteToken(jwt);
 
+			token.RefreshTokenExpiration = token.Expiration.AddSeconds(refreshTokenAddMinute);
 			token.RefreshToken = CreateRefreshToken();
 
 			return token;

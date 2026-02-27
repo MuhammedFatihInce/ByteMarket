@@ -8,6 +8,6 @@ namespace ByteMarket.Business.Abstract
 	public interface IUserService
 	{
 		Task<IResult> CreateAsync(CreateUserDto createUserDto);
-		Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime accessTokenDate, int addOnRefreshTokenDate);
+		Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime refreshTokenDate);
 	}
 }

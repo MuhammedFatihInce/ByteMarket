@@ -33,8 +33,8 @@ namespace ByteMarket.Business.Concrete
 
 			if (checkPassword)
 			{
-				Token token = _tokenHandler.CreateAccessToken(900, user);
-				await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 300);
+				Token token = _tokenHandler.CreateAccessToken(60, 300, user);
+				await _userService.UpdateRefreshToken(token.RefreshToken, user, token.RefreshTokenExpiration);
 				return new SuccessDataResult<Token>(token, "Giriş başarılı.");
 			}
 
@@ -47,27 +47,31 @@ namespace ByteMarket.Business.Concrete
 
 			if (user != null && user?.RefreshTokenEndDate > DateTime.UtcNow)
 			{
-				Token token = _tokenHandler.CreateAccessToken(900, user);
-				await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 300);
+				Token token = _tokenHandler.CreateAccessToken(60, 300, user);
+				await _userService.UpdateRefreshToken(token.RefreshToken, user, token.RefreshTokenExpiration);
 				return new SuccessDataResult<Token>(token, "Token yenilendi.");
 			}
 
 			return new ErrorDataResult<Token>("Geçersiz veya süresi dolmuş refresh token!");
 		}
 
-		public async Task<IResult> LogoutAsync(string refreshToken)
+		public async Task<IResult> LogoutAsync(string userId, string refreshToken)
 		{
-			AppUser? user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+			var user = await _userManager.FindByIdAsync(userId);
 
-			if (user != null)
+			if (user == null) return new ErrorResult("Kullanıcı bulunamadı.");
+
+			if (user.RefreshToken != refreshToken)
 			{
-				user.RefreshToken = null;
-				user.RefreshTokenEndDate = null;
-
-				var result = await _userManager.UpdateAsync(user);
-				if (result.Succeeded)
-					return new SuccessResult("Çıkış yapıldı ve refresh token geçersiz kılındı.");
+				return new ErrorResult("Geçersiz token veya oturum zaten sonlandırılmış.");
 			}
+
+			user.RefreshToken = null;
+			user.RefreshTokenEndDate = null;
+
+			var result = await _userManager.UpdateAsync(user);
+			if (result.Succeeded)
+				return new SuccessResult("Çıkış yapıldı ve refresh token geçersiz kılındı.");
 
 			return new ErrorResult("Kullanıcı bulunamadı veya zaten çıkış yapılmış.");
 		}
