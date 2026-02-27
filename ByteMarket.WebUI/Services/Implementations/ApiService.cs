@@ -21,6 +21,26 @@ namespace ByteMarket.WebUI.Services.Implementations
 		{
 			var json = await response.Content.ReadAsStringAsync();
 
+			if (!response.IsSuccessStatusCode)
+			{
+				return new ApiDataResponse<T>
+				{
+					Success = false,
+					Message = $"API Hatası! Kod: {(int)response.StatusCode}, Detay: {json}",
+					StatusCode = (int)response.StatusCode
+				};
+			}
+
+			if (string.IsNullOrWhiteSpace(json))
+			{
+				return new ApiDataResponse<T> { Success = true, StatusCode = (int)response.StatusCode };
+			}
+
+			if (json.TrimStart().StartsWith("<"))
+			{
+				return new ApiDataResponse<T> { Success = false, Message = "API JSON yerine HTML döndü (Rota hatası olabilir).", StatusCode = (int)response.StatusCode };
+			}
+
 			var result = JsonSerializer.Deserialize<ApiDataResponse<T>>(json, JsonOptionsHelper.Default);
 
 			if (result != null)
@@ -58,15 +78,21 @@ namespace ByteMarket.WebUI.Services.Implementations
 			return await ProcessResponse<T>(response);
 		}
 
-		public async Task<ApiDataResponse<bool>> DeleteAsync(string endpoint, string id)
+		public async Task<ApiDataResponse<T>> DeleteAsync<T>(string endpoint, string id)
 		{
 			var response = await _client.DeleteAsync($"{endpoint}/{id}");
-			return await ProcessResponse<bool>(response);
+			return await ProcessResponse<T>(response);
 		}
 
 		public async Task<ApiDataResponse<T>> PostMultipartAsync<T>(string endpoint, MultipartFormDataContent content)
 		{
 			var response = await _client.PostAsync(endpoint, content);
+			return await ProcessResponse<T>(response);
+		}
+
+		public async Task<ApiDataResponse<T>> GetAsync<T>(string endpoint)
+		{
+			var response = await _client.GetAsync(endpoint);
 			return await ProcessResponse<T>(response);
 		}
 	}

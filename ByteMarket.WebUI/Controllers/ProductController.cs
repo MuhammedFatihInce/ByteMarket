@@ -1,5 +1,7 @@
-﻿using ByteMarket.WebUI.Models.Product;
+﻿using ByteMarket.WebUI.Constants;
+using ByteMarket.WebUI.Models.Product;
 using ByteMarket.WebUI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ByteMarket.WebUI.Controllers
@@ -18,6 +20,7 @@ namespace ByteMarket.WebUI.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		public async Task<IActionResult> Create()
 		{
 			var model = new CreateProductViewModel
@@ -29,6 +32,7 @@ namespace ByteMarket.WebUI.Controllers
 		} 
 
 		[HttpPost]
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(CreateProductViewModel model)
 		{
@@ -47,9 +51,12 @@ namespace ByteMarket.WebUI.Controllers
 			}
 
 			ModelState.AddModelError(String.Empty, result.Message);
+
+			model.CategoryList = await _categoryService.GetCategorySelectListAsync();
 			return View(model);
 		}
 
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		public async Task<IActionResult> AdminIndex()
 		{
 			var products = await _productService.GetProductsForAdminAsync();
@@ -57,6 +64,7 @@ namespace ByteMarket.WebUI.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		public async Task<IActionResult> Edit(string id)
 		{
 			var productResult = await _apiService.GetByIdAsync<SingleProductViewModel>("Product/GetById", id);
@@ -79,6 +87,7 @@ namespace ByteMarket.WebUI.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(UpdateProductViewModel model)
 		{

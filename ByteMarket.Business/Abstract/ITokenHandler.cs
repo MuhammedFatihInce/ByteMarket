@@ -6,7 +6,7 @@ namespace ByteMarket.Business.Abstract
 {
 	public interface ITokenHandler
 	{
-		Token CreateAccessToken(int second, int refreshTokenAddMinute, AppUser appUser);
+		Task<Token> CreateAccessToken(int second, int refreshTokenAddMinute, AppUser appUser);
 		string CreateRefreshToken();
 	}
 }

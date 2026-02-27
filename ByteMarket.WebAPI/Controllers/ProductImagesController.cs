@@ -1,8 +1,11 @@
 ﻿using ByteMarket.Business.Abstract;
+using ByteMarket.Business.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ByteMarket.WebAPI.Controllers
 {
+	[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 	public class ProductImagesController : BaseController
 	{
 		private readonly IProductImageService _productImageService;

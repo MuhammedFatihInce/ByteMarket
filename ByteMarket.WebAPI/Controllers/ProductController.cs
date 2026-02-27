@@ -1,5 +1,7 @@
 ﻿using ByteMarket.Business.Abstract;
+using ByteMarket.Business.Constants;
 using ByteMarket.Business.DTOs.Product;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ByteMarket.WebAPI.Controllers
@@ -29,6 +31,7 @@ namespace ByteMarket.WebAPI.Controllers
 		}
 
 		[HttpPost("Add")]
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		public async Task<IActionResult> Add(CreateProductDto createProductDto)
 		{
 			var result = await _productService.CreateProductAsync(createProductDto);
@@ -37,6 +40,7 @@ namespace ByteMarket.WebAPI.Controllers
 		}
 
 		[HttpPut("Update")]
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		public async Task<IActionResult> Update([FromBody] UpdateProductDto updateProductDto)
 		{
 			var result = await _productService.UpdateProductAsync(updateProductDto);
@@ -44,6 +48,7 @@ namespace ByteMarket.WebAPI.Controllers
 		}
 
 		[HttpDelete("Delete/{id}")]
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		public async Task<IActionResult> Delete(string id)
 		{
 			var result = await _productService.DeleteProductAsync(id);

@@ -1,3 +1,4 @@
+using ByteMarket.WebUI.Constants;
 using ByteMarket.WebUI.Services.Implementations;
 using ByteMarket.WebUI.Services.Interfaces;
 using ByteMarket.WebUI.Utilities.Handlers;
@@ -30,7 +31,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 					var token = handler.ReadJwtToken(jwt);
 
 					
-					if (token.ValidTo < DateTime.UtcNow.AddSeconds(5))
+					if (token.ValidTo < DateTime.UtcNow.AddSeconds(30))
 					{
 						var accountService = context.HttpContext.RequestServices.GetRequiredService<IAccountService>();
 						var isRefreshed = await accountService.RefreshTokenAsync();
@@ -46,6 +47,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 		};
 	});
 
+builder.Services.AddAuthorization(options =>
+{
+	options.AddPolicy(AuthorizePolicies.AdminOnly, policy =>
+		policy.RequireRole("Admin"));
+
+	options.AddPolicy(AuthorizePolicies.CustomerOnly, policy =>
+		policy.RequireRole("Customer"));
+});
+
 var apiBaseAddress = builder.Configuration.GetSection("ApiSettings:BaseAddress").Value;
 
 builder.Services.AddHttpClient("MyApiClient", client =>
@@ -58,6 +68,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAuthHelper, AuthHelper>();
+builder.Services.AddScoped<IRoleService, RoleService>();
 
 var app = builder.Build();
 

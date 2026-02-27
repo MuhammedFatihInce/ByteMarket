@@ -26,6 +26,7 @@ namespace ByteMarket.Business
 			services.AddScoped<ITokenHandler, TokenHandler>();
 			services.AddScoped<IUserService, UserManager>();
 			services.AddScoped<IAuthService, AuthManager>();
+			services.AddScoped<IRoleService, RoleManager>();
 		}
 	}
 }

@@ -1,5 +1,7 @@
-﻿using ByteMarket.WebUI.Models.Category;
+﻿using ByteMarket.WebUI.Constants;
+using ByteMarket.WebUI.Models.Category;
 using ByteMarket.WebUI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ByteMarket.WebUI.Controllers
@@ -15,12 +17,14 @@ namespace ByteMarket.WebUI.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		public IActionResult Create()
 		{
 			return View();
 		}
 
 		[HttpPost]
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(CreateCategoryViewModel model)
 		{
@@ -38,6 +42,7 @@ namespace ByteMarket.WebUI.Controllers
 			return View(model);
 		}
 
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		public async Task<IActionResult> AdminIndex()
 		{
 			var categories = await _categoryService.GetCategoriesForAdminAsync();
@@ -45,6 +50,7 @@ namespace ByteMarket.WebUI.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		public async Task<IActionResult> Edit(string id)
 		{
 			var categoryResult = await _apiService.GetByIdAsync<SingleCategoryViewModel>("Category/GetById", id);
@@ -65,6 +71,7 @@ namespace ByteMarket.WebUI.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(UpdateCategoryViewModel model)
 		{

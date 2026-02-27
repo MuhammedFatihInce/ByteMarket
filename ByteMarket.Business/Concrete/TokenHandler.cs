@@ -2,6 +2,7 @@
 using ByteMarket.Business.Abstract;
 using ByteMarket.Business.DTOs.Token;
 using ByteMarket.Entities.Concrete.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,13 +15,15 @@ namespace ByteMarket.Business.Concrete
 	public class TokenHandler: ITokenHandler
 	{
 		private readonly IConfiguration _configuration;
+		private readonly UserManager<AppUser> _userManager;
 
-		public TokenHandler(IConfiguration configuration)
+		public TokenHandler(IConfiguration configuration, UserManager<AppUser> userManager)
 		{
 			_configuration = configuration;
+			_userManager = userManager;
 		}
 
-		public Token CreateAccessToken(int second, int refreshTokenAddMinute, AppUser appUser)
+		public async Task<Token> CreateAccessToken(int second, int refreshTokenAddMinute, AppUser appUser)
 		{
 			Token token = new();
 
@@ -34,6 +37,12 @@ namespace ByteMarket.Business.Concrete
 				new Claim(ClaimTypes.Email, appUser.Email),
 				new Claim(ClaimTypes.Name, appUser.NameSurname)
 			};
+
+			var userRoles = await _userManager.GetRolesAsync(appUser);
+			foreach (var role in userRoles)
+			{
+				claims.Add(new Claim(ClaimTypes.Role, role));
+			}
 
 			JwtSecurityToken jwt = new(
 				issuer: _configuration["Token:Issuer"],

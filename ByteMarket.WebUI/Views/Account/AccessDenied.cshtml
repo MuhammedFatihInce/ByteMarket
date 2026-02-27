@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Yetkisiz Erişim";
+}
+
+<div class="container text-center mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border shadow-sm p-5" style="border-radius: 20px;">
+                <div class="mb-4">
+                    <i class="bi bi-shield-lock text-ty-orange" style="font-size: 100px;"></i>
+                </div>
+                <h2 class="fw-bold">Dur Yolcu!</h2>
+                <p class="text-muted">Bu bölgeye giriş yetkiniz bulunmamaktadır. Eğer bir yanlışlık olduğunu düşünüyorsanız yönetici ile iletişime geçin.</p>
+                <div class="mt-4">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-login border px-5 py-2 fw-bold shadow-sm">Anasayfa'ya Dön</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,8 +1,9 @@
-using System.Security.Claims;
 using ByteMarket.Business;
+using ByteMarket.Business.Constants;
 using ByteMarket.Business.Validators.Products;
 using ByteMarket.DataAccess;
 using ByteMarket.DataAccess.Contexts;
+using ByteMarket.DataAccess.SeedData;
 using ByteMarket.Entities.Concrete.Identity;
 using ByteMarket.WebAPI.Filters;
 using ByteMarket.WebAPI.Middleware;
@@ -10,6 +11,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -79,6 +81,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 		};
 	});
 
+builder.Services.AddAuthorization(options =>
+{
+	options.AddPolicy(AuthorizePolicies.AdminOnly, policy =>
+		policy.RequireRole("Admin"));
+
+	options.AddPolicy(AuthorizePolicies.CustomerOnly, policy =>
+		policy.RequireRole("Customer"));
+});
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -99,6 +110,8 @@ app.UseStaticFiles();
 app.UseHttpsRedirection();
 
 app.UseCors("AllowWebUI");
+
+await DbInitializer.SeedAsync(app.Services);
 
 app.UseAuthentication();
 
