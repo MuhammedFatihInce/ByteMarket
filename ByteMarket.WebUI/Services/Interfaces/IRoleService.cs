@@ -8,5 +8,6 @@ namespace ByteMarket.WebUI.Services.Interfaces
 		Task<ApiDataResponse<List<RoleListViewModel>>> GetAllRolesAsync();
 		Task<ApiDataResponse<object>> CreateRoleAsync(string roleName);
 		Task<ApiDataResponse<object>> DeleteRoleAsync(string roleName);
+		Task<ApiDataResponse<object>> AssignRoleAsync(AssignRoleViewModel model);
 	}
 }

@@ -3,6 +3,7 @@ using ByteMarket.Business.DTOs.User;
 using ByteMarket.Business.Utilities.Results;
 using ByteMarket.Entities.Concrete.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ByteMarket.Business.Concrete
 {
@@ -48,6 +49,27 @@ namespace ByteMarket.Business.Concrete
 				user.RefreshTokenEndDate = refreshTokenDate;
 				await _userManager.UpdateAsync(user);
 			}
+		}
+
+		public async Task<IDataResult<List<UserListDto>>> GetAllUsersWithRolesAsync()
+		{
+			var users = await _userManager.Users.ToListAsync();
+			var userListDtos = new List<UserListDto>();
+
+			foreach (var user in users)
+			{
+				var roles = await _userManager.GetRolesAsync(user);
+				userListDtos.Add(new UserListDto
+				{
+					Id = user.Id.ToString(),
+					NameSurname = user.NameSurname,
+					UserName = user.UserName,
+					Email = user.Email,
+					Roles = roles
+				});
+			}
+
+			return new SuccessDataResult<List<UserListDto>>(userListDtos);
 		}
 	}
 }

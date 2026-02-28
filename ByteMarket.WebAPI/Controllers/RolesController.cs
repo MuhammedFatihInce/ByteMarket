@@ -1,5 +1,6 @@
 ﻿using ByteMarket.Business.Abstract;
 using ByteMarket.Business.Constants;
+using ByteMarket.Business.DTOs.Role;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,9 +31,9 @@ namespace ByteMarket.WebAPI.Controllers
 		}
 
 		[HttpPost("AssignRole")]
-		public async Task<IActionResult> AssignRole(string userId, string[] roles)
+		public async Task<IActionResult> AssignRole(AssignRoleDto assignRoleDto)
 		{
-			var result = await _roleService.AssignRoleToUserAsync(userId, roles);
+			var result = await _roleService.AssignRoleToUserAsync(assignRoleDto);
 			return CreateActionResult(result);
 		}
 

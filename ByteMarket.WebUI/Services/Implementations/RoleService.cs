@@ -27,5 +27,10 @@ namespace ByteMarket.WebUI.Services.Implementations
 		{
 			return await _apiService.DeleteAsync<object>("Roles/DeleteRole", id);
 		}
+
+		public async Task<ApiDataResponse<object>> AssignRoleAsync(AssignRoleViewModel model)
+		{
+			return await _apiService.PostAsync<object>("Roles/AssignRole", model);
+		}
 	}
 }

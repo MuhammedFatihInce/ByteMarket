@@ -9,6 +9,6 @@ namespace ByteMarket.Business.Abstract
 		Task<IResult> CreateRoleAsync(string name);
 		Task<IResult> DeleteRoleAsync(string id);
 		Task<IDataResult<List<RoleListDto>>> GetAllRolesAsync();
-		Task<IResult> AssignRoleToUserAsync(string userId, string[] roles);
+		Task<IResult> AssignRoleToUserAsync(AssignRoleDto assignRoleDto);
 	}
 }

@@ -36,15 +36,15 @@ namespace ByteMarket.Business.Concrete
 			return new SuccessDataResult<List<RoleListDto>>(roles);
 		}
 
-		public async Task<IResult> AssignRoleToUserAsync(string userId, string[] roles)
+		public async Task<IResult> AssignRoleToUserAsync(AssignRoleDto assignRoleDto)
 		{
-			AppUser? user = await _userManager.FindByIdAsync(userId);
+			AppUser? user = await _userManager.FindByIdAsync(assignRoleDto.UserId);
 			if (user == null) return new ErrorResult("Kullanıcı bulunamadı.");
 
 			var userRoles = await _userManager.GetRolesAsync(user);
 			await _userManager.RemoveFromRolesAsync(user, userRoles);
 
-			IdentityResult result = await _userManager.AddToRolesAsync(user, roles);
+			IdentityResult result = await _userManager.AddToRolesAsync(user, assignRoleDto.Roles);
 			if (result.Succeeded) return new SuccessResult("Roller başarıyla atandı.");
 			return new ErrorResult("Rol atama işlemi başarısız.");
 		}
