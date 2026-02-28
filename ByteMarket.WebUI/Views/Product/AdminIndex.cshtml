@@ -3,6 +3,7 @@
 @model List<ByteMarket.WebUI.Models.Product.ProductListViewModel>
 
 <div class="container-fluid pt-4 px-4">
+    @Html.AntiForgeryToken()
     <div class="row g-4">
         <div class="col-12">
             <div class="bg-white rounded shadow-sm p-4">

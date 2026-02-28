@@ -1,6 +1,9 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@using ByteMarket.WebUI.Constants
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model List<ByteMarket.WebUI.Models.Category.ListCategoryViewModel>
 @inject IConfiguration Configuration
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 
 @{
     var apiBaseUrl = Configuration["ApiSettings:BaseStorageAdress"];
@@ -52,18 +55,26 @@
                                 <li><h6 class="dropdown-header">Üye Bilgileri</h6></li>
                                 <li><a class="dropdown-item py-2" href="#"><i class="bi bi-person-circle me-2"></i>Profilim</a></li>
                                 <li><a class="dropdown-item py-2" href="#"><i class="bi bi-box-seam me-2"></i>Siparişlerim</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><h6 class="dropdown-header text-ty-orange">Yönetim</h6></li>
-                                <li>
-                                    <a class="dropdown-item py-2 fw-semibold text-danger" asp-controller="Product" asp-action="AdminIndex">
-                                        <i class="bi bi-grid-fill me-2"></i>Ürün Yönetimi
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item py-2" asp-controller="Category" asp-action="AdminIndex">
-                                        <i class="bi bi-tags-fill me-2"></i>Kategori Yönetimi
-                                    </a>
-                                </li>
+                                @if ((await AuthorizationService.AuthorizeAsync(User, AuthorizePolicies.AdminOnly)).Succeeded)
+                                {
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><h6 class="dropdown-header text-ty-orange">Yönetim</h6></li>
+                                    <li>
+                                        <a class="dropdown-item py-2 fw-semibold text-danger" asp-controller="Product" asp-action="AdminIndex">
+                                            <i class="bi bi-grid-fill me-2"></i>Ürün Yönetimi
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item py-2" asp-controller="Category" asp-action="AdminIndex">
+                                            <i class="bi bi-tags-fill me-2"></i>Kategori Yönetimi
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item py-2 fw-semibold text-dark" asp-controller="Role" asp-action="Index">
+                                            <i class="bi bi-shield-lock-fill me-2 text-primary"></i>Rol Yönetimi
+                                        </a>
+                                    </li>
+                                }
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item py-2 text-danger fw-bold" asp-controller="Account" asp-action="Logout"><i class="bi bi-door-open me-2"></i>Çıkış Yap</a></li>
                             }

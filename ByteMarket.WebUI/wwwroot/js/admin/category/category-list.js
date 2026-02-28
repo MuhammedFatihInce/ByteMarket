@@ -7,13 +7,17 @@
         text: `"${name}" kategorisi silinecek. Bu işlem geri alınamaz!`,
         confirmButtonText: 'Evet, Sil!',
         onConfirm: async () => {
-            await HttpClient.delete(`Category/Delete/${id}`);
+            const response = await CustomAjax.delete(`/Category/Delete/${id}`)
 
-            const row = document.getElementById(`row-${id}`);
-            if (row) {
-                row.classList.add('fade-out');
-                setTimeout(() => row.remove(), 300);
+            if (response && response.success) {
+                const row = document.getElementById(`row-${id}`);
+                if (row) {
+                    row.classList.add('fade-out');
+                    setTimeout(() => row.remove(), 300);
+                }
             }
+
+            
         },
         successMessage: 'Kategori başarıyla silindi.'
     });

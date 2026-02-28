@@ -89,26 +89,5 @@
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/admin/category/category-image-management.js" asp-append-version="true"></script>
     <script src="~/js/admin/category/category-icon-preview.js" asp-append-version="true"></script>
-
-    <script>
-        async function removeExistingImage(imageId) {
-
-            await Alert.fire({
-                title: 'Görseli Sil',
-                text: 'Bu görseli kalıcı olarak silmek istediğinize emin misiniz?',
-                successMessage: 'Görsel başarıyla sistemden kaldırıldı.',
-                onConfirm: async () => {
-                    await HttpClient.delete(`CategoryImage/Delete/${imageId}`);
-
-                    const element = document.getElementById(`img-wrapper-${imageId}`);
-                    if (element) {
-                        element.classList.add('fade-out');
-                        setTimeout(() => {
-                            element.remove();
-                        }, 300);
-                    }
-                }
-            });
-        }
-    </script>
+    <script src="~/js/admin/category/category-edit.js" asp-append-version="true"></script>
 }

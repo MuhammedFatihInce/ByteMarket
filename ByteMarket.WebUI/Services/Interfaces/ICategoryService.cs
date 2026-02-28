@@ -11,5 +11,7 @@ namespace ByteMarket.WebUI.Services.Interfaces
 		Task<ApiDataResponse<object>> UpdateCategoriesAsync(UpdateCategoryViewModel model);
 		Task<List<SelectListItem>> GetCategorySelectListAsync();
 		Task<ApiDataResponse<List<ListCategoryViewModel>>> GetCategoriesAsync();
+		Task<ApiDataResponse<object>> DeleteCategoryAsync(string id);
+		Task<ApiDataResponse<object>> DeleteCategoryImageAsync(string id);
 	}
 }

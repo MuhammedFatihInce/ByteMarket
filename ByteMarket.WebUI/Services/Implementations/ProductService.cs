@@ -89,5 +89,15 @@ namespace ByteMarket.WebUI.Services.Implementations
 			return await _apiService.GetByIdAsync<SingleProductViewModel>("Product/GetById", id);
 		}
 
+		public async Task<ApiDataResponse<object>> DeleteProductAsync(string id)
+		{
+			return await _apiService.DeleteAsync<object>("Product/Delete", id);
+		}
+
+		public async Task<ApiDataResponse<object>> DeleteProductImageAsync(string id)
+		{
+			return await _apiService.DeleteAsync<object>("ProductImages/Delete", id);
+		}
+
 	}
 }

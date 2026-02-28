@@ -117,5 +117,36 @@ namespace ByteMarket.WebUI.Controllers
 
 			return View(result.Data);
 		}
+
+
+		[HttpDelete]
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Delete(string id)
+		{
+			var result = await _productService.DeleteProductAsync(id);
+
+			if (result.Success)
+			{
+				return Json(new { success = true, message = result.Message });
+			}
+
+			return Json(new { success = false, message = result.Message });
+		}
+
+		[HttpDelete]
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteImage(string id)
+		{
+			var result = await _productService.DeleteProductImageAsync(id);
+
+			if (result.Success)
+			{
+				return Json(new { success = true, message = result.Message });
+			}
+
+			return Json(new { success = false, message = result.Message });
+		}
 	}
 }

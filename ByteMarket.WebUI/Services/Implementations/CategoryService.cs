@@ -90,5 +90,15 @@ namespace ByteMarket.WebUI.Services.Implementations
 
 			return await _apiService.PostMultipartAsync<object>($"CategoryImage/Upload/{categoryId}", content);
 		}
+
+		public async Task<ApiDataResponse<object>> DeleteCategoryAsync(string id)
+		{
+			return await _apiService.DeleteAsync<object>("Category/Delete", id);
+		}
+
+		public async Task<ApiDataResponse<object>> DeleteCategoryImageAsync(string id)
+		{
+			return await _apiService.DeleteAsync<object>("CategoryImage/Delete", id);
+		}
 	}
 }

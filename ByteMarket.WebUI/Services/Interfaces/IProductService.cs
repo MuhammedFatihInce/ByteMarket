@@ -10,5 +10,7 @@ namespace ByteMarket.WebUI.Services.Interfaces
 		Task<ApiDataResponse<List<ProductListViewModel>>> GetProductsForCustomerAsync(string? categoryId = null);
 		Task<ApiDataResponse<object>> UpdateProductWithImagesAsync(UpdateProductViewModel model);
 		Task<ApiDataResponse<SingleProductViewModel>> GetProductDetailsAsync(string id);
+		Task<ApiDataResponse<object>> DeleteProductAsync(string id);
+		Task<ApiDataResponse<object>> DeleteProductImageAsync(string id);
 	}
 }

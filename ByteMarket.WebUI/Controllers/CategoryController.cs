@@ -88,5 +88,35 @@ namespace ByteMarket.WebUI.Controllers
 			return View(model);
 		}
 
+		[HttpDelete]
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
+		[ValidateAntiForgeryToken] // AJAX içindeki header ile eşleşecek
+		public async Task<IActionResult> Delete(string id)
+		{
+			var result = await _categoryService.DeleteCategoryAsync(id);
+
+			if (result.Success)
+			{
+				return Json(new { success = true, message = result.Message });
+			}
+
+			return Json(new { success = false, message = result.Message });
+		}
+
+		[HttpDelete]
+		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteImage(string id)
+		{
+			var result = await _categoryService.DeleteCategoryImageAsync(id);
+
+			if (result.Success)
+			{
+				return Json(new { success = true, message = result.Message });
+			}
+
+			return Json(new { success = false, message = result.Message });
+		}
+
 	}
 }

@@ -5,14 +5,16 @@
 		text: 'Bu görseli kalıcı olarak silmek istediğinize emin misiniz?',
 		successMessage: 'Görsel başarıyla sistemden kaldırıldı.',
 		onConfirm: async () => {
-			await HttpClient.delete(`ProductImages/Delete/${imageId}`);
+			var response = await CustomAjax.delete(`Product/DeleteImage/${imageId}`);
 
-			const element = document.getElementById(`img-wrapper-${imageId}`);
-			if (element) {
-				element.classList.add('fade-out');
-				setTimeout(() => {
-					element.remove();
-				}, 300);
+			if (response && response.success) {
+				const element = document.getElementById(`img-wrapper-${imageId}`);
+				if (element) {
+					element.classList.add('fade-out');
+					setTimeout(() => {
+						element.remove();
+					}, 300);
+				}
 			}
 		}
 	});

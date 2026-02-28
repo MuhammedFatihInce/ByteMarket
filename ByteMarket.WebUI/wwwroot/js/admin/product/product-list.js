@@ -7,13 +7,16 @@
         text: `"${productName}" isimli ürün ve bağlı tüm görseller kalıcı olarak silinecek!`,
         confirmButtonText: 'Evet, Sil!',
         onConfirm: async () => {
-            await HttpClient.delete(`Product/Delete/${productId}`);
+            const response = await CustomAjax.delete(`Product/Delete/${productId}`);
 
-            const row = document.getElementById(`row-${productId}`);
 
-            if (row) {
-                row.classList.add('fade-out');
-                setTimeout(() => row.remove(), 400);
+            if (response && response.success) {
+                const row = document.getElementById(`row-${productId}`);
+
+                if (row) {
+                    row.classList.add('fade-out');
+                    setTimeout(() => row.remove(), 400);
+                }
             }
         },
         successMessage: 'Ürün başarıyla silindi.'

@@ -11,6 +11,7 @@
 
     <div class="card border-0 shadow-sm p-4 mb-4">
         <form asp-action="Create" method="post" class="row g-3">
+            @Html.AntiForgeryToken()
             <div class="col-md-8">
                 <input type="text" name="roleName" class="form-control" placeholder="Yeni rol ismi (Örn: Editor, Moderator)" required>
             </div>
@@ -51,24 +52,21 @@
 
 @section Scripts {
     <script>
-        function deleteRole(id, roleName) {
-            if (confirm(roleName + " rolünü silmek istediğinize emin misiniz?")) {
-                $.ajax({
-                    url: '/Role/Delete',
-                    type: 'POST',
-                    data: { id: id },
-                    success: function (response) {
-                        if (response.success) {
-                            location.reload();
-                        } else {
-                            alert("Hata: " + response.message);
-                        }
-                    },
-                    error: function () {
-                        alert("İşlem sırasında bir hata oluştu.");
+          function deleteRole(id, roleName) {
+            Alert.fire({
+                title: `${roleName} rolünü silmek istiyor musunuz?`,
+                text: "Bu işlem geri alınamaz ve bu role sahip kullanıcıların yetkileri etkilenebilir!",
+                icon: 'warning',
+                confirmButtonText: 'Evet, Sil',
+                onConfirm: async () => {
+
+                    const response = await CustomAjax.delete(`/Role/Delete/${id}`);
+                    if (response && response.success) {
+                        location.reload();
                     }
-                });
-            }
+                },
+                successMessage: 'Rol başarıyla silindi!'
+            });
         }
     </script>
 }

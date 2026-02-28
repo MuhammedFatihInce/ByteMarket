@@ -23,6 +23,7 @@ namespace ByteMarket.WebUI.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(string roleName)
 		{
 			if (string.IsNullOrWhiteSpace(roleName)) return RedirectToAction("Index");
@@ -34,7 +35,8 @@ namespace ByteMarket.WebUI.Controllers
 			return RedirectToAction("Index");
 		}
 
-		[HttpPost]
+		[HttpDelete]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(string id)
 		{
 			var result = await _roleService.DeleteRoleAsync(id);
