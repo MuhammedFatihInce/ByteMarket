@@ -1,4 +1,5 @@
-﻿using ByteMarket.WebUI.Models.Auth;
+﻿using ByteMarket.Business.Utilities.Results;
+using ByteMarket.WebUI.Models.Auth;
 using ByteMarket.WebUI.Models.ResultModels;
 using ByteMarket.WebUI.Services.Interfaces;
 using ByteMarket.WebUI.Utilities.Helpers.Auth;
@@ -120,6 +121,18 @@ namespace ByteMarket.WebUI.Services.Implementations
 			});
 
 			await _authHelper.SignInUserAsync(accessToken, refreshTokenExp, isPersistent);
+		}
+
+		public async Task<ApiDataResponse<JsonElement>> GoogleLoginAsync(string idToken)
+		{
+			var result = await _apiService.PostAsync<JsonElement>("Auth/google-login", idToken);
+
+			if (result.Success && result.Data.ValueKind != JsonValueKind.Null)
+			{
+				await HandleTokenResponse(result.Data, true);
+			}
+
+			return result;
 		}
 	}
 }

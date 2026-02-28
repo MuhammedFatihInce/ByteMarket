@@ -1,9 +1,13 @@
 ﻿@model ByteMarket.WebUI.Models.Auth.LoginViewModel
+@inject IConfiguration Configuration
 
 @{
  
     ViewData["Title"] = "Giriş Yap";
+    var googleClientId = Configuration["ExternalLogin:Google:ClientId"];
 }
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <div class="account-container">
     <div class="account-card shadow-lg">
@@ -40,6 +44,28 @@
             </button>
         </form>
 
+        <div class="text-center my-4">
+            <div class="position-relative">
+                <hr>
+                <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">VEYA</span>
+            </div>
+        </div>
+
+        <div id="g_id_onload"
+             data-client_id="@googleClientId"
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false">
+        </div>
+        
+        <div class="g_id_signin w-100"
+             data-type="standard"
+             data-size="large"
+             data-theme="outline"
+             data-text="signin_with"
+             data-shape="rectangular"
+             data-logo_alignment="left">
+        </div>
+
         <div class="text-center mt-4">
             <p class="small text-muted">Henüz üye değil misiniz? <a asp-action="Register" class="text-ty-orange fw-bold text-decoration-none">Ücretsiz Kayıt Ol</a></p>
         </div>
@@ -48,4 +74,6 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/customer/auth/google-login.js" asp-append-version="true"></script>
+
 }

@@ -64,5 +64,20 @@ namespace ByteMarket.WebUI.Controllers
 			return View();
 		}
 
+		[HttpPost]
+		public async Task<IActionResult> GoogleLogin([FromBody] string idToken)
+		{
+			if (string.IsNullOrEmpty(idToken)) return Json(new { success = false, message = "Token boş olamaz." });
+
+			var result = await _accountService.GoogleLoginAsync(idToken);
+
+			if (result.Success)
+			{
+				return Json(new { success = true });
+			}
+
+			return Json(new { success = false, message = result.Message });
+		}
+
 	}
 }

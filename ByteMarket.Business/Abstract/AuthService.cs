@@ -9,5 +9,6 @@ namespace ByteMarket.Business.Abstract
 		Task<IDataResult<Token>> LoginAsync(LoginUserDto loginUserDto);
 		Task<IDataResult<Token>> RefreshTokenLoginAsync(string refreshToken);
 		Task<IResult> LogoutAsync(string userId, string refreshToken);
+		Task<IDataResult<Token>> GoogleLoginAsync(string idToken);
 	}
 }

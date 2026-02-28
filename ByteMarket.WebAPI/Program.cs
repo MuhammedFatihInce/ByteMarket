@@ -60,9 +60,7 @@ builder.Services.AddAuthentication(options =>
 {
 	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
 	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-});
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+})
 	.AddJwtBearer(options =>
 	{
 		options.TokenValidationParameters = new()
@@ -76,10 +74,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 			ValidIssuer = builder.Configuration["Token:Issuer"],
 			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
 			ClockSkew = TimeSpan.Zero,
-
-			NameClaimType = ClaimTypes.Name
 		};
-	});
+	}); 
+
 
 builder.Services.AddAuthorization(options =>
 {

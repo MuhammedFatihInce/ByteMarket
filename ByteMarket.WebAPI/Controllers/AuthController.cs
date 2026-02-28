@@ -47,5 +47,12 @@ namespace ByteMarket.WebAPI.Controllers
 			var result = await _authService.LogoutAsync(userId, refreshToken);
 			return CreateActionResult(result);
 		}
+
+		[HttpPost("google-login")]
+		public async Task<IActionResult> GoogleLogin([FromBody] string idToken)
+		{
+			var result = await _authService.GoogleLoginAsync(idToken);
+			return CreateActionResult(result);
+		}
 	}
 }
