@@ -1,0 +1,45 @@
+﻿@model List<ByteMarket.WebUI.Models.Category.ListCategoryViewModel>
+@inject IConfiguration Configuration
+
+@{
+    var apiBaseUrl = Configuration["ApiSettings:BaseStorageAdress"];
+    string noImageUrl = "https://placehold.co/600x400?text=Resim+Yok";
+}
+
+
+<nav class="container d-none d-lg-block">
+    <ul class="nav justify-content-center gap-2 category-nav-list">
+        @foreach (var category in Model)
+        {
+            string currentImagePath = noImageUrl;
+            if (!string.IsNullOrEmpty(category.ImagePath))
+            {
+                var sanitizedPath = category.ImagePath.Replace("\\", "/");
+                currentImagePath = $"{apiBaseUrl}{sanitizedPath}";
+            }
+
+            <li class="nav-item">
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   asp-route-categoryId="@category.Id"
+                   class="category-item-link @(Context.Request.Query["categoryId"] == category.Id.ToString() ? "active" : "")">
+
+                    <div class="category-img-wrapper">
+                        @if (!string.IsNullOrEmpty(category.ImagePath))
+                        {
+                            <img src="@currentImagePath" alt="@category.Name" loading="lazy">
+                        }
+                        else
+                        {
+                            <div class="text-muted d-flex align-items-center justify-content-center h-100">
+                                <i class="bi bi-tag" style="font-size: 24px;"></i>
+                            </div>
+                        }
+                    </div>
+
+                    <span class="category-name">@category.Name</span>
+                </a>
+            </li>
+        }
+    </ul>
+</nav>
