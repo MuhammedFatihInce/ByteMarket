@@ -1,5 +1,4 @@
-﻿using ByteMarket.Business.Utilities.Results;
-using ByteMarket.WebUI.Models.Auth;
+﻿using ByteMarket.WebUI.Models.Auth;
 using ByteMarket.WebUI.Models.ResultModels;
 using ByteMarket.WebUI.Services.Interfaces;
 using ByteMarket.WebUI.Utilities.Helpers.Auth;
@@ -133,6 +132,24 @@ namespace ByteMarket.WebUI.Services.Implementations
 			}
 
 			return result;
+		}
+
+		public async Task<ApiDataResponse<object>> PasswordResetAsync(string email)
+		{
+			return await _apiService.PostAsync<object>("Auth/password-reset", email);
+		}
+
+		public async Task<ApiDataResponse<object>> VerifyResetTokenAsync(ResetPasswordViewModel model)
+		{
+			
+			var resetData = new
+			{
+				Email = model.Email ?? "",
+				Token = model.Token ?? "",
+				NewPassword = model.Password 
+			};
+
+			return await _apiService.PostAsync<object>("Auth/verify-reset-token", resetData);
 		}
 	}
 }

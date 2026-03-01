@@ -36,13 +36,16 @@
                     <input asp-for="RememberMe" class="form-check-input" type="checkbox">
                     <label class="form-check-label small text-muted" asp-for="RememberMe">Beni Hatırla</label>
                 </div>
-                <a href="#" class="text-ty-orange text-decoration-none small fw-bold">Şifremi Unuttum</a>
+                <a asp-action="ForgotPassword" class="text-ty-orange text-decoration-none small fw-bold">Şifremi Unuttum</a>
             </div>
 
             <button type="submit" class="btn btn-account w-100 py-3 fw-bold shadow-sm">
                 GİRİŞ YAP
             </button>
         </form>
+        <div class="text-center mt-4">
+            <p class="small text-muted">Henüz üye değil misiniz? <a asp-action="Register" class="text-ty-orange fw-bold text-decoration-none">Kayıt Ol</a></p>
+        </div>
 
         <div class="text-center my-4">
             <div class="position-relative">
@@ -56,7 +59,7 @@
              data-callback="handleCredentialResponse"
              data-auto_prompt="false">
         </div>
-        
+
         <div class="g_id_signin w-100"
              data-type="standard"
              data-size="large"
@@ -64,10 +67,6 @@
              data-text="signin_with"
              data-shape="rectangular"
              data-logo_alignment="left">
-        </div>
-
-        <div class="text-center mt-4">
-            <p class="small text-muted">Henüz üye değil misiniz? <a asp-action="Register" class="text-ty-orange fw-bold text-decoration-none">Ücretsiz Kayıt Ol</a></p>
         </div>
     </div>
 </div>

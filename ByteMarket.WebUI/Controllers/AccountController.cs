@@ -1,4 +1,5 @@
-﻿using ByteMarket.WebUI.Models.Auth;
+﻿using ByteMarket.Business.DTOs.User;
+using ByteMarket.WebUI.Models.Auth;
 using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -77,6 +78,36 @@ namespace ByteMarket.WebUI.Controllers
 			}
 
 			return Json(new { success = false, message = result.Message });
+		}
+
+		[HttpGet]
+		public IActionResult ForgotPassword()
+		{
+			return View();
+		}
+
+
+		[HttpPost]
+		public async Task<IActionResult> ForgotPassword([FromBody] string email)
+		{
+			var result = await _accountService.PasswordResetAsync(email);
+			return Json(new { success = result.Success, message = result.Message });
+		}
+
+		[HttpGet]
+		public IActionResult ResetPassword(string email, string token)
+		{
+			if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token)) return RedirectToAction("Login");
+
+			var model = new ResetPasswordViewModel { Email = email, Token = token };
+			return View(model);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordViewModel model)
+		{
+			var result = await _accountService.VerifyResetTokenAsync(model);
+			return Json(new { success = result.Success, message = result.Message });
 		}
 
 	}

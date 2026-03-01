@@ -54,5 +54,19 @@ namespace ByteMarket.WebAPI.Controllers
 			var result = await _authService.GoogleLoginAsync(idToken);
 			return CreateActionResult(result);
 		}
+
+		[HttpPost("password-reset")]
+		public async Task<IActionResult> PasswordReset([FromBody] string email)
+		{
+			var result = await _authService.PasswordResetAsync(email);
+			return CreateActionResult(result);
+		}
+
+		[HttpPost("verify-reset-token")]
+		public async Task<IActionResult> VerifyResetToken([FromBody] ResetPasswordDto resetPasswordDto)
+		{
+			var result = await _authService.VerifyResetTokenAsync(resetPasswordDto);
+			return CreateActionResult(result);
+		}
 	}
 }

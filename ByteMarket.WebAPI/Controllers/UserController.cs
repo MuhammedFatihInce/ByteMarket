@@ -1,6 +1,5 @@
 ﻿using ByteMarket.Business.Abstract;
 using ByteMarket.Business.Constants;
-using ByteMarket.Business.DTOs.Role;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

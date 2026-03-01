@@ -6,8 +6,10 @@ using ByteMarket.Business.Utilities.Results;
 using ByteMarket.Entities.Concrete.Identity;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Text;
 
 namespace ByteMarket.Business.Concrete
 {
@@ -17,13 +19,15 @@ namespace ByteMarket.Business.Concrete
 		private readonly ITokenHandler _tokenHandler;
 		private readonly IUserService _userService;
 		private readonly IConfiguration _configuration;
+		private readonly IMailService _mailService;
 
-		public AuthManager(UserManager<AppUser> userManager, ITokenHandler tokenHandler, IUserService userService, IConfiguration configuration)
+		public AuthManager(UserManager<AppUser> userManager, ITokenHandler tokenHandler, IUserService userService, IConfiguration configuration, IMailService mailService)
 		{
 			_userManager = userManager;
 			_tokenHandler = tokenHandler;
 			_userService = userService;
 			_configuration = configuration;
+			_mailService = mailService;
 		}
 
 		public async Task<IDataResult<Token>> LoginAsync(LoginUserDto loginUserDto)
@@ -122,5 +126,41 @@ namespace ByteMarket.Business.Concrete
 			await _userService.UpdateRefreshToken(token.RefreshToken, user, token.RefreshTokenExpiration);
 			return new SuccessDataResult<Token>(token, "Google ile giriş başarılı.");
 		}
+
+
+		public async Task<IResult> PasswordResetAsync(string email)
+		{
+			var user = await _userManager.FindByEmailAsync(email);
+			if (user == null) return new ErrorResult("Kullanıcı bulunamadı.");
+
+			string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+			byte[] tokenBytes = Encoding.UTF8.GetBytes(resetToken);
+			string encodedToken = WebEncoders.Base64UrlEncode(tokenBytes);
+
+			string webUiUrl = _configuration["ClientSettings:WebUI_Url"];
+			string resetLink = $"{webUiUrl}/Account/ResetPassword?email={email}&token={encodedToken}";
+
+			await _mailService.SendPasswordResetMailAsync(email, resetLink);
+
+			return new SuccessResult("Şifre yenileme bağlantısı e-posta adresinize gönderildi.");
+		}
+
+		public async Task<IResult> VerifyResetTokenAsync(ResetPasswordDto resetPasswordDto)
+		{
+			var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
+			if (user == null) return new ErrorResult("Kullanıcı bulunamadı.");
+
+			byte[] decodedTokenBytes = WebEncoders.Base64UrlDecode(resetPasswordDto.Token);
+			string originalToken = Encoding.UTF8.GetString(decodedTokenBytes);
+
+			var result = await _userManager.ResetPasswordAsync(user, originalToken, resetPasswordDto.NewPassword);
+
+			if (result.Succeeded)
+				return new SuccessResult("Şifreniz başarıyla güncellendi.");
+
+			return new ErrorResult("Şifre güncellenirken bir hata oluştu veya bağlantı süresi dolmuş.");
+		}
+
 	}
 }
