@@ -7,7 +7,7 @@
         text: `"${name}" kategorisi silinecek. Bu işlem geri alınamaz!`,
         confirmButtonText: 'Evet, Sil!',
         onConfirm: async () => {
-            const response = await CustomAjax.delete(`/Category/Delete/${id}`)
+            const response = await CustomAjax.delete(`Admin/Category/Delete/${id}`)
 
             if (response && response.success) {
                 const row = document.getElementById(`row-${id}`);

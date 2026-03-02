@@ -1,5 +1,4 @@
-﻿using ByteMarket.Business.DTOs.User;
-using ByteMarket.WebUI.Models.Auth;
+﻿using ByteMarket.WebUI.Models.Auth;
 using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -108,6 +107,23 @@ namespace ByteMarket.WebUI.Controllers
 		{
 			var result = await _accountService.VerifyResetTokenAsync(model);
 			return Json(new { success = result.Success, message = result.Message });
+		}
+
+		[HttpGet]
+		public IActionResult AdminLogin()
+		{
+			return View();
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> AdminLogin(LoginViewModel model)
+		{
+			var result = await _accountService.LoginAsync(model);
+			if (result.Success)
+				return RedirectToAction("Index", "Product", new{area = "Admin"});
+
+			ModelState.AddModelError(string.Empty, result.Message);
+			return View(model);
 		}
 
 	}

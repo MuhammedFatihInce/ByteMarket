@@ -14,4 +14,8 @@
     <ProjectReference Include="..\ByteMarket.Business\ByteMarket.Business.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Data\" />
+  </ItemGroup>
+
 </Project>

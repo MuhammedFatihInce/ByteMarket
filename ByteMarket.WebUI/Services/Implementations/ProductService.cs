@@ -1,4 +1,5 @@
-﻿using ByteMarket.WebUI.Models.Product;
+﻿using ByteMarket.WebUI.Areas.Admin.Models.Product;
+using ByteMarket.WebUI.Models.Product;
 using ByteMarket.WebUI.Models.ResultModels;
 using ByteMarket.WebUI.Services.Interfaces;
 
@@ -31,13 +32,13 @@ namespace ByteMarket.WebUI.Services.Implementations
 			return productResponse;
 		}
 
-		public async Task<ApiDataResponse<List<ProductListViewModel>>> GetProductsForAdminAsync(string? categoryId = null)
+		public async Task<ApiDataResponse<List<ProductListAdminViewModel>>> GetProductsForAdminAsync(string? categoryId = null)
 		{
 			var endpoint = string.IsNullOrEmpty(categoryId)
 				? "Product/GetAll"
 				: $"Product/GetAll?categoryId={categoryId}";
 
-			return await _apiService.GetAllAsync<ProductListViewModel>(endpoint);
+			return await _apiService.GetAllAsync<ProductListAdminViewModel>(endpoint);
 		}
 
 		public async Task<ApiDataResponse<List<ProductListViewModel>>> GetProductsForCustomerAsync(string? categoryId = null)

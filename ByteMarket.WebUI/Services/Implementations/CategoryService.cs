@@ -1,4 +1,5 @@
 ﻿
+using ByteMarket.WebUI.Areas.Admin.Models.Category;
 using ByteMarket.WebUI.Models.Category;
 using ByteMarket.WebUI.Models.ResultModels;
 using ByteMarket.WebUI.Services.Interfaces;
@@ -37,9 +38,9 @@ namespace ByteMarket.WebUI.Services.Implementations
 			return categoryResponse;
 		}
 
-		public async Task<ApiDataResponse<List<ListCategoryViewModel>>> GetCategoriesForAdminAsync()
+		public async Task<ApiDataResponse<List<ListCategoryAdminViewModel>>> GetCategoriesForAdminAsync()
 		{
-			return await _apiService.GetAllAsync<ListCategoryViewModel>("Category/GetAll");
+			return await _apiService.GetAllAsync<ListCategoryAdminViewModel>("Category/GetAll");
 		}
 
 		public async Task<ApiDataResponse<List<ListCategoryViewModel>>> GetCategoriesAsync()

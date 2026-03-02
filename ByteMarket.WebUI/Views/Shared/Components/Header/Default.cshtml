@@ -1,17 +1,7 @@
-﻿@using ByteMarket.WebUI.Constants
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using Microsoft.AspNetCore.Authorization
-@inject IAuthorizationService AuthorizationService
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
 
 
 <header class="border-bottom shadow-sm sticky-top bg-white">
-    <div class="bg-light py-1 border-bottom d-none d-lg-block">
-        <div class="container d-flex justify-content-end gap-3" style="font-size: 12px;">
-            <a href="#" class="text-secondary text-decoration-none">İndirim Kuponlarım</a>
-            <a href="#" class="text-secondary text-decoration-none">ByteMarket'de Satış Yap</a>
-            <a href="#" class="text-secondary text-decoration-none">Yardım & Destek</a>
-        </div>
-    </div>
 
     <div class="container py-3">
         <div class="row align-items-center">
@@ -48,31 +38,6 @@
                                 <li><h6 class="dropdown-header">Üye Bilgileri</h6></li>
                                 <li><a class="dropdown-item py-2" href="#"><i class="bi bi-person-circle me-2"></i>Profilim</a></li>
                                 <li><a class="dropdown-item py-2" href="#"><i class="bi bi-box-seam me-2"></i>Siparişlerim</a></li>
-                                @if ((await AuthorizationService.AuthorizeAsync(User, AuthorizePolicies.AdminOnly)).Succeeded)
-                                {
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><h6 class="dropdown-header text-ty-orange">Yönetim</h6></li>
-                                    <li>
-                                        <a class="dropdown-item fw-semibold text-dark py-2 " asp-controller="Product" asp-action="AdminIndex">
-                                            <i class="bi bi-grid-fill text-danger me-2"></i>Ürün Yönetimi
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item fw-semibold text-dark py-2" asp-controller="Category" asp-action="AdminIndex">
-                                            <i class="bi bi-tags-fill text-danger me-2"></i>Kategori Yönetimi
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item py-2 fw-semibold text-dark" asp-controller="Role" asp-action="Index">
-                                            <i class="bi bi-shield-lock-fill me-2 text-primary"></i>Rol Yönetimi
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item py-2 fw-semibold text-dark" asp-controller="User" asp-action="Index">
-                                            <i class="bi bi-people-fill me-2 text-primary"></i>Kullanıcı Yönetimi
-                                        </a>
-                                    </li>
-                                }
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item py-2 text-danger fw-bold" asp-controller="Account" asp-action="Logout"><i class="bi bi-door-open me-2"></i>Çıkış Yap</a></li>
                             }
@@ -80,6 +45,7 @@
                             {
                                 <li class="p-3">
                                     <a class="btn btn-primary w-100 bg-ty-orange border-0 fw-bold mb-2" asp-controller="Account" asp-action="Login"><i class="bi bi-person-fill me-2"></i>Giriş Yap</a>
+                                    <a class="btn btn-primary w-100 bg-primary border-0 fw-bold mb-2" asp-controller="Account" asp-action="AdminLogin" style="white-space: nowrap;"><i class="bi bi-person-fill me-2"></i>Admin Girişi</a>
                                     <a class="btn btn-outline-secondary w-100 fw-bold" asp-controller="Account" asp-action="Register"><i class="bi bi-person-plus-fill me-2"></i>Üye Ol</a>
                                 </li>
                             }

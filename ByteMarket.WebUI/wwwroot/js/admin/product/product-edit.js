@@ -5,7 +5,7 @@
 		text: 'Bu görseli kalıcı olarak silmek istediğinize emin misiniz?',
 		successMessage: 'Görsel başarıyla sistemden kaldırıldı.',
 		onConfirm: async () => {
-			var response = await CustomAjax.delete(`Product/DeleteImage/${imageId}`);
+			var response = await CustomAjax.delete(`Admin/Product/DeleteImage/${imageId}`);
 
 			if (response && response.success) {
 				const element = document.getElementById(`img-wrapper-${imageId}`);

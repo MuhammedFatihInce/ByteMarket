@@ -1,0 +1,103 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model ByteMarket.WebUI.Areas.Admin.Models.Product.UpdateProductViewModel
+@inject IConfiguration Configuration
+@{
+    var apiBaseStorageUrl = Configuration["ApiSettings:BaseStorageAdress"];
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-white py-3 border-bottom-0 d-flex justify-content-between">
+                    <h4 class="mb-0 fw-bold text-ty-orange"><i class="bi bi-pencil-square me-2"></i>Ürün Düzenle</h4>
+                    <a asp-action="Index" class="btn btn-light btn-sm border text-secondary">Vazgeç</a>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Yayındaki Resimler</label>
+                            <div class="row g-2" id="existing-images-container">
+                                @if (Model.ProductImageFiles != null)
+                                {
+                                    @foreach (var img in Model.ProductImageFiles)
+                                    {
+                                        <div class="col-3 col-md-2 position-relative" id="img-wrapper-@img.Id">
+                                            <div class="ratio ratio-1x1 border rounded overflow-hidden shadow-sm bg-white">
+                                                <img src="@(apiBaseStorageUrl + img.Path.Replace("\\", "/"))" class="img-fluid object-fit-cover">
+                                            </div>
+                                            <button type="button" class="btn-delete-image" onclick="removeExistingImage('@img.Id')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-semibold">Ürün Adı</label>
+                            <input asp-for="Name" class="form-control bg-light border-0 py-2">
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="Price" class="form-label fw-semibold">Fiyat</label>
+                                <input type="text" 
+                                       name="Price" 
+                                       id="Price"
+                                       value="@Model.Price.ToString("F2")" 
+                                       class="form-control bg-light border-0 py-2"
+                                       inputmode="decimal"
+                                       oninput="this.value = this.value.replace(/[^0-9,.]/g, '');">
+                                <span asp-validation-for="Price" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Stock" class="form-label fw-semibold">Stok</label>
+                                <input asp-for="Stock" type="number" class="form-control bg-light border-0 py-2">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-success">Yeni Fotoğraf Ekle</label>
+                            <div class="border-2 border-dashed rounded-3 p-4 text-center bg-light position-relative mb-2">
+                                <i class="bi bi-cloud-arrow-up fs-2 text-ty-orange"></i>
+                                <p class="mb-0 small fw-bold">Tıklayarak fotoğrafları seçin</p>
+                                <input type="file" asp-for="Files" id="image-input" multiple class="position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer" accept="image/*">
+                            </div>
+                            <div id="image-preview-container" class="row g-2"></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="CategoryIds" class="form-label fw-semibold mb-2">
+                                <i class="bi bi-grid-3x3-gap me-1 text-ty-orange"></i> Ürün Kategorileri
+                            </label>
+                            <select asp-for="CategoryIds" 
+                                    asp-items="Model.CategoryList" 
+                                    class="form-control select2-multiple" 
+                                    multiple="multiple">
+                            </select>
+                            <span asp-validation-for="CategoryIds" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid pt-3">
+                            <button type="submit" class="btn btn-primary py-2 fw-bold bg-ty-orange border-0 shadow-sm text-white">
+                                DEĞİŞİKLİKLERİ KAYDET
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/admin/product/product-image-management.js" asp-append-version="true"></script>
+    <script src="~/js/admin/product/product-edit.js" asp-append-version="true"></script>
+    <script src="~/js/admin/product/product-form.js" asp-append-version="true"></script>
+}

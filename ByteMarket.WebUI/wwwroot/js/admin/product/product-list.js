@@ -7,7 +7,7 @@
         text: `"${productName}" isimli ürün ve bağlı tüm görseller kalıcı olarak silinecek!`,
         confirmButtonText: 'Evet, Sil!',
         onConfirm: async () => {
-            const response = await CustomAjax.delete(`Product/Delete/${productId}`);
+            const response = await CustomAjax.delete(`Admin/Product/Delete/${productId}`);
 
 
             if (response && response.success) {

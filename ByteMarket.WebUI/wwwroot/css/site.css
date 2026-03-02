@@ -70,3 +70,7 @@ body {
 .slideIn {
     animation-name: slideIn;
 }
+
+.cursor-pointer{
+    cursor: pointer !important;
+}

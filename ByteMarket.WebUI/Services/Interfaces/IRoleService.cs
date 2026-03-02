@@ -1,5 +1,5 @@
-﻿using ByteMarket.WebUI.Models.ResultModels;
-using ByteMarket.WebUI.Models.Role;
+﻿using ByteMarket.WebUI.Areas.Admin.Models.Role;
+using ByteMarket.WebUI.Models.ResultModels;
 
 namespace ByteMarket.WebUI.Services.Interfaces
 {

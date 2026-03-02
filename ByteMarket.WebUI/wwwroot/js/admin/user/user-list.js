@@ -31,7 +31,7 @@
         };
 
         try {
-            const response = await CustomAjax.post('/User/AssignRole', data);
+            const response = await CustomAjax.post('/Admin/User/AssignRole', data);
 
             if (response && response.success) {
                 roleModal.hide();

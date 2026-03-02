@@ -1,0 +1,83 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+<header class="border-bottom shadow-sm sticky-top bg-white">
+    <div class="container py-3">
+        <div class="row align-items-center justify-content-between">
+            <div class="col-lg-2 col-md-3 col-6">
+                <a class="navbar-brand fw-bold fs-2 text-dark" href="/Admin/Product/Index" style="letter-spacing: -1px;">
+                    ByteMarket<span class="text-ty-orange ms-2">Admin</span>
+                </a>
+            </div>
+
+            <div class="col-lg-4 col-md-4 col-6">
+                <div class="d-flex justify-content-end align-items-center gap-4">
+
+                    <div class="dropdown">
+                        <div class="d-flex align-items-center gap-2 cursor-pointer dropdown-toggle no-caret" id="userMenu" data-bs-toggle="dropdown">
+                            <i class="bi bi-person fs-4"></i>
+                            <div class="user-text-wrapper d-none d-lg-flex flex-column">
+                                <span class="fw-bold small">@User.Identity.Name</span>
+                            </div>
+                        </div>
+
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-5 animate slideIn" aria-labelledby="userMenu">
+                            <li><h6 class="dropdown-header">Üye Bilgileri</h6></li>
+                            <li><a class="dropdown-item py-2" href="#"><i class="bi bi-person-circle me-2"></i>Profilim</a></li>
+                            <li><a class="dropdown-item py-2" href="#"><i class="bi bi-box-seam me-2"></i>Siparişlerim</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item py-2 text-danger fw-bold" asp-area="" asp-controller="Account" asp-action="Logout"><i class="bi bi-door-open me-2"></i>Çıkış Yap</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="dropdown">
+                        <div class="d-flex align-items-center gap-2 cursor-pointer dropdown-toggle no-caret" id="shopMenu" data-bs-toggle="dropdown">
+                            <i class="bi bi-shop fs-4"></i>
+                            <div class="user-text-wrapper d-none d-lg-flex flex-column">
+                                <span class="fw-bold small">Market Yonetimi</span>
+                            </div>
+                        </div>
+
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-5 animate slideIn" aria-labelledby="shopMenu">
+                            <li><h6 class="dropdown-header">Market Bilgileri</h6></li>
+                            <li>
+                                <a class="dropdown-item fw-semibold text-dark py-2 " asp-area="Admin" asp-controller="Product" asp-action="Index">
+                                    <i class="bi bi-grid-fill text-danger me-2"></i>Ürün Yönetimi
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item fw-semibold text-dark py-2" asp-area="Admin" asp-controller="Category" asp-action="Index">
+                                    <i class="bi bi-tags-fill text-danger me-2"></i>Kategori Yönetimi
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="dropdown">
+                        <div class="d-flex align-items-center gap-2 cursor-pointer dropdown-toggle no-caret" id="roleMenu" data-bs-toggle="dropdown">
+                            <i class="bi bi-lock fs-4"></i>
+                            <div class="user-text-wrapper d-none d-lg-flex flex-column">
+                                <span class="fw-bold small">Yetki Yonetimi</span>
+                            </div>
+                        </div>
+
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-5 animate slideIn" aria-labelledby="roleMenu">
+                            <li><h6 class="dropdown-header">Yetkilendirme Bilgileri</h6></li>
+                            <li>
+                                <a class="dropdown-item py-2 fw-semibold text-dark" asp-area="Admin" asp-controller="Role" asp-action="Index">
+                                    <i class="bi bi-shield-lock-fill me-2 text-primary"></i>Rol Yönetimi
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2 fw-semibold text-dark" asp-area="Admin" asp-controller="User" asp-action="Index">
+                                    <i class="bi bi-people-fill me-2 text-primary"></i>Kullanıcı Yönetimi
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+

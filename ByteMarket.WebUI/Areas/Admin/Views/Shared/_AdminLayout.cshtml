@@ -1,0 +1,35 @@
+﻿@inject IConfiguration Configuration
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="api-base-url" content="@Configuration["ApiSettings:BaseAddress"]">
+    <title>@ViewData["Title"] - ByteMarket.WebUI</title>
+   
+    @await Html.PartialAsync("/Areas/Admin/Views/Shared/Partials/_StylesPartial.cshtml")
+
+</head>
+<body>
+<div id="temp-data-radar"
+     data-success="@TempData["SuccessMessage"]"
+     data-error="@TempData["ErrorMessage"]"
+     data-warning="@TempData["WarningMessage"]">
+</div>
+
+    @await Component.InvokeAsync("AdminHeader")
+
+<div class="container">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
+
+    @await Html.PartialAsync("/Areas/Admin/Views/Shared/Partials/_FooterPartial.cshtml")
+
+    @await Html.PartialAsync("/Areas/Admin/Views/Shared/Partials/_ScriptsPartial.cshtml")
+
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

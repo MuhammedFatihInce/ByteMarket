@@ -1,7 +1,4 @@
-﻿using ByteMarket.WebUI.Constants;
-using ByteMarket.WebUI.Models.Product;
-using ByteMarket.WebUI.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+﻿using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ByteMarket.WebUI.Controllers
@@ -20,95 +17,6 @@ namespace ByteMarket.WebUI.Controllers
 		}
 
 		[HttpGet]
-		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
-		public async Task<IActionResult> Create()
-		{
-			var model = new CreateProductViewModel
-			{
-				CategoryList = await _categoryService.GetCategorySelectListAsync()
-			};
-
-			return View(model);
-		} 
-
-		[HttpPost]
-		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create(CreateProductViewModel model)
-		{
-			if (!ModelState.IsValid)
-			{
-				model.CategoryList = await _categoryService.GetCategorySelectListAsync();
-				return View(model);
-			}
-
-			var result = await _productService.AddProductAsync(model);
-
-			if (result.Success)
-			{
-				TempData["SuccessMessage"] = result.Message;
-				return RedirectToAction("AdminIndex");
-			}
-
-			ModelState.AddModelError(String.Empty, result.Message);
-
-			model.CategoryList = await _categoryService.GetCategorySelectListAsync();
-			return View(model);
-		}
-
-		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
-		public async Task<IActionResult> AdminIndex()
-		{
-			var products = await _productService.GetProductsForAdminAsync();
-			return View(products.Data);
-		}
-
-		[HttpGet]
-		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
-		public async Task<IActionResult> Edit(string id)
-		{
-			var productResult = await _apiService.GetByIdAsync<SingleProductViewModel>("Product/GetById", id);
-			if (!productResult.Success) return RedirectToAction("AdminIndex");
-
-			var product = productResult.Data;
-
-			var model = new UpdateProductViewModel
-			{
-				Id = product.Id.ToString(),
-				Name = product.Name,
-				Stock = product.Stock,
-				Price = product.Price,
-				CategoryIds = product.Categories.Select(c => c.Id.ToString()).ToList(),
-				CategoryList = await _categoryService.GetCategorySelectListAsync(),
-				ProductImageFiles = product.ProductImageFiles
-			};
-
-			return View(model);
-		}
-
-		[HttpPost]
-		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(UpdateProductViewModel model)
-		{
-			if (!ModelState.IsValid)
-			{
-				model.CategoryList = await _categoryService.GetCategorySelectListAsync();
-				return View(model);
-			}
-			
-			var result = await _productService.UpdateProductWithImagesAsync(model);
-			if (result.Success)
-			{
-				TempData["SuccessMessage"] = result.Message;
-				return RedirectToAction("AdminIndex");
-			}
-
-			ModelState.AddModelError(String.Empty, result.Message);
-			return View(model);
-		}
-
-		[HttpGet]
 		public async Task<IActionResult> Detail(string id)
 		{
 			var result = await _productService.GetProductDetailsAsync(id);
@@ -116,37 +24,6 @@ namespace ByteMarket.WebUI.Controllers
 			if (!result.Success) return RedirectToAction("Index", "Home");
 
 			return View(result.Data);
-		}
-
-
-		[HttpDelete]
-		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Delete(string id)
-		{
-			var result = await _productService.DeleteProductAsync(id);
-
-			if (result.Success)
-			{
-				return Json(new { success = true, message = result.Message });
-			}
-
-			return Json(new { success = false, message = result.Message });
-		}
-
-		[HttpDelete]
-		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteImage(string id)
-		{
-			var result = await _productService.DeleteProductImageAsync(id);
-
-			if (result.Success)
-			{
-				return Json(new { success = true, message = result.Message });
-			}
-
-			return Json(new { success = false, message = result.Message });
 		}
 	}
 }
