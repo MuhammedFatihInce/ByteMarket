@@ -49,7 +49,7 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Edit(string id)
 		{
-			var categoryResult = await _apiService.GetByIdAsync<SingleCategoryAdminViewModel>("Category/GetById", id);
+			var categoryResult = await _apiService.GetByIdAsync<SingleCategoryAdminViewModel>("Category", id);
 
 			if (!categoryResult.Success) return RedirectToAction("Index");
 

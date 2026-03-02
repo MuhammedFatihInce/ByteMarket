@@ -12,7 +12,7 @@ namespace ByteMarket.WebUI.Services.Implementations
 
 		public async Task<ApiDataResponse<string>> AddProductAsync(CreateProductViewModel model)
 		{
-			var productResponse = await _apiService.PostAsync<string>("Product/Add", new {model.Name, model.Price, model.Stock, model.CategoryIds});
+			var productResponse = await _apiService.PostAsync<string>("Product", new {model.Name, model.Price, model.Stock, model.CategoryIds});
 
 			if (!productResponse.Success) return productResponse;
 
@@ -35,8 +35,8 @@ namespace ByteMarket.WebUI.Services.Implementations
 		public async Task<ApiDataResponse<List<ProductListAdminViewModel>>> GetProductsForAdminAsync(string? categoryId = null)
 		{
 			var endpoint = string.IsNullOrEmpty(categoryId)
-				? "Product/GetAll"
-				: $"Product/GetAll?categoryId={categoryId}";
+				? "Product"
+				: $"Product?categoryId={categoryId}";
 
 			return await _apiService.GetAllAsync<ProductListAdminViewModel>(endpoint);
 		}
@@ -44,15 +44,15 @@ namespace ByteMarket.WebUI.Services.Implementations
 		public async Task<ApiDataResponse<List<ProductListViewModel>>> GetProductsForCustomerAsync(string? categoryId = null)
 		{
 			var endpoint = string.IsNullOrEmpty(categoryId)
-				? "Product/GetAll"
-				: $"Product/GetAll?categoryId={categoryId}";
+				? "Product"
+				: $"Product?categoryId={categoryId}";
 
 			return await _apiService.GetAllAsync<ProductListViewModel>(endpoint);
 		}
 
 		public async Task<ApiDataResponse<object>> UpdateProductWithImagesAsync(UpdateProductViewModel model)
 		{
-			var updateResponse = await _apiService.PutAsync<object>("Product/Update", new
+			var updateResponse = await _apiService.PutAsync<object>("Product", new
 			{
 				model.Id,
 				model.Name,
@@ -87,17 +87,17 @@ namespace ByteMarket.WebUI.Services.Implementations
 
 		public async Task<ApiDataResponse<SingleProductViewModel>> GetProductDetailsAsync(string id)
 		{
-			return await _apiService.GetByIdAsync<SingleProductViewModel>("Product/GetById", id);
+			return await _apiService.GetByIdAsync<SingleProductViewModel>("Product", id);
 		}
 
 		public async Task<ApiDataResponse<object>> DeleteProductAsync(string id)
 		{
-			return await _apiService.DeleteAsync<object>("Product/Delete", id);
+			return await _apiService.DeleteAsync<object>("Product", id);
 		}
 
 		public async Task<ApiDataResponse<object>> DeleteProductImageAsync(string id)
 		{
-			return await _apiService.DeleteAsync<object>("ProductImages/Delete", id);
+			return await _apiService.DeleteAsync<object>("ProductImages", id);
 		}
 
 	}

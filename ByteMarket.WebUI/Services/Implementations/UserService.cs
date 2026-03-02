@@ -15,7 +15,7 @@ namespace ByteMarket.WebUI.Services.Implementations
 
 		public async Task<ApiDataResponse<List<UserListViewModel>>> GetAllUsersWithRolesAsync()
 		{
-			return await _apiService.GetAllAsync<UserListViewModel>("User/GetAllUsers");
+			return await _apiService.GetAllAsync<UserListViewModel>("User");
 		}
 	}
 }

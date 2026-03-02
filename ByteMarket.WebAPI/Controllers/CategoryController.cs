@@ -14,7 +14,7 @@ namespace ByteMarket.WebAPI.Controllers
 			_categoryService = categoryService;
 		}
 
-		[HttpPost("Add")]
+		[HttpPost]
 		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		public async Task<IActionResult> Add(CreateCategoryDto createCategoryDto)
 		{
@@ -22,14 +22,14 @@ namespace ByteMarket.WebAPI.Controllers
 			return CreateActionResult(result, successStatusCode:201);
 		}
 
-		[HttpGet("GetAll")]
+		[HttpGet]
 		public async Task<IActionResult> GetAll()
 		{
 			var result = await _categoryService.GetAllAsync();
 			return CreateActionResult(result);
 		}
 
-		[HttpDelete("Delete/{id}")]
+		[HttpDelete("{id}")]
 		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		public async Task<IActionResult> Delete(string id)
 		{
@@ -37,7 +37,7 @@ namespace ByteMarket.WebAPI.Controllers
 			return CreateActionResult(result, errorStatusCode: 404);
 		}
 
-		[HttpPut("Update")]
+		[HttpPut]
 		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		public async Task<IActionResult> Update([FromBody] UpdateCategoryDto updateCategoryDtoDto)
 		{
@@ -45,7 +45,7 @@ namespace ByteMarket.WebAPI.Controllers
 			return CreateActionResult(result, errorStatusCode: 404);
 		}
 
-		[HttpGet("GetById/{id}")]
+		[HttpGet("{id}")]
 		public async Task<IActionResult> GetById(string id)
 		{
 			var result = await _categoryService.GetByIdAsync(id);

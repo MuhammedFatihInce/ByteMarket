@@ -23,7 +23,7 @@ namespace ByteMarket.WebAPI.Controllers
 			return CreateActionResult(result, successStatusCode: 201);
 		}
 
-		[HttpDelete("Delete/{id}")]
+		[HttpDelete("{id}")]
 		public async Task<IActionResult> Delete(string id)
 		{
 			var result = await _categoryImageService.DeleteImageAsync(id);

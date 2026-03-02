@@ -14,7 +14,7 @@ namespace ByteMarket.WebUI.Services.Implementations
 
 		public async Task<ApiDataResponse<string>> AddCategoryAsync(CreateCategoryViewModel model)
 		{
-			var categoryResponse = await _apiService.PostAsync<string>("Category/Add", new
+			var categoryResponse = await _apiService.PostAsync<string>("Category", new
 			{
 				model.Name, 
 				model.Icon
@@ -40,17 +40,17 @@ namespace ByteMarket.WebUI.Services.Implementations
 
 		public async Task<ApiDataResponse<List<ListCategoryAdminViewModel>>> GetCategoriesForAdminAsync()
 		{
-			return await _apiService.GetAllAsync<ListCategoryAdminViewModel>("Category/GetAll");
+			return await _apiService.GetAllAsync<ListCategoryAdminViewModel>("Category");
 		}
 
 		public async Task<ApiDataResponse<List<ListCategoryViewModel>>> GetCategoriesAsync()
 		{
-			return await _apiService.GetAllAsync<ListCategoryViewModel>("Category/GetAll");
+			return await _apiService.GetAllAsync<ListCategoryViewModel>("Category");
 		}
 
 		public async Task<ApiDataResponse<object>> UpdateCategoriesAsync(UpdateCategoryViewModel model)
 		{
-			var updateResponse = await _apiService.PutAsync<object>("Category/Update", new
+			var updateResponse = await _apiService.PutAsync<object>("Category", new
 			{
 				model.Id,
 				model.Name,
@@ -70,7 +70,7 @@ namespace ByteMarket.WebUI.Services.Implementations
 
 		public async Task<List<SelectListItem>> GetCategorySelectListAsync()
 		{
-			var result = await _apiService.GetAllAsync<ListCategoryViewModel>("Category/GetAll");
+			var result = await _apiService.GetAllAsync<ListCategoryViewModel>("Category");
 
 			if (result?.Data == null) return new List<SelectListItem>();
 
@@ -94,12 +94,12 @@ namespace ByteMarket.WebUI.Services.Implementations
 
 		public async Task<ApiDataResponse<object>> DeleteCategoryAsync(string id)
 		{
-			return await _apiService.DeleteAsync<object>("Category/Delete", id);
+			return await _apiService.DeleteAsync<object>("Category", id);
 		}
 
 		public async Task<ApiDataResponse<object>> DeleteCategoryImageAsync(string id)
 		{
-			return await _apiService.DeleteAsync<object>("CategoryImage/Delete", id);
+			return await _apiService.DeleteAsync<object>("CategoryImage", id);
 		}
 	}
 }

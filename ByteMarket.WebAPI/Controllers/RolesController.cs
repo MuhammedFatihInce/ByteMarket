@@ -16,14 +16,14 @@ namespace ByteMarket.WebAPI.Controllers
 			_roleService = roleService;
 		}
 
-		[HttpGet("GetRoles")]
+		[HttpGet]
 		public async Task<IActionResult> GetRoles()
 		{
 			var result = await _roleService.GetAllRolesAsync();
 			return CreateActionResult(result);
 		}
 
-		[HttpPost("CreateRole")]
+		[HttpPost]
 		public async Task<IActionResult> CreateRole([FromQuery] string name)
 		{
 			var result = await _roleService.CreateRoleAsync(name);
@@ -37,7 +37,7 @@ namespace ByteMarket.WebAPI.Controllers
 			return CreateActionResult(result);
 		}
 
-		[HttpDelete("DeleteRole/{id}")]
+		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteRole(string id)
 		{
 			var result = await _roleService.DeleteRoleAsync(id);

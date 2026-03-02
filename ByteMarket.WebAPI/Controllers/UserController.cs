@@ -15,7 +15,7 @@ namespace ByteMarket.WebAPI.Controllers
 			_userService = userService;
 		}
 
-		[HttpGet("GetAllUsers")]
+		[HttpGet]
 		public async Task<IActionResult> GetAllUsers()
 		{
 			var result = await _userService.GetAllUsersWithRolesAsync();

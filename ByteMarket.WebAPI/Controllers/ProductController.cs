@@ -14,7 +14,7 @@ namespace ByteMarket.WebAPI.Controllers
 			_productService = productService;
 		}
 
-		[HttpGet("GetAll")]
+		[HttpGet]
 		public async Task<IActionResult> GetAll([FromQuery] string? categoryId)
 		{
 			var result = await _productService.GetAllProductsAsync(categoryId);
@@ -22,7 +22,7 @@ namespace ByteMarket.WebAPI.Controllers
 			return CreateActionResult(result);
 		}
 
-		[HttpGet("GetById/{id}")]
+		[HttpGet("{id}")]
 		public async Task<IActionResult> GetById(string id)
 		{
 			var result = await _productService.GetProductByIdAsync(id);
@@ -30,7 +30,7 @@ namespace ByteMarket.WebAPI.Controllers
 			return CreateActionResult(result, errorStatusCode: 404);
 		}
 
-		[HttpPost("Add")]
+		[HttpPost]
 		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		public async Task<IActionResult> Add(CreateProductDto createProductDto)
 		{
@@ -39,7 +39,7 @@ namespace ByteMarket.WebAPI.Controllers
 			return CreateActionResult(result, successStatusCode:201);
 		}
 
-		[HttpPut("Update")]
+		[HttpPut]
 		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		public async Task<IActionResult> Update([FromBody] UpdateProductDto updateProductDto)
 		{
@@ -47,7 +47,7 @@ namespace ByteMarket.WebAPI.Controllers
 			return CreateActionResult(result, errorStatusCode: 404);
 		}
 
-		[HttpDelete("Delete/{id}")]
+		[HttpDelete("{id}")]
 		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
 		public async Task<IActionResult> Delete(string id)
 		{

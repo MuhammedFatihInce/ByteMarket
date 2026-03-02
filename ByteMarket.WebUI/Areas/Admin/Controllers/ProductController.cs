@@ -66,7 +66,7 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Edit(string id)
 		{
-			var productResult = await _apiService.GetByIdAsync<SingleProductAdminViewModel>("Product/GetById", id);
+			var productResult = await _apiService.GetByIdAsync<SingleProductAdminViewModel>("Product", id);
 			if (!productResult.Success) return RedirectToAction("Index");
 
 			var product = productResult.Data;

@@ -25,9 +25,7 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 
 			var allRolesResult = await _roleService.GetAllRolesAsync();
 
-			ViewBag.AllRoles = allRolesResult.Data ?? new List<Models.Role.RoleListViewModel>();
-
-			return View(usersResult.Data ?? new List<UserListViewModel>());
+			return View((usersResult.Data, allRolesResult.Data));
 		}
 
 		[HttpPost]

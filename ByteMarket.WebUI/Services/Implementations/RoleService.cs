@@ -15,17 +15,17 @@ namespace ByteMarket.WebUI.Services.Implementations
 
 		public async Task<ApiDataResponse<List<RoleListViewModel>>> GetAllRolesAsync()
 		{
-			return await _apiService.GetAsync<List<RoleListViewModel>>("Roles/GetRoles");
+			return await _apiService.GetAsync<List<RoleListViewModel>>("Roles");
 		}
 
 		public async Task<ApiDataResponse<object>> CreateRoleAsync(string roleName)
 		{
-			return await _apiService.PostAsync<object>($"Roles/CreateRole?name={roleName}", null);
+			return await _apiService.PostAsync<object>($"Roles?name={roleName}", null);
 		}
 
 		public async Task<ApiDataResponse<object>> DeleteRoleAsync(string id)
 		{
-			return await _apiService.DeleteAsync<object>("Roles/DeleteRole", id);
+			return await _apiService.DeleteAsync<object>("Roles", id);
 		}
 
 		public async Task<ApiDataResponse<object>> AssignRoleAsync(AssignRoleViewModel model)
