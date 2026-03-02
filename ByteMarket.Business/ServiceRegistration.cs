@@ -28,6 +28,8 @@ namespace ByteMarket.Business
 			services.AddScoped<IAuthService, AuthManager>();
 			services.AddScoped<IRoleService, RoleManager>();
 			services.AddScoped<IMailService, MailManager>();
+
+			services.AddScoped<IWishListService, WishListManager>();
 		}
 	}
 }

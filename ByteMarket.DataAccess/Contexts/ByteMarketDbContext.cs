@@ -20,6 +20,7 @@ namespace ByteMarket.DataAccess.Contexts
 		public DbSet<Basket> Baskets { get; set; }
 		public DbSet<BasketItem> BasketItems { get; set; }
 		public DbSet<Category> Categories { get; set; }
+		public DbSet<WishList> WhisLists { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
@@ -46,6 +47,10 @@ namespace ByteMarket.DataAccess.Contexts
 
 			builder.Entity<Category>()
 				.HasIndex("CategoryImageFileId")
+				.IsUnique();
+
+			builder.Entity<WishList>()
+				.HasIndex(w => new { w.UserId, w.ProductId })
 				.IsUnique();
 
 			base.OnModelCreating(builder);

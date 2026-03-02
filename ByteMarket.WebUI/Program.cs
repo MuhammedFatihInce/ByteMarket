@@ -5,6 +5,10 @@ using ByteMarket.WebUI.Utilities.Handlers;
 using ByteMarket.WebUI.Utilities.Helpers.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using ICategoryService = ByteMarket.WebUI.Services.Interfaces.ICategoryService;
+using IProductService = ByteMarket.WebUI.Services.Interfaces.IProductService;
+using IRoleService = ByteMarket.WebUI.Services.Interfaces.IRoleService;
+using IUserService = ByteMarket.WebUI.Services.Interfaces.IUserService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,6 +80,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAuthHelper, AuthHelper>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IWishListService, WishListService>();
 
 var app = builder.Build();
 

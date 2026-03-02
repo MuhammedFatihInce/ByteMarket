@@ -1,7 +1,7 @@
 ﻿@model List<ByteMarket.WebUI.Models.Product.ProductListViewModel>
 
 @{
-    var categoryId = ViewBag.ActiveCategoryId;
+    var categoryId = ViewBag.ActiveCategoryId as string;
     ViewData["Title"] = string.IsNullOrEmpty(categoryId) ? "Tüm Ürünler" : "Kategori Ürünleri";
 }
 
@@ -24,3 +24,7 @@
         }
     </div>
 </div>
+
+@section Scripts{
+    <script src="~/js/customer/wishList/wishList-add.js" asp-append-version="false"></script>
+}

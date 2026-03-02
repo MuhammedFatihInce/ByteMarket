@@ -84,7 +84,7 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 		}
 
 		[HttpDelete]
-		[ValidateAntiForgeryToken] // AJAX içindeki header ile eşleşecek
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(string id)
 		{
 			var result = await _categoryService.DeleteCategoryAsync(id);

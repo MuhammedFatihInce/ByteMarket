@@ -74,3 +74,15 @@ body {
 .cursor-pointer{
     cursor: pointer !important;
 }
+
+.empty-list-warning {
+    border: 2px solid #ff9800;
+    background-color: #FFF;
+    color: #e65100;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    margin: 20px 0;
+    height: 400px;
+}

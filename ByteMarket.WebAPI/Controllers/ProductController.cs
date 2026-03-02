@@ -3,6 +3,7 @@ using ByteMarket.Business.Constants;
 using ByteMarket.Business.DTOs.Product;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ByteMarket.WebAPI.Controllers
 {
@@ -17,7 +18,8 @@ namespace ByteMarket.WebAPI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetAll([FromQuery] string? categoryId)
 		{
-			var result = await _productService.GetAllProductsAsync(categoryId);
+			var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var result = await _productService.GetAllProductsAsync(categoryId, currentUserId);
 
 			return CreateActionResult(result);
 		}
@@ -25,7 +27,8 @@ namespace ByteMarket.WebAPI.Controllers
 		[HttpGet("{id}")]
 		public async Task<IActionResult> GetById(string id)
 		{
-			var result = await _productService.GetProductByIdAsync(id);
+			var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var result = await _productService.GetProductByIdAsync(id, currentUserId);
 
 			return CreateActionResult(result, errorStatusCode: 404);
 		}

@@ -1,5 +1,4 @@
 ﻿using ByteMarket.WebUI.Areas.Admin.Models.Role;
-using ByteMarket.WebUI.Areas.Admin.Models.User;
 using ByteMarket.WebUI.Constants;
 using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;

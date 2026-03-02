@@ -22,6 +22,10 @@
   </ItemGroup>
   
   <ItemGroup>
+    <None Include="DTOs\WishList\WishListProductDto.cs" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <ProjectReference Include="..\ByteMarket.DataAccess\ByteMarket.DataAccess.csproj" />
     <ProjectReference Include="..\ByteMarket.Entity\ByteMarket.Entities.csproj" />
   </ItemGroup>

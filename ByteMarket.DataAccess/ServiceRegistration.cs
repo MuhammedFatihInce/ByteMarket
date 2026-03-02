@@ -1,6 +1,4 @@
-﻿
-
-using ByteMarket.DataAccess.Abstract.Basket;
+﻿using ByteMarket.DataAccess.Abstract.Basket;
 using ByteMarket.DataAccess.Abstract.BasketItem;
 using ByteMarket.DataAccess.Abstract.Category;
 using ByteMarket.DataAccess.Abstract.CategoryImageFile;
@@ -9,6 +7,7 @@ using ByteMarket.DataAccess.Abstract.File;
 using ByteMarket.DataAccess.Abstract.Order;
 using ByteMarket.DataAccess.Abstract.Product;
 using ByteMarket.DataAccess.Abstract.ProductImageFile;
+using ByteMarket.DataAccess.Abstract.WishList;
 using ByteMarket.DataAccess.Concrete.EntityFramework.Basket;
 using ByteMarket.DataAccess.Concrete.EntityFramework.BasketItem;
 using ByteMarket.DataAccess.Concrete.EntityFramework.Category;
@@ -18,6 +17,7 @@ using ByteMarket.DataAccess.Concrete.EntityFramework.File;
 using ByteMarket.DataAccess.Concrete.EntityFramework.Order;
 using ByteMarket.DataAccess.Concrete.EntityFramework.Product;
 using ByteMarket.DataAccess.Concrete.EntityFramework.ProductImageFile;
+using ByteMarket.DataAccess.Concrete.EntityFramework.WishList;
 using ByteMarket.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -63,7 +63,11 @@ namespace ByteMarket.DataAccess
 			services.AddScoped<ICategoryReadRepository, CategoryReadRepository>();
 			services.AddScoped<ICategoryWriteRepository, CategoryWriteRepository>();
 
-			
+			// İstek Listesi
+			services.AddScoped<IWishListReadRepository, WishListReadRepository>();
+			services.AddScoped<IWishListWriteRepository, WishListWriteRepository>();
+
+
 		}
 	}
 }

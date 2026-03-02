@@ -1,4 +1,4 @@
-﻿@model ByteMarket.WebUI.Models.Product.ProductListViewModel
+﻿@model ByteMarket.WebUI.Models.wishList.WishListProductViewModel
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
@@ -14,12 +14,12 @@
 
 @Html.AntiForgeryToken()
 
-<div class="card h-100 border product-card transition-up position-relative p-2">
+<div id="product-card-@Model.Id"  class="card h-100 border product-card transition-up position-relative p-2">
 
     <a asp-controller="Product" asp-action="Detail" asp-route-id="@Model.Id" class="stretched-link"></a>
 
-    <button class="wishlist-btn-group wishlist-btn bg-white border rounded-circle position-absolute" id="whishListBtn" data-productId="@Model.Id" data-isInWishlist="@Model.IsInWishlist">
-        <i class="bi @(Model.IsInWishlist ? "bi-heart-fill text-ty-orange" : "bi-heart")"></i>
+    <button class="remove-btn bg-white border rounded-circle position-absolute" data-productId="@Model.Id">
+        <i class="bi bi-x-lg"></i>
     </button>
 
     <div class="image-box d-flex align-items-center justify-content-center p-3">

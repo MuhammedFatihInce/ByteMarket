@@ -49,5 +49,14 @@ namespace ByteMarket.DataAccess.Concrete.EntityFramework
 
 			return await query.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id));
 		}
+
+		public async Task<bool> AnyAsync(Expression<Func<T, bool>> method, bool tracking = true)
+		{
+			var query = Table.AsQueryable();
+			if (!tracking)
+				query = query.AsNoTracking();
+
+			return await query.AnyAsync(method);
+		}
 	}
 }

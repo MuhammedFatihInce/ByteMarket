@@ -28,7 +28,7 @@ namespace ByteMarket.Business.Concrete
 			_categoryReadRepository = categoryReadRepository;
 		}
 
-		public async Task<IDataResult<List<ListProductDto>>> GetAllProductsAsync(string? categoryId = null)
+		public async Task<IDataResult<List<ListProductDto>>> GetAllProductsAsync(string? categoryId = null, string? currentUserId = null)
 		{
 			var query = _productReadRepository.GetAll(false);
 
@@ -38,7 +38,7 @@ namespace ByteMarket.Business.Concrete
 			}
 
 			var products = await query
-				.ProjectTo<ListProductDto>(_mapper.ConfigurationProvider)
+				.ProjectTo<ListProductDto>(_mapper.ConfigurationProvider, new{ currentUserId })
 				.ToListAsync();
 
 			if (products == null || !products.Any())
@@ -49,12 +49,13 @@ namespace ByteMarket.Business.Concrete
 			return new SuccessDataResult<List<ListProductDto>>(products, "Ürünler başarıyla listelendi.");
 		}
 
-		public async Task<IDataResult<SingleProductDto>> GetProductByIdAsync(string id)
+		public async Task<IDataResult<SingleProductDto>> GetProductByIdAsync(string id, string? currentUserId = null)
 		{
 			var product = await _productReadRepository
 				.GetWhere(p => p.Id == Guid.Parse(id), false)
 				.Include(p =>p.ProductImageFiles)
 				.Include(p=> p.Categories)
+				.Include(p=>p.WishList)
 				.FirstOrDefaultAsync();
 
 			if (product == null)
@@ -62,7 +63,7 @@ namespace ByteMarket.Business.Concrete
 				return new ErrorDataResult<SingleProductDto>("Ürün bulunamadı.");
 			}
 
-			var productDto = _mapper.Map<SingleProductDto>(product);
+			var productDto = _mapper.Map<SingleProductDto>(product, opt=> opt.Items["CurrentUserId"] = currentUserId);
 			return new SuccessDataResult<SingleProductDto>(productDto, "Ürün başarıyla getirildi.");
 		}
 

@@ -12,5 +12,7 @@ namespace ByteMarket.WebUI.Models.Product
 		public decimal Price { get; set; }
 		public List<ProductImageViewModel> ProductImageFiles { get; set; }
 		public List<SingleCategoryViewModel> Categories { get; set; }
+		public bool IsInWishlist { get; set; }
+
 	}
 }

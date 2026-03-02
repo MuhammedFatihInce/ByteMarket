@@ -6,6 +6,8 @@
     string noImageUrl = "https://placehold.co/600x400?text=Resim+Yok";
 }
 
+@Html.AntiForgeryToken()
+
 <div class="container mt-5 mb-5">
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
@@ -105,8 +107,8 @@
                          SEPETE EKLE
                     </button>
 
-                    <button class="btn wishlist-detail-btn shadow-sm rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="bi bi-heart fs-5"></i>
+                    <button class="wishlist-btn-group btn wishlist-detail-btn shadow-sm rounded-circle d-flex align-items-center justify-content-center" id="whishListBtn" data-productId="@Model.Id" data-isInWishList="@Model.IsInWishlist">
+                        <i class="bi @(Model.IsInWishlist ? "bi-heart-fill text-ty-orange" : "bi-heart")"></i>
                     </button>
                 </div>
             </div>
@@ -122,5 +124,6 @@
             imageZoom("image-0", "zoom-result", "lens-0");
         });
     </script>
+    <script src="~/js/customer/wishList/wishList-add.js" asp-append-version="false"></script>
 }
 

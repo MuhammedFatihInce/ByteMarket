@@ -92,6 +92,26 @@
 		transform: scale(1.1);
 	}
 
+.remove-btn {
+	line-height: 0;
+	top: 15px;
+	right: 15px;
+	width: 35px;
+	height: 35px;
+	z-index: 10;
+	color: var(--text-gray);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: var(--transition);
+	box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+	.remove-btn:hover {
+		color: var(--ty-orange);
+		transform: scale(1.1);
+	}
+
 .btn-outline-ty-orange {
 	border: 1px solid var(--ty-orange);
 	color: var(--ty-orange);
