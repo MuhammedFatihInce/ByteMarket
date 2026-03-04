@@ -19,9 +19,9 @@ namespace ByteMarket.WebUI.Services.Implementations
 		}
 
 
-		public async Task<ApiDataResponse<List<BasketItemViewModel>>> GetBasketItems()
+		public async Task<ApiDataResponse<ListBasketViewModel>> GetBasketItems()
 		{
-			return await _apiService.GetAllAsync<BasketItemViewModel>("Baskets");
+			return await _apiService.GetAsync<ListBasketViewModel>("Baskets");
 		}
 
 		public async Task<ApiDataResponse<object>> RemoveBasketItem(string basketItemId)

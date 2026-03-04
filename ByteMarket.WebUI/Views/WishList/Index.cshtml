@@ -25,9 +25,12 @@
     }
     else
     {
-        <div class="empty-list-warning d-flex align-items-center justify-content-center">
-            <i class="fa fa-exclamation-triangle"></i> 
-            <span>İstek listesi boş</span>
+        <div class="empty-list-warning align-content-center gap-2">
+            <div d-flex align-items-center justify-content-center>
+                <i class="fa fa-exclamation-triangle"></i>
+                <span>İstek listesi boş.</span>
+            </div>
+            <a href="/" class="btn btn-ty-orange text-white mt-3">Ürünlere Göz At</a>
         </div>
     }
 
@@ -35,4 +38,5 @@
 
 @section Scripts {
     <script src="~/js/customer/wishList/wishList-delete.js" asp-append-version="false"></script>
+    <script src="~/js/customer/basket/basket-add.js" asp-append-version="false"></script>
 }

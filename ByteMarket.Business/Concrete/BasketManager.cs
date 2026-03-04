@@ -91,7 +91,7 @@ namespace ByteMarket.Business.Concrete
 			return new ErrorResult("Ürün sepete eklenemedi.");
 		}
 
-		public async Task<IDataResult<List<BasketItemDto>>> GetBasketItemsAsync()
+		public async Task<IDataResult<ListBasketDto>> GetBasketItemsAsync()
 		{
 			var basket = await GetActiveBasketOfUser();
 
@@ -102,7 +102,7 @@ namespace ByteMarket.Business.Concrete
 				.FirstOrDefaultAsync(b => b.Id == basket.Id);
 
 			if (result == null)
-				return new ErrorDataResult<List<BasketItemDto>>("Sepet bulunamadı.");
+				return new ErrorDataResult<ListBasketDto>("Sepet bulunamadı.");
 
 			var basketItemsDto = result.BasketItems.Select(bi=>new BasketItemDto
 				{
@@ -117,7 +117,13 @@ namespace ByteMarket.Business.Concrete
 								: null
 			}).ToList();
 
-			 return new SuccessDataResult<List<BasketItemDto>>(basketItemsDto);
+			var basketDto = new ListBasketDto
+			{
+				Id = result.Id.ToString(),
+				BasketItem = basketItemsDto
+			};
+
+			 return new SuccessDataResult<ListBasketDto>(basketDto);
 		}
 
 		public async Task<IResult> RemoveBasketItemAsync(string basketItemId)

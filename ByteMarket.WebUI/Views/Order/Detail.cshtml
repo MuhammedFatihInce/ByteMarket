@@ -1,0 +1,114 @@
+﻿@model ByteMarket.WebUI.Models.Order.SingleOrderViewModel
+@inject IConfiguration Configuration
+
+@{
+    ViewData["Title"] = "Sipariş Detayı";
+    var apiBaseUrl = Configuration["ApiSettings:BaseStorageAdress"];
+    string noImageUrl = "https://placehold.co/600x400?text=Resim+Yok";
+    decimal totalOrderAmount = Model.BasketItems.Sum(x => x.Price * x.Quantity);
+}
+
+<div class="container mt-5 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Sipariş Detayı</h2>
+            <small class="text-muted">Sipariş No: <span class="fw-bold text-dark">#@Model.OrderCode</span></small>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+            <i class="fa fa-arrow-left me-1"></i> Siparişlerime Dön
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white py-3 border-bottom-0">
+                    <h5 class="mb-0 fw-bold"><i class="fa fa-shopping-bag me-2 text-ty-orange"></i>Ürünler (@Model.BasketItems.Sum(x=> x.Quantity))</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <tbody>
+                                @foreach (var item in Model.BasketItems)
+                                {
+                                    var currentImagePath = !string.IsNullOrEmpty(item.ImagePath)
+                                    ? $"{apiBaseUrl}{item.ImagePath.Replace("\\", "/")}"
+                                    : noImageUrl;
+
+                                    <tr>
+                                        <td class="ps-4 py-3" style="width: 100px;">
+                                            <div class="rounded border p-1" style="width: 80px; height: 80px;">
+                                                <img src="@currentImagePath" class="img-fluid object-fit-contain h-100 w-100"
+                                                     alt="@item.Name" onerror="this.src='@noImageUrl'">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <h6 class="mb-1 fw-bold text-dark">@item.Name</h6>
+                                            <small class="text-muted">Adet: @item.Quantity</small>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <span class="fw-bold text-ty-orange">@((item.Price * item.Quantity).ToString("C2"))</span>
+                                            <br />
+                                            <small class="text-muted" style="font-size: 0.7rem;">Birim: @item.Price.ToString("C2")</small>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fa fa-map-marker-alt me-2 text-ty-orange"></i>Teslimat Bilgileri</h6>
+                    <p class="small text-dark mb-1 fw-bold">Teslimat Adresi:</p>
+                    <p class="small text-muted mb-3">@Model.Address</p>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <p class="small text-dark mb-1 fw-bold">Sipariş Notu:</p>
+                        <p class="small text-muted italic">"@Model.Description"</p>
+                    }
+
+                    <hr />
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Sipariş Tarihi:</span>
+                        <span class="fw-bold">@Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 bg-light">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3">Ödeme Özeti</h6>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Ara Toplam</span>
+                        <span>@totalOrderAmount.ToString("C2")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 text-success">
+                        <span>Kargo</span>
+                        <span>Bedava</span>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="h6 mb-0 fw-bold">Toplam</span>
+                        <span class="h4 mb-0 fw-bold text-ty-orange">@totalOrderAmount.ToString("C2")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+
+    .object-fit-contain {
+        object-fit: contain;
+    }
+</style>

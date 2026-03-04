@@ -1,5 +1,4 @@
 ﻿using ByteMarket.WebUI.Models.Basket;
-using ByteMarket.WebUI.Models.wishList;
 using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +39,36 @@ namespace ByteMarket.WebUI.Controllers
 			}
 
 			TempData["Error"] = result.Message;
-			return View(new List<BasketItemViewModel>());
+			return View(new ListBasketViewModel());
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> UpdateQuantity([FromBody] UpdateBasketItemQuantityViewModel model)
+		{
+			var result = await _basketService.UpdateQuantity(model);
+
+			if (result.Success)
+			{
+				return Json(new { success = true, message = result.Message });
+			}
+
+			return Json(new { success = false, message = result.Message });
+		}
+
+
+		[HttpDelete("Basket/Delete/{basketItemId}")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Delete(string basketItemId)
+		{
+			var result = await _basketService.RemoveBasketItem(basketItemId);
+
+			if (result.Success)
+			{
+				return Json(new { success = true, message = result.Message });
+			}
+
+			return Json(new { success = false, message = result.Message });
 		}
 	}
 }

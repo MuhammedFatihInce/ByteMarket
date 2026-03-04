@@ -86,3 +86,25 @@ body {
     margin: 20px 0;
     height: 400px;
 }
+
+.success-order {
+    border: 2px solid #ff9800;
+    background-color: #F8FFF9;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    margin: 20px 0;
+    height: 400px;
+}
+
+.success-icon {
+    color: #27ae60; 
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+.success-title {
+    color: #2d3436; 
+    font-weight: bold;
+    font-size: 28px;
+}

@@ -7,7 +7,7 @@ namespace ByteMarket.Business.Abstract
 	public interface IBasketService
 	{
 		Task<IResult> AddItemToBasketAsync(CreateBasketDto creaBasketDto);
-		Task<IDataResult<List<BasketItemDto>>> GetBasketItemsAsync();
+		Task<IDataResult<ListBasketDto>> GetBasketItemsAsync();
 		Task<IResult> RemoveBasketItemAsync(string basketItemId);
 		Task<IResult> UpdateQuantityAsync(UpdateBasketItemQuantityDto dto);
 	}

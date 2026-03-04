@@ -69,6 +69,7 @@ namespace ByteMarket.Business.Concrete
 				.Include(o => o.Basket)
 				.ThenInclude(b => b.BasketItems)
 				.ThenInclude(bi => bi.Product)
+				.ThenInclude(p=>p.ProductImageFiles)
 				.FirstOrDefaultAsync(o => o.Id == Guid.Parse(id));
 
 			if (data == null) new ErrorDataResult<SingleOrderDto>("Sipariş bulunamadı.");
@@ -83,6 +84,9 @@ namespace ByteMarket.Business.Concrete
 				BasketItems = data.Basket.BasketItems.Select(bi => new OrderItemDto
 				{
 					Name = bi.Product.Name,
+					ImagePath = bi.Product.ProductImageFiles.FirstOrDefault() != null
+						? bi.Product.ProductImageFiles.FirstOrDefault().Path
+						: null,
 					Price = bi.Price,
 					Quantity = bi.Quantity
 				})

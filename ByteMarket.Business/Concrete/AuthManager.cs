@@ -41,7 +41,7 @@ namespace ByteMarket.Business.Concrete
 
 			if (checkPassword)
 			{
-				Token token = await _tokenHandler.CreateAccessToken(60, 300, user);
+				Token token = await _tokenHandler.CreateAccessToken(60, 600, user);
 				await _userService.UpdateRefreshToken(token.RefreshToken, user, token.RefreshTokenExpiration);
 				return new SuccessDataResult<Token>(token, "Giriş başarılı.");
 			}
@@ -55,7 +55,7 @@ namespace ByteMarket.Business.Concrete
 
 			if (user != null && user?.RefreshTokenEndDate > DateTime.UtcNow)
 			{
-				Token token = await _tokenHandler.CreateAccessToken(60, 300, user);
+				Token token = await _tokenHandler.CreateAccessToken(60, 600, user);
 				await _userService.UpdateRefreshToken(token.RefreshToken, user, token.RefreshTokenExpiration);
 				return new SuccessDataResult<Token>(token, "Token yenilendi.");
 			}
@@ -122,7 +122,7 @@ namespace ByteMarket.Business.Concrete
 				await _userManager.AddLoginAsync(user, new UserLoginInfo("GOOGLE", payload.Subject, "GOOGLE"));
 			}
 
-			var token = await _tokenHandler.CreateAccessToken(60, 300, user);
+			var token = await _tokenHandler.CreateAccessToken(60, 600, user);
 			await _userService.UpdateRefreshToken(token.RefreshToken, user, token.RefreshTokenExpiration);
 			return new SuccessDataResult<Token>(token, "Google ile giriş başarılı.");
 		}
