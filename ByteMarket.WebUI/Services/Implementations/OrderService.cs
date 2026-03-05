@@ -1,5 +1,4 @@
-﻿using ByteMarket.WebUI.Models.Basket;
-using ByteMarket.WebUI.Models.Order;
+﻿using ByteMarket.WebUI.Models.Order;
 using ByteMarket.WebUI.Models.ResultModels;
 using ByteMarket.WebUI.Services.Interfaces;
 

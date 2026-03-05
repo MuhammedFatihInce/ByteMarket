@@ -32,5 +32,15 @@ namespace ByteMarket.WebUI.Services.Implementations
 		{
 			return await _apiService.PostAsync<object>("Roles/AssignRole", model);
 		}
+
+		public async Task<ApiDataResponse<object>> UpdatePermissions(PermissionsUpdateViewModel model)
+		{
+			return await _apiService.PostAsync<object>("Roles/UpdatePermissions", model);
+		}
+
+		public async Task<ApiDataResponse<RolePermissionsViewModel>> GetPermissionsByRoleIdAsync(string roleId)
+		{
+			return await _apiService.GetByIdAsync<RolePermissionsViewModel>("Roles/GetPermissions", roleId);
+		}
 	}
 }

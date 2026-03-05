@@ -1,11 +1,11 @@
 ﻿using ByteMarket.Business.Abstract;
-using ByteMarket.Business.Constants;
+using ByteMarket.Entities.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ByteMarket.WebAPI.Controllers
 {
-	[Authorize(Policy = AuthorizePolicies.AdminOnly)]
+	[Authorize(Policy = AuthorizePolicies.FullUserManagement)]
 	public class UserController : BaseController
 	{
 		private readonly IUserService _userService;

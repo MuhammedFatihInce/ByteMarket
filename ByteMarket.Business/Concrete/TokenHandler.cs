@@ -16,11 +16,13 @@ namespace ByteMarket.Business.Concrete
 	{
 		private readonly IConfiguration _configuration;
 		private readonly UserManager<AppUser> _userManager;
+		private readonly RoleManager<AppRole> _roleManager;
 
-		public TokenHandler(IConfiguration configuration, UserManager<AppUser> userManager)
+		public TokenHandler(IConfiguration configuration, UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
 		{
 			_configuration = configuration;
 			_userManager = userManager;
+			_roleManager = roleManager;
 		}
 
 		public async Task<Token> CreateAccessToken(int second, int refreshTokenAddMinute, AppUser appUser)
@@ -39,9 +41,23 @@ namespace ByteMarket.Business.Concrete
 			};
 
 			var userRoles = await _userManager.GetRolesAsync(appUser);
-			foreach (var role in userRoles)
+			foreach (var roleName in userRoles)
 			{
-				claims.Add(new Claim(ClaimTypes.Role, role));
+				claims.Add(new Claim(ClaimTypes.Role, roleName));
+
+				var role = await _roleManager.FindByNameAsync(roleName);
+				if (role != null)
+				{
+					var roleClaims = await _roleManager.GetClaimsAsync(role);
+					foreach (var roleClaim in roleClaims)
+					{
+						if (!claims.Any(c => c.Type == roleClaim.Type && c.Value == roleClaim.Value))
+						{
+							claims.Add(roleClaim);
+						}
+					}
+				}
+
 			}
 
 			JwtSecurityToken jwt = new(

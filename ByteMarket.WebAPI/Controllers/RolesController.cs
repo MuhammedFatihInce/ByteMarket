@@ -1,12 +1,12 @@
 ﻿using ByteMarket.Business.Abstract;
-using ByteMarket.Business.Constants;
+using ByteMarket.Entities.Constants;
 using ByteMarket.Business.DTOs.Role;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ByteMarket.WebAPI.Controllers
 {
-	[Authorize(Policy = AuthorizePolicies.AdminOnly)]
+	[Authorize(Policy = AuthorizePolicies.FullRoleManagement)]
 	public class RolesController : BaseController
 	{
 		private readonly IRoleService _roleService;
@@ -41,6 +41,20 @@ namespace ByteMarket.WebAPI.Controllers
 		public async Task<IActionResult> DeleteRole(string id)
 		{
 			var result = await _roleService.DeleteRoleAsync(id);
+			return CreateActionResult(result);
+		}
+
+		[HttpPost("UpdatePermissions")]
+		public async Task<IActionResult> UpdatePermissions(PermissionsUpdateDto dto)
+		{
+			var result = await _roleService.UpdatePermissions(dto);
+			return CreateActionResult(result);
+		}
+
+		[HttpGet("GetPermissions/{roleId}")]
+		public async Task<IActionResult> GetPermissionsByRoleIdAsync(string roleId)
+		{
+			var result = await _roleService.GetPermissionsByRoleIdAsync(roleId);
 			return CreateActionResult(result);
 		}
 	}

@@ -1,5 +1,5 @@
 ﻿using ByteMarket.Business.Abstract;
-using ByteMarket.Business.Constants;
+using ByteMarket.Entities.Constants;
 using ByteMarket.Business.DTOs.Category;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +15,7 @@ namespace ByteMarket.WebAPI.Controllers
 		}
 
 		[HttpPost]
-		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
+		[Authorize(Policy = AuthorizePolicies.FullCategoryManagement)]
 		public async Task<IActionResult> Add(CreateCategoryDto createCategoryDto)
 		{
 			var result = await _categoryService.AddAsync(createCategoryDto);
@@ -30,7 +30,7 @@ namespace ByteMarket.WebAPI.Controllers
 		}
 
 		[HttpDelete("{id}")]
-		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
+		[Authorize(Policy = AuthorizePolicies.FullCategoryManagement)]
 		public async Task<IActionResult> Delete(string id)
 		{
 			var result = await _categoryService.DeleteAsync(id);
@@ -38,7 +38,7 @@ namespace ByteMarket.WebAPI.Controllers
 		}
 
 		[HttpPut]
-		[Authorize(Policy = AuthorizePolicies.AdminOnly)]
+		[Authorize(Policy = AuthorizePolicies.FullCategoryManagement)]
 		public async Task<IActionResult> Update([FromBody] UpdateCategoryDto updateCategoryDtoDto)
 		{
 			var result = await _categoryService.UpdateAsync(updateCategoryDtoDto);

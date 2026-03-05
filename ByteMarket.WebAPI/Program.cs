@@ -1,5 +1,5 @@
 using ByteMarket.Business;
-using ByteMarket.Business.Constants;
+using ByteMarket.Entities.Constants;
 using ByteMarket.Business.Validators.Products;
 using ByteMarket.DataAccess;
 using ByteMarket.DataAccess.Contexts;
@@ -84,6 +84,22 @@ builder.Services.AddAuthorization(options =>
 
 	options.AddPolicy(AuthorizePolicies.CustomerOnly, policy =>
 		policy.RequireRole("Customer"));
+
+	options.AddPolicy(AuthorizePolicies.FullProductManagement, policy =>
+		policy.RequireClaim("Permission",
+			AuthorizePolicies.ProductsPermissions));
+
+	options.AddPolicy(AuthorizePolicies.FullCategoryManagement, policy =>
+		policy.RequireClaim("Permission",
+			AuthorizePolicies.CategoriesPermissions));
+
+	options.AddPolicy(AuthorizePolicies.FullUserManagement, policy =>
+		policy.RequireClaim("Permission",
+			AuthorizePolicies.UsersPermissions));
+
+	options.AddPolicy(AuthorizePolicies.FullRoleManagement, policy =>
+		policy.RequireClaim("Permission",
+			AuthorizePolicies.RolesPermissions));
 });
 
 

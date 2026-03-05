@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ByteMarket.WebUI.Areas.Admin.Controllers
 {
-	[Area("Admin"), Authorize(Policy = AuthorizePolicies.AdminOnly)]
+	[Area("Admin"), Authorize(Policy = AuthorizePolicies.FullCategoryManagement)]
 	public class CategoryController : Controller
 	{
 		private readonly ICategoryService _categoryService;

@@ -1,4 +1,5 @@
-﻿namespace ByteMarket.WebUI.Constants
+﻿
+namespace ByteMarket.Entities.Constants
 {
 	public static class AuthorizePolicies
 	{

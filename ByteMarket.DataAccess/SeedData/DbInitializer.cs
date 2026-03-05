@@ -1,7 +1,9 @@
 ﻿
 using ByteMarket.Entities.Concrete.Identity;
+using ByteMarket.Entities.Constants;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using System.Security.Claims;
 
 namespace ByteMarket.DataAccess.SeedData
 {
@@ -43,6 +45,20 @@ namespace ByteMarket.DataAccess.SeedData
 					await userManager.AddToRoleAsync(newAdmin, "Admin");
 				}
 			}
+
+			var adminRole = await roleManager.FindByNameAsync("Admin");
+
+			var allPermissions = AuthorizePolicies.GetSystemPermissions();
+
+			foreach (var permission in allPermissions)
+			{
+				var claims = await roleManager.GetClaimsAsync(adminRole);
+				if (!claims.Any(c => c.Type == "Permission" && c.Value == permission))
+				{
+					await roleManager.AddClaimAsync(adminRole, new Claim("Permission", permission));
+				}
+			}
+
 		}
 	}
 }

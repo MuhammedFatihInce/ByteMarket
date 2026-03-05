@@ -40,6 +40,12 @@ namespace ByteMarket.WebUI.Utilities.Helpers.Auth
 				claims.Add(new Claim(ClaimTypes.Role, role.Value));
 			}
 
+			var permissions = token.Claims.Where(c => c.Type == "Permission" || c.Type == "permission");
+			foreach (var permission in permissions)
+			{
+				claims.Add(new Claim("Permission", permission.Value));
+			}
+
 			var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
 			var authProperties = new AuthenticationProperties

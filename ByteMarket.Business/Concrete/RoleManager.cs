@@ -5,6 +5,8 @@ using ByteMarket.Business.Utilities.Results;
 using ByteMarket.Entities.Concrete.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using ByteMarket.Entities.Constants;
 
 namespace ByteMarket.Business.Concrete
 {
@@ -72,5 +74,60 @@ namespace ByteMarket.Business.Concrete
 
 			return new ErrorResult("Rol silinirken bir hata oluştu.");
 		}
+
+
+		public async Task<IResult> UpdatePermissions(PermissionsUpdateDto dto)
+		{
+
+			var role = await _roleManager.FindByIdAsync(dto.Id);
+
+			if (role == null)
+			{
+				return new ErrorResult("Yetki izni verilmek istenen rol bulunamadı.");
+			}
+
+			var existingClaims = await _roleManager.GetClaimsAsync(role);
+
+			foreach (var claim in existingClaims)
+			{
+				await _roleManager.RemoveClaimAsync(role, claim);
+			}
+
+			foreach (var permission in dto.Permissions)
+			{
+				 await _roleManager.AddClaimAsync(role, new Claim("Permission", permission));
+			}
+
+			return new SuccessResult("Yetki izni verildi.");
+		}
+
+		public async Task<IDataResult<RolePermissionsDto>> GetPermissionsByRoleIdAsync(string roleId)
+		{
+			var role = await _roleManager.FindByIdAsync(roleId);
+			if (role == null) return new ErrorDataResult<RolePermissionsDto>("Rol bulunamadı.");
+
+			var existingClaims = await _roleManager.GetClaimsAsync(role);
+			var existingPermissions = existingClaims
+				.Where(c => c.Type == "Permission")
+				.Select(c => c.Value)
+				.ToList();
+
+			var allPermissions = AuthorizePolicies.GetSystemPermissions();
+
+			var model = new RolePermissionsDto
+			{
+				RoleId = role.Id.ToString(),
+				RoleName = role.Name,
+				Permissions = allPermissions.Select(p => new PermissionCheckDto
+				{
+					PermissionValue = p,
+					IsExist = existingPermissions.Contains(p)
+				}).ToList()
+			};
+
+			return new SuccessDataResult<RolePermissionsDto>(model);
+		}
+
+		
 	}
 }
