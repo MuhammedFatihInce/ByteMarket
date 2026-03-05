@@ -25,13 +25,13 @@ namespace ByteMarket.Business.Concrete
 			_roleManager = roleManager;
 		}
 
-		public async Task<Token> CreateAccessToken(int second, int refreshTokenAddMinute, AppUser appUser)
+		public async Task<Token> CreateAccessToken(int minutes, int refreshTokenAddDays, AppUser appUser)
 		{
 			Token token = new();
 
 			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
 
-			token.Expiration = DateTime.UtcNow.AddSeconds(second);
+			token.Expiration = DateTime.UtcNow.AddMinutes(minutes);
 
 			var claims = new List<Claim>
 			{
@@ -72,7 +72,7 @@ namespace ByteMarket.Business.Concrete
 			JwtSecurityTokenHandler tokenHandler = new();
 			token.AccessToken = tokenHandler.WriteToken(jwt);
 
-			token.RefreshTokenExpiration = token.Expiration.AddSeconds(refreshTokenAddMinute);
+			token.RefreshTokenExpiration = token.Expiration.AddDays(refreshTokenAddDays);
 			token.RefreshToken = CreateRefreshToken();
 
 			return token;

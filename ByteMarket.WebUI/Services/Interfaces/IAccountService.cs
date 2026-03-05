@@ -9,7 +9,7 @@ namespace ByteMarket.WebUI.Services.Interfaces
 		Task<ApiDataResponse<JsonElement>> LoginAsync(LoginViewModel loginViewModel);
 		Task Logout();
 		Task<ApiDataResponse<object>> RegisterAsync(RegisterViewModel registerViewModel);
-		Task<bool> RefreshTokenAsync();
+		Task<(bool IsSuccess, string? NewToken)> RefreshTokenAsync();
 		Task<ApiDataResponse<JsonElement>> GoogleLoginAsync(string idToken);
 		Task<ApiDataResponse<object>> PasswordResetAsync(string email);
 		Task<ApiDataResponse<object>> VerifyResetTokenAsync(ResetPasswordViewModel model);

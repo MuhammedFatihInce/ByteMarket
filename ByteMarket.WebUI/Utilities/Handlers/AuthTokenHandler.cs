@@ -1,4 +1,6 @@
 ﻿using ByteMarket.WebUI.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -24,7 +26,8 @@ namespace ByteMarket.WebUI.Utilities.Handlers
 				return await base.SendAsync(request, cancellationToken);
 			}
 
-			var jwt = _httpContextAccessor.HttpContext.Request.Cookies["jwt"];
+			var context = _httpContextAccessor.HttpContext;
+			var jwt = context?.Request.Cookies["jwt"];
 
 			if (!string.IsNullOrEmpty(jwt))
 			{
@@ -38,17 +41,28 @@ namespace ByteMarket.WebUI.Utilities.Handlers
 				using var scope = _serviceProvider.CreateScope();
 				var accountService = scope.ServiceProvider.GetRequiredService<IAccountService>();
 
-				var isRefreshed = await accountService.RefreshTokenAsync();
+				var (isRefreshed, newJwt) = await accountService.RefreshTokenAsync();
 
 				if (isRefreshed)
 				{
-					var newJwt = _httpContextAccessor.HttpContext?.Request.Cookies["jwt"];
-
 					response.Dispose();
 					request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", newJwt);
 
 					return await base.SendAsync(request, cancellationToken);
 				}
+				else
+				{
+					response.Dispose();
+					if (context != null)
+					{
+						await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+						context.Response.Cookies.Delete("jwt");
+						context.Response.Cookies.Delete("refreshToken");
+					}
+
+					return response;
+				}
+				
 			}
 
 			return response;

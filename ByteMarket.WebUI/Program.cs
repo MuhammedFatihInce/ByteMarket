@@ -44,7 +44,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 					if (token.ValidTo < DateTime.UtcNow.AddSeconds(30))
 					{
 						var accountService = context.HttpContext.RequestServices.GetRequiredService<IAccountService>();
-						var isRefreshed = await accountService.RefreshTokenAsync();
+						var (isRefreshed, _) = await accountService.RefreshTokenAsync();
 
 						if (!isRefreshed)
 						{

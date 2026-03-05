@@ -63,26 +63,27 @@ namespace ByteMarket.WebUI.Services.Implementations
 			});
 		}
 
-		public async Task<bool> RefreshTokenAsync()
+		public async Task<(bool IsSuccess, string? NewToken)> RefreshTokenAsync()
 		{
 			await _semaphore.WaitAsync();
 			try
 			{
 				var context = _httpContextAccessor.HttpContext;
-				if (context == null) return false;
+				if (context == null) return (false, null);
 
 				var refreshToken = context.Request.Cookies["refreshToken"];
-				if (string.IsNullOrEmpty(refreshToken)) return false;
+				if (string.IsNullOrEmpty(refreshToken)) return (false, null);
 
 				var encodedToken = WebUtility.UrlEncode(refreshToken);
 				var result = await _apiService.PostAsync<JsonElement>($"auth/refresh-token-login?refreshToken={encodedToken}", null);
 
 				if (result.Success && result.Data.ValueKind != JsonValueKind.Null)
 				{
-					await HandleTokenResponse(result.Data);
-					return true;
+					context.Response.Cookies.Delete("refreshToken");
+					var newAccessToken = await HandleTokenResponse(result.Data);
+					return (true, newAccessToken);
 				}
-				return false;
+				return (false, null);
 			}
 			finally
 			{
@@ -90,10 +91,10 @@ namespace ByteMarket.WebUI.Services.Implementations
 			}
 		}
 
-		private async Task HandleTokenResponse(JsonElement data, bool isPersistent = false)
+		private async Task<string?> HandleTokenResponse(JsonElement data, bool isPersistent = false)
 		{
 			var context = _httpContextAccessor.HttpContext;
-			if (context == null) return;
+			if (context == null) return null;
 
 			
 			var accessToken = data.GetProperty("accessToken").GetString();
@@ -101,7 +102,7 @@ namespace ByteMarket.WebUI.Services.Implementations
 			var refreshToken = data.GetProperty("refreshToken").GetString();
 			var refreshTokenExp = data.GetProperty("refreshTokenExpiration").GetDateTime().ToUniversalTime();
 
-			if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken)) return;
+			if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken)) return null;
 
 			context.Response.Cookies.Append("jwt", accessToken, new CookieOptions
 			{
@@ -120,6 +121,8 @@ namespace ByteMarket.WebUI.Services.Implementations
 			});
 
 			await _authHelper.SignInUserAsync(accessToken, refreshTokenExp, isPersistent);
+
+			return accessToken;
 		}
 
 		public async Task<ApiDataResponse<JsonElement>> GoogleLoginAsync(string idToken)

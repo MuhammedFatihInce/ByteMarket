@@ -187,7 +187,7 @@
                     <div class="mt-4">
                         <button type="submit" class="btn btn-ty-orange text-white w-100 py-3 rounded-3 fw-bold shadow-sm"
                         data-basketId="@Model.Id">
-                            Ödemeyi Tamamla (@Model.BasketItem.Sum(x => x.Total).ToString("C2"))
+                            Ödemeyi Tamamla (@Model?.BasketItem?.Sum(x => x.Total).ToString("C2"))
                         </button>
                     </div>
                 </form>

@@ -1,6 +1,7 @@
 ﻿
 using ByteMarket.Business.Abstract;
 using ByteMarket.Business.DTOs.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -32,6 +33,7 @@ namespace ByteMarket.WebAPI.Controllers
 			return CreateActionResult(result, errorStatusCode: 401);
 		}
 
+		[AllowAnonymous]
 		[HttpPost("refresh-token-login")]
 		public async Task<IActionResult> RefreshTokenLogin([FromQuery] string refreshToken)
 		{
