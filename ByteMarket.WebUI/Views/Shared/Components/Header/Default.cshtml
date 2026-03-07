@@ -9,13 +9,13 @@
 
     <div class="container py-3">
         <div class="row align-items-center">
-            <div class="col-lg-2 col-md-3 col-6">
+            <div class="col-lg-2 col-md-3 col-6 order-1">
                 <a class="navbar-brand fw-bold fs-2 text-dark" asp-area="" asp-controller="Home" asp-action="Index" style="letter-spacing: -1px;">
                     ByteMarket<span class="text-ty-orange">.</span>
                 </a>
             </div>
 
-            <div class="col-lg-6 col-md-5 d-none d-md-block">
+            <div class="col-lg-6 col-md-5 col-12 order-3 order-md-2 mt-3 mt-md-0">
                 <div class="input-group">
                     <input type="text" class="form-control border-end-0 bg-light" placeholder="Aradığınız ürün, kategori veya markayı yazınız" style="padding: 10px 15px;">
                     <span class="input-group-text bg-light border-start-0 text-ty-orange">
@@ -24,7 +24,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-4 col-md-4 col-6">
+            <div class="col-lg-4 col-md-4 col-6 order-2 order-md-3">
                 <div class="d-flex justify-content-end align-items-center gap-4">
 
                     <div class="dropdown">
@@ -36,7 +36,7 @@
                             </div>
                         </div>
 
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-5 animate slideIn" aria-labelledby="userMenu">
+                        <ul class="dropdown-menu dropdown-menu-center shadow border-0 mt-5 animate slideIn" aria-labelledby="userMenu">
                             @if (User.Identity.IsAuthenticated)
                             {
                                 <li><h6 class="dropdown-header">Üye Bilgileri</h6></li>

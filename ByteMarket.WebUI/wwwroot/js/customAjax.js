@@ -14,6 +14,7 @@
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: url,
+
                 type: method,
                 contentType: 'application/json',
                 data: data ? JSON.stringify(data) : null,

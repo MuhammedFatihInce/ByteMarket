@@ -13,5 +13,6 @@ namespace ByteMarket.Entities.Concrete
 		public ICollection<BasketItem> BasketItems { get; set; }
 		public ICollection<Category> Categories { get; set; }
 		public ICollection<WishList> WishList { get; set; }
+		public ICollection<Coupon> Coupons { get; set; }
 	}
 }

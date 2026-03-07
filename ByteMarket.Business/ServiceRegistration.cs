@@ -32,6 +32,7 @@ namespace ByteMarket.Business
 			services.AddScoped<IWishListService, WishListManager>();
 			services.AddScoped<IBasketService, BasketManager>();
 			services.AddScoped<IOrderService, OrderManager>();
+			services.AddScoped<ICouponService, CouponManager>();
 		}
 	}
 }

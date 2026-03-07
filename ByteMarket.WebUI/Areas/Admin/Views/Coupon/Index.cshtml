@@ -1,0 +1,293 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model ByteMarket.WebUI.Areas.Admin.Models.Coupon.ListCouponViewModel
+
+<div class="container-fluid pt-4 px-4">
+    @Html.AntiForgeryToken()
+
+    <div class="bg-white rounded shadow-sm p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-ticket-perforated me-2 text-ty-orange"></i>Kupon Yönetimi</h5>
+                <small class="text-muted">Sistemdeki indirim kuponlarını buradan yönetebilirsiniz.</small>
+            </div>
+            <button type="button" class="btn btn-sm btn-ty-orange text-white fw-bold px-4 py-2" data-bs-toggle="modal" data-bs-target="#createCouponModal">
+                <i class="bi bi-plus-lg me-1"></i> Yeni Kupon
+            </button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle table-hover border-top">
+                <thead>
+                    <tr class="text-secondary small text-uppercase" style="background-color: #fafafa;">
+                        <th class="py-3 ps-3">Kupon Kodu</th>
+                        <th class="py-3">Hedef Tipi</th>
+                        <th class="py-3">İndirim Miktarı</th>
+                        <th class="py-3">İndirim Tipi</th>
+                        <th class="py-3 text-end pe-3">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if ( Model.Coupons != null && Model.Coupons.Any())
+                    {
+                        @foreach (var coupon in Model.Coupons)
+                        {
+                            <tr id="coupon-row-@coupon.Id">
+                                <td class="ps-3">
+                                    <div class="fw-bold text-dark">@coupon.Code</div>
+                                    <small class="text-muted" style="font-size: 11px;">ID: @coupon.Id</small>
+                                </td>
+                                <td>
+                                    @if (coupon.Target == 2)
+                                    {
+                                        <span class="badge bg-info text-dark">Ürünlere Özel</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-dark border">Genel Sepet</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-dark">@coupon.DiscountValue</span>
+                                </td>
+                                <td>
+                                    @if (coupon.IsPercentage)
+                                    {
+                                        <span class="badge bg-warning text-white border">Yüzdelik (%)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-white border">Sabit Tutar</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-3">
+                                    <div class="btn-group">
+                                        <button class="btn-edit-coupon btn btn-sm btn-outline-secondary border-0"
+                                                data-id="@coupon.Id" title="Düzenle">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger border-0 btn-delete-coupon"
+                                                data-id="@coupon.Id" title="Sil">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-info-circle me-2"></i> Listelenecek Kupon Bulunamadı.
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="createCouponModal" tabindex="-1" aria-labelledby="createCouponModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+      
+            <div class="modal-header bg-light border-0">
+                <h5 class="modal-title fw-bold" id="createCouponModalLabel">
+                    <i class="bi bi-ticket-perforated me-2 text-ty-orange"></i>Yeni Kupon Oluştur
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+      
+            <form id="createCouponForm">
+
+                <div class="modal-body p-4">
+                   
+                    <div class="mb-3">
+                        <label for="Code" class="form-label small fw-bold">Kupon Kodu</label>
+                        <input type="text" class="form-control" id="Code" name="Code" placeholder="Örn: Yaz2026" required />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="DiscountValue" class="form-label small fw-bold">İndirim Miktarı</label>
+                            <input type="number" class="form-control" id="DiscountValue" name="DiscountValue" step="0.01" required>
+                        </div>
+                        <div class="col-md-6 mb-3 d-flex align-items-end">
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" id="IsPercentage" name="IsPercentage">
+                                <label class="form-check-label small fw-bold" for="IsPercentage">Yüzdelik (%)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Target" class="form-label small fw-bold">Hedef Tipi</label>
+                        <select class="form-select" id="Target" name="Target">
+                            <option value="1">Tüm Sepete Uygula</option>
+                            <option value="2">Belirli Ürünlere Uygula</option>
+                        </select>
+                    </div>
+
+                    <div id="productSelectionArea" class="mb-3 d-none">
+                        <label for="ProductIds" class="form-label small fw-bold">Ürünleri Seçin</label>
+                        <select class="form-select select2-products" id="ProductIds" name="ProductIds" 
+                                multiple="multiple" data-placeholder="Ürün aramak için yazın...">
+                        </select>
+                        <small class="text-muted d-block mt-1">Arama yaparak ürünleri seçebilirsiniz.</small>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light fw-bold" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-ty-orange text-white fw-bold px-4">Kuponu Tanımla</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="updateCouponModal" tabindex="-1" aria-labelledby="updateCouponModalLabel">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header bg-light border-0">
+                <h5 class="modal-title fw-bold" id="updateCouponModalLabel">
+                    <i class="bi bi-ticket-perforated me-2 text-ty-orange"></i>Kuponu Düzenle
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+
+            <form id="updateCouponForm">
+                <input type="hidden" id="UpdateId" name="Id" /> 
+
+                <div class="modal-body p-4">
+
+                    <div class="mb-3">
+                        <label for="UpdateCode" class="form-label small fw-bold">Kupon Kodu</label>
+                        <input type="text" class="form-control" id="UpdateCode" name="Code" placeholder="Örn: Yaz2026" required />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="UpdateDiscountValue" class="form-label small fw-bold">İndirim Miktarı</label>
+                            <input type="number" class="form-control" id="UpdateDiscountValue" name="DiscountValue" step="0.01" required>
+                        </div>
+                        <div class="col-md-6 mb-3 d-flex align-items-end">
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" id="UpdateIsPercentage" name="IsPercentage">
+                                <label class="form-check-label small fw-bold" for="UpdateIsPercentage">Yüzdelik (%)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="UpdateTarget" class="form-label small fw-bold">Hedef Tipi</label>
+                        <select class="form-select" id="UpdateTarget" name="Target">
+                            <option value="1">Tüm Sepete Uygula</option>
+                            <option value="2">Belirli Ürünlere Uygula</option>
+                        </select>
+                    </div>
+
+                    <div id="updateProductSelectionArea" class="mb-3 d-none">
+                        <label for="UpdateProductIds" class="form-label small fw-bold">Ürünleri Seçin</label>
+                        <select class="form-select select2-products-update" id="UpdateProductIds" name="ProductIds"
+                                multiple="multiple" data-placeholder="Ürün aramak için yazın...">
+                        </select>
+                        <small class="text-muted d-block mt-1">Arama yaparak ürünleri seçebilirsiniz.</small>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light fw-bold" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-ty-orange text-white fw-bold px-4">Değişiklikleri Kaydet</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<style>
+    .select2-container--bootstrap-5 .select2-selection {
+        border: 1px solid #dee2e6;
+        padding: 0.3rem;
+        min-height: 45px;
+        border-radius: 8px !important;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .select2-container--bootstrap-5.select2-container--focus .select2-selection,
+    .select2-container--bootstrap-5.select2-container--open .select2-selection {
+        border-color: #ff6000 !important; 
+        box-shadow: 0 0 0 0.25rem rgba(255, 96, 0, 0.1) !important;
+    }
+
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+        background-color: #fff4ed !important;
+        border: 1px solid #ffdec9 !important;
+        color: #ff6000 !important;
+        border-radius: 6px !important;
+        padding: 2px 8px !important;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
+        color: #ff6000 !important;
+        margin-right: 5px !important;
+    }
+
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove:hover {
+            background-color: #ff6000 !important;
+            color: #fff !important;
+        }
+
+    .select2-dropdown {
+        border-radius: 12px !important;
+        border: 1px solid #eee !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+        overflow: hidden;
+    }
+
+    .product-item-wrapper {
+        display: flex;
+        align-items: center;
+        padding: 5px;
+    }
+
+    .select2-product-img {
+        width: 38px;
+        height: 38px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-right: 12px;
+        border: 1px solid #eee;
+    }
+
+    .product-info-name {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .select2-container--bootstrap-5 .select2-results__option--highlighted[aria-selected] {
+        background-color: #ff6000 !important;
+    }
+</style>
+
+@section Scripts {
+
+    <script src="~/js/admin/coupon/coupon-list.js" asp-append-version="true"></script>
+}

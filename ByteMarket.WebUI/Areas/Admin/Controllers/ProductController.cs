@@ -133,5 +133,6 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 
 			return Json(new { success = false, message = result.Message });
 		}
+
 	}
 }

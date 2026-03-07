@@ -2,10 +2,11 @@
 
     _toastMixin: Swal.mixin({
         toast: true,
-        position: 'top-end', // Sağ üstten kayar
+        position: 'top-end', 
         showConfirmButton: false,
-        timer: 3000, // 3 saniye sonra kaybolur
+        timer: 3000, 
         timerProgressBar: true,
+        showCloseButton: true,
         didOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)

@@ -2,9 +2,11 @@
 
     $(document).on("click", ".remove-btn", async function (e) {
         e.preventDefault();
-
         const $btn = $(this);
-        var productId = $(this).attr("data-productId");
+
+        $(this).prop('disabled', true);
+
+        var productId = $btn.attr("data-productId");
 
         console.log(productId)
 

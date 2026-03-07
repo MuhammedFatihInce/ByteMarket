@@ -37,7 +37,9 @@ $(document).ready(function () {
         e.preventDefault();
 
         const $btn = $(this);
-        var basketItemId = $(this).attr("data-basketItemId");
+        var basketItemId = $btn.attr("data-basketItemId");
+
+        $btn.prop('disabled', true);
 
         console.log(basketItemId)
 

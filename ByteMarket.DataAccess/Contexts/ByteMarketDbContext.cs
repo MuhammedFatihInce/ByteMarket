@@ -1,4 +1,5 @@
 ﻿
+using System.Text.Json;
 using ByteMarket.Entities.Common;
 using ByteMarket.Entities.Concrete;
 using ByteMarket.Entities.Concrete.Identity;
@@ -21,6 +22,7 @@ namespace ByteMarket.DataAccess.Contexts
 		public DbSet<BasketItem> BasketItems { get; set; }
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<WishList> WhisLists { get; set; }
+		public DbSet<Coupon> Coupons { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
@@ -52,6 +54,11 @@ namespace ByteMarket.DataAccess.Contexts
 			builder.Entity<WishList>()
 				.HasIndex(w => new { w.UserId, w.ProductId })
 				.IsUnique();
+
+			builder.Entity<Coupon>()
+				.HasMany(c => c.Products)
+				.WithMany(p => p.Coupons)
+				.UsingEntity(j => j.ToTable("CouponProducts"));
 
 			base.OnModelCreating(builder);
 		}

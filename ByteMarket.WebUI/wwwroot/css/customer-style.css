@@ -45,10 +45,10 @@
 }
 
 .image-box-basket {
-	height: 100px;
-	width: 75px;
+	height: 64px;
+	width: 64px;
 	background-color: #fff;
-	position: relative;
+	flex-shrink: 0;
 }
 
 .product-title {
