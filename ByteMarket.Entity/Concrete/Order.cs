@@ -9,6 +9,9 @@ namespace ByteMarket.Entities.Concrete
 		public string Address { get; set; }
 		public string OrderCode { get; set; }
 		public Basket Basket { get; set; }
+		public decimal TotalBasePrice { get; set; }
+		public decimal DiscountAmount { get; set; }
+		public decimal FinalTotalPrice { get; set; }
 
 		//public ICollection<Product> Products { get; set; }
 

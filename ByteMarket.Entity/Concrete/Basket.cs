@@ -9,5 +9,6 @@ namespace ByteMarket.Entities.Concrete
 		public AppUser User { get; set; }
 		public Order Order { get; set; }
 		public ICollection<BasketItem> BasketItems { get; set; }
+		public ICollection<Coupon> Coupons { get; set; }
 	}
 }

@@ -9,5 +9,7 @@ namespace ByteMarket.WebUI.Services.Interfaces
 		Task<ApiDataResponse<ListBasketViewModel>> GetBasketItems();
 		Task<ApiDataResponse<object>> RemoveBasketItem(string basketItemId);
 		Task<ApiDataResponse<object>> UpdateQuantity(UpdateBasketItemQuantityViewModel model);
+		Task<ApiDataResponse<object>> ApplyCouponToBasketAsync(string couponCode);
+		Task<ApiDataResponse<object>> RemoveCouponFromBasket(string couponId);
 	}
 }

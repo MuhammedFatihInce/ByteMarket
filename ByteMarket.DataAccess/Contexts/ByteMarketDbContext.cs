@@ -1,5 +1,4 @@
 ﻿
-using System.Text.Json;
 using ByteMarket.Entities.Common;
 using ByteMarket.Entities.Concrete;
 using ByteMarket.Entities.Concrete.Identity;
@@ -59,6 +58,10 @@ namespace ByteMarket.DataAccess.Contexts
 				.HasMany(c => c.Products)
 				.WithMany(p => p.Coupons)
 				.UsingEntity(j => j.ToTable("CouponProducts"));
+
+			builder.Entity<Basket>()
+				.HasMany(b => b.Coupons)
+				.WithMany(c => c.Baskets);
 
 			base.OnModelCreating(builder);
 		}

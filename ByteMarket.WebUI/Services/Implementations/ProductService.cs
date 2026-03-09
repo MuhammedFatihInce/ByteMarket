@@ -100,5 +100,11 @@ namespace ByteMarket.WebUI.Services.Implementations
 			return await _apiService.DeleteAsync<object>("ProductImages", id);
 		}
 
+		public async Task<ApiDataResponse<List<GetAllProductByFilterViewModel>>> GetAllProductByFilterAsync(string q)
+		{
+
+			return await _apiService.GetAllAsync<GetAllProductByFilterViewModel>($"Product/GetAllProductsByFilter?q={q}");
+		}
+
 	}
 }

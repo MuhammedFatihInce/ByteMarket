@@ -126,6 +126,24 @@ namespace ByteMarket.Business.Concrete
 			return new SuccessResult("Ürün ve bağlı tüm görseller başarıyla temizlendi.");
 		}
 
+		public async Task<IDataResult<List<GetAllProductByFilterDto>>> GetAllProductsByFilterAsync(string q)
+		{
+			var query = _productReadRepository.GetWhere(x => x.Name.Contains(q), false)
+				.Include(p=>p.ProductImageFiles);
+
+			var products = await query
+				.ProjectTo<GetAllProductByFilterDto>(_mapper.ConfigurationProvider)
+				.ToListAsync();
+
+			if (products == null || !products.Any())
+			{
+				return new ErrorDataResult<List<GetAllProductByFilterDto>>("Listelenecek ürün bulunamadı.");
+			}
+
+			return new SuccessDataResult<List<GetAllProductByFilterDto>>(products, "Ürünler başarıyla listelendi.");
+		}
+
+
 
 	}
 }

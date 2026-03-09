@@ -35,13 +35,13 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> GetAllProductsForSelect()
+		public async Task<IActionResult> GetAllProductsForSelect([FromQuery] string q)
 		{
 			var apiBaseUrl = _configuration["ApiSettings:BaseStorageAdress"];
 			string noImageUrl = "https://placehold.co/100x100?text=Resim+Yok";
 
 
-			var products = await _productService.GetProductsForAdminAsync();
+			var products = await _productService.GetAllProductByFilterAsync(q);
 
 			if (products?.Data == null)
 			{

@@ -11,5 +11,6 @@ namespace ByteMarket.Business.Abstract
 		Task<IDataResult<string>> CreateProductAsync(CreateProductDto createProductDto);
 		Task<IResult> UpdateProductAsync(UpdateProductDto updateProductDto);
 		Task<IResult> DeleteProductAsync(string id);
+		Task<IDataResult<List<GetAllProductByFilterDto>>> GetAllProductsByFilterAsync(string q);
 	}
 }

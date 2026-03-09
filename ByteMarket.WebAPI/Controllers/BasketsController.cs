@@ -43,6 +43,20 @@ namespace ByteMarket.WebAPI.Controllers
 			var result = await _basketService.UpdateQuantityAsync(dto);
 			return CreateActionResult(result);
 		}
-		
+
+		[HttpPost("ApplyCouponToBasket")]
+		public async Task<IActionResult> ApplyCouponToBasket([FromBody]string couponCode)
+		{
+			var result = await _basketService.ApplyCouponToBasketAsync(couponCode);
+			return CreateActionResult(result);
+		}
+
+		[HttpDelete("RemoveCouponFromBasket/{couponId}")]
+		public async Task<IActionResult> RemoveCouponFromBasket(string couponId)
+		{
+			var result = await _basketService.RemoveCouponFromBasketAsync(couponId);
+			return CreateActionResult(result);
+		}
+
 	}
 }

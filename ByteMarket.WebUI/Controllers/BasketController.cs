@@ -70,5 +70,23 @@ namespace ByteMarket.WebUI.Controllers
 
 			return Json(new { success = false, message = result.Message });
 		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> ApplyCouponToBasket([FromBody]string couponCode)
+		{
+			var result = await _basketService.ApplyCouponToBasketAsync(couponCode);
+
+			return Json(new { success = result.Success, message = result.Message });
+		}
+
+		[HttpDelete("Basket/RemoveCouponFromBasket/{couponId}")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> RemoveCouponFromBasket(string couponId)
+		{
+			var result = await _basketService.RemoveCouponFromBasket(couponId);
+
+			return Json(new { success = result.Success, message = result.Message });
+		}
 	}
 }

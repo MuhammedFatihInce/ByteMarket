@@ -10,5 +10,7 @@ namespace ByteMarket.Business.Abstract
 		Task<IDataResult<ListBasketDto>> GetBasketItemsAsync();
 		Task<IResult> RemoveBasketItemAsync(string basketItemId);
 		Task<IResult> UpdateQuantityAsync(UpdateBasketItemQuantityDto dto);
+		Task<IResult> ApplyCouponToBasketAsync(string couponCode);
+		Task<IResult> RemoveCouponFromBasketAsync(string id);
 	}
 }

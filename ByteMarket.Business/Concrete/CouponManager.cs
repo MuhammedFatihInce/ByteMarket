@@ -68,10 +68,14 @@ namespace ByteMarket.Business.Concrete
 			var couponDtosList = coupons.Select(c => new SingleCouponDto
 			{
 				Id = c.Id.ToString(),
+				Name = c.Name,
 				Code = c.Code,
 				DiscountValue = c.DiscountValue,
 				IsPercentage = c.IsPercentage,
 				Target = (int)c.Target,
+				ExpireTime = c.ExpireTime,
+				IsStackable = c.IsStackable,
+				UsageLimitPerUser = c.UsageLimitPerUser,
 				Products = c.Products.Select(p=> new CouponProductDto()
 				{
 					Id = p.Id.ToString(),
@@ -107,10 +111,14 @@ namespace ByteMarket.Business.Concrete
 			var couponDto = new SingleCouponDto
 			{
 				Id = coupon.Id.ToString(),
+				Name = coupon.Name,
 				Code = coupon.Code,
 				DiscountValue = coupon.DiscountValue,
 				IsPercentage = coupon.IsPercentage,
 				Target = (int)coupon.Target,
+				ExpireTime = coupon.ExpireTime,
+				IsStackable = coupon.IsStackable,
+				UsageLimitPerUser = coupon.UsageLimitPerUser,
 				Products = coupon.Products.Select(p => new CouponProductDto()
 				{
 					Id = p.Id.ToString(),
@@ -134,10 +142,14 @@ namespace ByteMarket.Business.Concrete
 			if (coupon == null) return new ErrorResult("Kupon bulunamadı.");
 
 			coupon.Id = Guid.Parse(updateCouponDto.Id);
+			coupon.Name = updateCouponDto.Name;
 			coupon.Code = updateCouponDto.Code;
 			coupon.DiscountValue = updateCouponDto.DiscountValue;
 			coupon.IsPercentage = updateCouponDto.IsPercentage;
 			coupon.Target = (DiscountTarget)updateCouponDto.Target;
+			coupon.ExpireTime = updateCouponDto.ExpireTime;
+			coupon.IsStackable = updateCouponDto.IsStackable;
+			coupon.UsageLimitPerUser = updateCouponDto.UsageLimitPerUser;
 
 			if (updateCouponDto.Target == 2 && updateCouponDto.ProductIds != null && updateCouponDto.ProductIds.Any())
 			{

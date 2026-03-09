@@ -4,6 +4,7 @@ using ByteMarket.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ByteMarket.DataAccess.Migrations
 {
     [DbContext(typeof(ByteMarketDbContext))]
-    partial class ByteMarketDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260307202309_updateOrderForCoupon")]
+    partial class updateOrderForCoupon
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,25 +25,13 @@ namespace ByteMarket.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BasketCoupon", b =>
-                {
-                    b.Property<Guid>("BasketsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CouponsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("BasketsId", "CouponsId");
-
-                    b.HasIndex("CouponsId");
-
-                    b.ToTable("BasketCoupon");
-                });
-
             modelBuilder.Entity("ByteMarket.Entities.Concrete.Basket", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CouponId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateDate")
@@ -53,6 +44,8 @@ namespace ByteMarket.DataAccess.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CouponId");
 
                     b.HasIndex("UserId");
 
@@ -168,27 +161,14 @@ namespace ByteMarket.DataAccess.Migrations
                     b.Property<decimal>("DiscountValue")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("ExpireTime")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool>("IsPercentage")
                         .HasColumnType("bit");
-
-                    b.Property<bool>("IsStackable")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Target")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("UsageLimitPerUser")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -595,28 +575,20 @@ namespace ByteMarket.DataAccess.Migrations
                     b.ToTable("ProductProductImageFile");
                 });
 
-            modelBuilder.Entity("BasketCoupon", b =>
-                {
-                    b.HasOne("ByteMarket.Entities.Concrete.Basket", null)
-                        .WithMany()
-                        .HasForeignKey("BasketsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ByteMarket.Entities.Concrete.Coupon", null)
-                        .WithMany()
-                        .HasForeignKey("CouponsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ByteMarket.Entities.Concrete.Basket", b =>
                 {
+                    b.HasOne("ByteMarket.Entities.Concrete.Coupon", "Coupon")
+                        .WithMany("Baskets")
+                        .HasForeignKey("CouponId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("ByteMarket.Entities.Concrete.Identity.AppUser", "User")
                         .WithMany("Baskets")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Coupon");
 
                     b.Navigation("User");
                 });
@@ -787,6 +759,11 @@ namespace ByteMarket.DataAccess.Migrations
                 {
                     b.Navigation("Category")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ByteMarket.Entities.Concrete.Coupon", b =>
+                {
+                    b.Navigation("Baskets");
                 });
 
             modelBuilder.Entity("ByteMarket.Entities.Concrete.Identity.AppUser", b =>

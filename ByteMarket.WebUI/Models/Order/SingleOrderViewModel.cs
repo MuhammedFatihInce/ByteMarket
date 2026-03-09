@@ -8,5 +8,8 @@
 		public string Description { get; set; }
 		public DateTime CreatedDate { get; set; }
 		public IEnumerable<OrderItemViewModel> BasketItems { get; set; }
+		public decimal TotalBasePrice { get; set; }
+		public decimal DiscountAmount { get; set; }
+		public decimal FinalTotalPrice { get; set; }
 	}
 }

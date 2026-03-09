@@ -57,5 +57,12 @@ namespace ByteMarket.WebAPI.Controllers
 			var result = await _productService.DeleteProductAsync(id);
 			return CreateActionResult(result, errorStatusCode: 404);
 		}
+
+		[HttpGet("GetAllProductsByFilter")]
+		public async Task<IActionResult> GetAllProductsByFilter([FromQuery]string q)
+		{
+			var result = await _productService.GetAllProductsByFilterAsync(q);
+			return CreateActionResult(result);
+		}
 	}
 }

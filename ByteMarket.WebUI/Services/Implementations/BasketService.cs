@@ -33,6 +33,16 @@ namespace ByteMarket.WebUI.Services.Implementations
 		{
 			return await _apiService.PutAsync<object>("Baskets", model);
 		}
-		
+
+		public async Task<ApiDataResponse<object>> ApplyCouponToBasketAsync(string couponCode)
+		{
+			return await _apiService.PostAsync<object>("Baskets/ApplyCouponToBasket", couponCode);
+		}
+
+		public async Task<ApiDataResponse<object>> RemoveCouponFromBasket(string couponId)
+		{
+			return await _apiService.DeleteAsync<object>("Baskets/RemoveCouponFromBasket", couponId);
+		}
+
 	}
 }

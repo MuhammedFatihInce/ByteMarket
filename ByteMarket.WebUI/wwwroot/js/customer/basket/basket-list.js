@@ -85,6 +85,9 @@ $(document).ready(function () {
         const year = expiryParts.length > 1 ? "20" + expiryParts[1] : "";
 
         var basketId = $(this).find('button[type="submit"]').attr("data-basketId");
+        var totalBasePrice = $(this).find('button[type="submit"]').attr("data-totalBasePrice");
+        var discountAmount = $(this).find('button[type="submit"]').attr("data-discountAmount");
+        var finalTotalPrice = $(this).find('button[type="submit"]').attr("data-finalTotalPrice");
                 
 
         const requestData = {
@@ -92,7 +95,10 @@ $(document).ready(function () {
             orderModel: {
                 Address: $("#adress").val(),
                 Description: $("#description").val(),
-                BasketId: basketId
+                BasketId: basketId,
+                TotalBasePrice: parseFloat(totalBasePrice.replace(',', '.')),
+                DiscountAmount: parseFloat(discountAmount.replace(',', '.')),
+                FinalTotalPrice: parseFloat(finalTotalPrice.replace(',', '.'))
             },
 
             paymentModel: {
@@ -101,7 +107,7 @@ $(document).ready(function () {
                 ExpirationMonth: month,
                 ExpirationYear: year,
                 Cvv: $('#cardCvc').val(),
-                TotalAmount: parseFloat("@Model.BasketItem.Sum(x => x.Total)".replace(',', '.'))
+                TotalAmount: parseFloat(finalTotalPrice.replace(',', '.'))
             }
         };
 
@@ -125,6 +131,77 @@ $(document).ready(function () {
         }
                
         Alert.toast({ title: "Ödemeniz alınıyor, lütfen bekleyin...", icon: 'info' });
+    });
+});
+
+
+$(document).ready(function () {
+
+    $(document).on("click", ".coupon-apply-button", async function () {
+
+        const $btn = $(this);
+
+        $btn.prop('disabled', true);
+
+        let inputValue = $btn.closest('.flex-column').find('#couponCode').val();
+
+        try {
+            const response = await CustomAjax.post('/Basket/ApplyCouponToBasket', inputValue);
+
+            if (response && response.success) {
+                Alert.toast({ title: response.message, icon: 'success' });
+                location.reload();
+            } else {
+                Alert.toast({ title: response.message || "Kupon uygulanmadı.", icon: 'error' });
+            }
+        } catch (error) {
+            console.error("Kupon hatası:", error);
+            Alert.toast({ title: "Bir hata oluştu", icon: 'error' });
+        } finally {
+            $btn.prop('disabled', false);
+        }
+
+        
+
+    });
+});
+
+
+$(document).ready(function () {
+
+    $(document).on("click", ".remove-coupon-btn", async function (e) {
+        console.log("Butona tıklandı!");
+        e.preventDefault();
+
+        const $btn = $(this);
+        var couponId = $btn.attr("data-id");
+
+
+        $btn.prop('disabled', true);
+
+        const $couponElement = $btn.closest('.coupon-group');
+
+        try {
+            const response = await CustomAjax.delete(`/Basket/RemoveCouponFromBasket/${couponId}`);
+
+            if (response && response.success) {
+                Alert.toast({ title: response.message, icon: 'success' });
+
+                $couponElement.fadeOut(300, function () {
+                    $(this).remove();
+                    location.reload();
+                });
+            } else {
+                Alert.toast({ title: response.message || "Silinemedi", icon: 'error' });
+            }
+        } catch (error) {
+            console.error("Kupon silme hatası:", error);
+            Alert.toast({ title: "Bir hata oluştu", icon: 'error' });
+        }
+        finally {
+            $btn.prop('disabled', false);
+        }
+
     });
 });
   

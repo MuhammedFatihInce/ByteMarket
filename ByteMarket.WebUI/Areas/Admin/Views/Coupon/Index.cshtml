@@ -19,10 +19,13 @@
             <table class="table align-middle table-hover border-top">
                 <thead>
                     <tr class="text-secondary small text-uppercase" style="background-color: #fafafa;">
+                        <th class="py-3 ps-3">Kupon Adı</th>
                         <th class="py-3 ps-3">Kupon Kodu</th>
                         <th class="py-3">Hedef Tipi</th>
                         <th class="py-3">İndirim Miktarı</th>
                         <th class="py-3">İndirim Tipi</th>
+                        <th class="py-3">Kupon Özelliği</th>
+                        <th class="py-3">Kullanıcı Başına Limit</th>
                         <th class="py-3 text-end pe-3">İşlemler</th>
                     </tr>
                 </thead>
@@ -33,8 +36,11 @@
                         {
                             <tr id="coupon-row-@coupon.Id">
                                 <td class="ps-3">
-                                    <div class="fw-bold text-dark">@coupon.Code</div>
+                                    <div class="fw-bold text-dark">@coupon.Name</div>
                                     <small class="text-muted" style="font-size: 11px;">ID: @coupon.Id</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary fw-bold text-white">@coupon.Code</span>
                                 </td>
                                 <td>
                                     @if (coupon.Target == 2)
@@ -58,6 +64,34 @@
                                     {
                                         <span class="badge bg-warning text-white border">Sabit Tutar</span>
                                     }
+                                </td>
+                                <td>
+                                    @if (coupon.IsStackable)
+                                    {
+                                        <span class="badge bg-success text-white border">Birleştirilebilir</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger text-white border">Birleştirilemez</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <span class="fw-bold text-dark">@coupon.UsageLimitPerUser</span>
+                                </td>
+                                <td>
+                                    @if (coupon.ExpireTime >= DateTime.UtcNow)
+                                    {
+                                        <span class="badge rounded-pill bg-success px-3 py-2">
+                                            <i class="bi bi-calendar-event me-1"></i>@coupon.ExpireTime.ToString("dd.MM.yyyy")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill bg-danger px-3 py-2">
+                                            <i class="bi bi-calendar-event me-1"></i>@coupon.ExpireTime.ToString("dd.MM.yyyy")
+                                        </span>
+                                    }
+
                                 </td>
                                 <td class="text-end pe-3">
                                     <div class="btn-group">
@@ -104,11 +138,18 @@
             <form id="createCouponForm">
 
                 <div class="modal-body p-4">
-                   
-                    <div class="mb-3">
-                        <label for="Code" class="form-label small fw-bold">Kupon Kodu</label>
-                        <input type="text" class="form-control" id="Code" name="Code" placeholder="Örn: Yaz2026" required />
+
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label for="Name" class="form-label small fw-bold">Kupon Adı</label>
+                            <input type="text" class="form-control" id="Name" name="Name" placeholder="Örn: Yaz İndirimi" required />
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="Code" class="form-label small fw-bold">Kupon Kodu</label>
+                            <input type="text" class="form-control" id="Code" name="Code" placeholder="Örn: Yaz2026" required />
+                        </div>
                     </div>
+                   
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -137,6 +178,24 @@
                                 multiple="multiple" data-placeholder="Ürün aramak için yazın...">
                         </select>
                         <small class="text-muted d-block mt-1">Arama yaparak ürünleri seçebilirsiniz.</small>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+                        <input type="text" id="calenderPicker" class="form-control" placeholder="Kupon Son kullnım tarihi...">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="UsageLimitPerUser" class="form-label small fw-bold">Kullanıcı Başına Limit</label>
+                            <input type="number" class="form-control" id="UsageLimitPerUser" name="UsageLimitPerUser" step="1" required>
+                        </div>
+                        <div class="col-md-6 mb-3 d-flex align-items-end">
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" id="IsStackable" name="IsStackable">
+                                <label class="form-check-label small fw-bold" for="IsStackable">Birleştirilebilir</label>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -168,9 +227,16 @@
 
                 <div class="modal-body p-4">
 
-                    <div class="mb-3">
-                        <label for="UpdateCode" class="form-label small fw-bold">Kupon Kodu</label>
-                        <input type="text" class="form-control" id="UpdateCode" name="Code" placeholder="Örn: Yaz2026" required />
+
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label for="UpdateName" class="form-label small fw-bold">Kupon Adı</label>
+                            <input type="text" class="form-control" id="UpdateName" name="Name" placeholder="Örn: Yaz İndirimi" required />
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="UpdateCode" class="form-label small fw-bold">Kupon Kodu</label>
+                            <input type="text" class="form-control" id="UpdateCode" name="Code" placeholder="Örn: Yaz2026" required />
+                        </div>
                     </div>
 
                     <div class="row">
@@ -202,6 +268,24 @@
                         <small class="text-muted d-block mt-1">Arama yaparak ürünleri seçebilirsiniz.</small>
                     </div>
 
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+                        <input type="text" id="updateCalenderPicker" class="form-control" placeholder="Kupon Son kullnım tarihi...">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="updateUsageLimitPerUser" class="form-label small fw-bold">Kullanıcı Başına Limit</label>
+                            <input type="number" class="form-control" id="updateUsageLimitPerUser" name="UsageLimitPerUser" step="1" required>
+                        </div>
+                        <div class="col-md-6 mb-3 d-flex align-items-end">
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" id="updateIsStackable" name="IsStackable">
+                                <label class="form-check-label small fw-bold" for="updateIsStackable">Birleştirilebilir</label>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="modal-footer border-0">
@@ -220,12 +304,34 @@
 
 
 <style>
+   
+    /* 1. ÖNCEKİ KURALI GÜNCELLİYORUZ (flex-wrap eklendi) */
     .select2-container--bootstrap-5 .select2-selection {
         border: 1px solid #dee2e6;
         padding: 0.3rem;
-        min-height: 45px;
+        min-height: 45px !important;
         border-radius: 8px !important;
         transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap; /* Seçilenler çoğaldıkça alta inmesini sağlar */
+    }
+
+    /* 2. ARAMA INPUTUNU DÜZELTİYORUZ (Kalın kutuyu kaldıran kısım burası!) */
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-search--inline .select2-search__field {
+        margin-top: 0;
+        min-height: 28px;
+        background: transparent !important; /* Arka planı tamamen şeffaf yap */
+        border: none !important; /* Eğer bir kenarlık varsa kaldır */
+        box-shadow: none !important; /* Varsa gölgeleri kaldır */
+        color: #333 !important; /* Yazı rengini koyu gri yap */
+        font-family: inherit;
+        outline: none !important; /* Tıklanma (focus) anındaki çizgiyi kaldır */
+    }
+
+    /* Eğer hala küçük görünüyorsa, Select2 kapsayıcısının %100 genişlikte olduğundan emin olalım */
+    .select2-container {
+        width: 100% !important;
     }
 
     .select2-container--bootstrap-5.select2-container--focus .select2-selection,
@@ -285,6 +391,10 @@
     .select2-container--bootstrap-5 .select2-results__option--highlighted[aria-selected] {
         background-color: #ff6000 !important;
     }
+
+
+
+
 </style>
 
 @section Scripts {

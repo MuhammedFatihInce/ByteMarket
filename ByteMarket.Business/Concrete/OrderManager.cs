@@ -27,7 +27,10 @@ namespace ByteMarket.Business.Concrete
 				Address = createOrderDto.Address,
 				Id = Guid.Parse(createOrderDto.BasketId),
 				Description = createOrderDto.Description,
-				OrderCode = orderCode
+				OrderCode = orderCode,
+				DiscountAmount = createOrderDto.DiscountAmount,
+				TotalBasePrice = createOrderDto.TotalBasePrice,
+				FinalTotalPrice = createOrderDto.FinalTotalPrice
 			});
 
 			if (result)
@@ -45,7 +48,8 @@ namespace ByteMarket.Business.Concrete
 				.Include(o => o.Basket)
 				.ThenInclude(b => b.User)
 				.Include(o => o.Basket)
-				.ThenInclude(b => b.BasketItems);
+				.ThenInclude(b => b.BasketItems)
+				.Include(o => o.Basket);
 
 			if (query == null) new ErrorDataResult<List<OrderListDetailDto>>("Siparişler bulunamadı.");
 
@@ -55,7 +59,7 @@ namespace ByteMarket.Business.Concrete
 				OrderCode = o.OrderCode,
 				CreatedDate = o.CreateDate,
 				UserName = o.Basket.User.UserName,
-				TotalPrice = o.Basket.BasketItems.Sum(bi => bi.Price * bi.Quantity)
+				TotalPrice = o.FinalTotalPrice
 			}).ToListAsync();
 
 
@@ -89,7 +93,10 @@ namespace ByteMarket.Business.Concrete
 						: null,
 					Price = bi.Price,
 					Quantity = bi.Quantity
-				})
+				}),
+				DiscountAmount = data.DiscountAmount,
+				FinalTotalPrice = data.FinalTotalPrice,
+				TotalBasePrice = data.TotalBasePrice
 			};
 
 			return new SuccessDataResult<SingleOrderDto>(singleOrder);

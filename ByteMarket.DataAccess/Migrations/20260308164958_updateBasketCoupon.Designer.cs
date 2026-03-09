@@ -4,6 +4,7 @@ using ByteMarket.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ByteMarket.DataAccess.Migrations
 {
     [DbContext(typeof(ByteMarketDbContext))]
-    partial class ByteMarketDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260308164958_updateBasketCoupon")]
+    partial class updateBasketCoupon
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -174,9 +177,6 @@ namespace ByteMarket.DataAccess.Migrations
                     b.Property<bool>("IsPercentage")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsStackable")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -186,9 +186,6 @@ namespace ByteMarket.DataAccess.Migrations
 
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("UsageLimitPerUser")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
