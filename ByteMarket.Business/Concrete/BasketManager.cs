@@ -242,18 +242,16 @@ namespace ByteMarket.Business.Concrete
 			if (coupon == null)
 				return new ErrorResult("Geçersiz veya süresi dolmuş kupon.");
 
+			if (coupon.UsageLimitPerUser == 0)
+				return new ErrorResult("Bu kupon kullanılamaz.");
 
-			if (coupon.UsageLimitPerUser > 0)
+			var usedCount = await _orderReadRepository.Table
+				.CountAsync(o => o.Basket.UserId == Guid.Parse(currentUserId) &&
+				                 o.Basket.Coupons.Any(c => c.Id == coupon.Id));
+
+			if (usedCount >= coupon.UsageLimitPerUser)
 			{
-				
-				var usedCount = await _orderReadRepository.Table
-					.CountAsync(o => o.Basket.UserId == Guid.Parse(currentUserId) &&
-					                 o.Basket.Coupons.Any(c => c.Id == coupon.Id));
-
-				if (usedCount >= coupon.UsageLimitPerUser)
-				{
-					return new ErrorResult($"Bu kuponu en fazla {coupon.UsageLimitPerUser} kez kullanabilirsiniz. Kullanım limitiniz dolmuştur.");
-				}
+				return new ErrorResult($"Bu kuponu en fazla {coupon.UsageLimitPerUser} kez kullanabilirsiniz. Kullanım limitiniz dolmuştur.");
 			}
 
 			basket.Coupons ??= new List<Coupon>();

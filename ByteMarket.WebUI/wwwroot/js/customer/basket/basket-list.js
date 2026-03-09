@@ -18,8 +18,8 @@ async function changeQuantity(itemId, amount) {
             const response = await CustomAjax.post('/Basket/UpdateQuantity', basketData);
 
             if (response && response.success) {
-                    $input.val(newVal);
-                    location.reload()
+                $input.val(newVal);
+                location.reload()
             }
 
         } catch (error) {

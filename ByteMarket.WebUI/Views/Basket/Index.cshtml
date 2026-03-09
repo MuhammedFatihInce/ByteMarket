@@ -56,7 +56,7 @@
                                                 <button class="btn btn-white rounded-circle border-0 shadow-none px-2 text-muted"
                                                         type="button"
                                                         onclick="changeQuantity('@item.BasketItemId', -1)">
-                                                    <i class="fa fa-minus" style="font-size: 0.75rem;"></i>
+                                                    <i class="fa fa-minus @(item.Quantity == 1 ? "" : "text-ty-orange")" style="font-size: 0.75rem;"></i>
                                                 </button>
 
                                                 <input type="text"

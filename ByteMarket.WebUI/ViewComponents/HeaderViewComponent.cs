@@ -1,30 +1,36 @@
-﻿
-using ByteMarket.WebUI.Models.Category;
-using ByteMarket.WebUI.Services.Interfaces;
+﻿using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ByteMarket.WebUI.ViewComponents
 {
 	public class HeaderViewComponent : ViewComponent
 	{
-		private readonly ICategoryService _categoryService;
+		private readonly IBasketService _basketService;
 
-		public HeaderViewComponent(ICategoryService categoryService)
+		public HeaderViewComponent(IBasketService basketService)
 		{
-			_categoryService = categoryService;
+			_basketService = basketService;
 		}
 		public async Task<IViewComponentResult> InvokeAsync()
 		{
-			var categories = new List<ListCategoryViewModel>();
+			int basketCount = 0;
 
-			var result = await _categoryService.GetCategoriesAsync();
-
-			if (result.Success && result.Data != null)
+			if (User.Identity.IsAuthenticated)
 			{
-				return View(result.Data);
+				var result = await _basketService.GetBasketItems();
+
+
+
+				if (result.Success && result.Data != null)
+				{
+					basketCount = result.Data.BasketItem.Sum(x => x.Quantity);
+
+				}
 			}
 
-			return View(categories); 
+			
+
+			return View(basketCount); 
 		}
 	}
 }

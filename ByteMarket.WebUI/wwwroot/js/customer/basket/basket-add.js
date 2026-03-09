@@ -17,6 +17,7 @@
 
             if (response && response.success) {
                 Alert.toast({ title: response.message, icon: 'success' });
+                location.reload();
             }
 
         } catch (error) {

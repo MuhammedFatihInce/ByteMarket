@@ -80,6 +80,10 @@ builder.Services.AddAuthorization(options =>
 	options.AddPolicy(AuthorizePolicies.FullRoleManagement, policy =>
 		policy.RequireClaim("Permission",
 			AuthorizePolicies.RolesPermissions));
+
+	options.AddPolicy(AuthorizePolicies.FullCouponManagement, policy =>
+		policy.RequireClaim("Permission",
+			AuthorizePolicies.CouponPermissions));
 });
 
 var apiBaseAddress = builder.Configuration.GetSection("ApiSettings:BaseAddress").Value;

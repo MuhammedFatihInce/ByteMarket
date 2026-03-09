@@ -1,9 +1,13 @@
 ﻿using ByteMarket.Business.Abstract;
 using ByteMarket.Business.DTOs.Coupon;
+using ByteMarket.Entities.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ByteMarket.WebAPI.Controllers
 {
+	[Authorize(Policy = AuthorizePolicies.FullCouponManagement)]
+
 	public class CouponController : BaseController
 	{
 		private readonly ICouponService _couponService;

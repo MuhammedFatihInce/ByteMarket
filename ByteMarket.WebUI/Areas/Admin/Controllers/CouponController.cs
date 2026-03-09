@@ -1,9 +1,11 @@
 ﻿using ByteMarket.WebUI.Areas.Admin.Models.Coupon;
+using ByteMarket.WebUI.Constants;
 using ByteMarket.WebUI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace ByteMarket.WebUI.Areas.Admin.Controllers
 {
-	[Area("Admin")]
+	[Area("Admin"), Authorize(Policy = AuthorizePolicies.FullCouponManagement)]
 	public class CouponController : Controller
 	{
 		private readonly ICouponService _couponService;
