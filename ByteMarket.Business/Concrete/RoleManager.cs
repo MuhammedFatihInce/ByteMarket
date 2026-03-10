@@ -43,11 +43,22 @@ namespace ByteMarket.Business.Concrete
 			AppUser? user = await _userManager.FindByIdAsync(assignRoleDto.UserId);
 			if (user == null) return new ErrorResult("Kullanıcı bulunamadı.");
 
-			var userRoles = await _userManager.GetRolesAsync(user);
-			await _userManager.RemoveFromRolesAsync(user, userRoles);
+			IdentityResult result;
 
-			IdentityResult result = await _userManager.AddToRolesAsync(user, assignRoleDto.Roles);
-			if (result.Succeeded) return new SuccessResult("Roller başarıyla atandı.");
+			if (assignRoleDto.IsAdding)
+			{
+				if (await _userManager.IsInRoleAsync(user, assignRoleDto.RoleName))
+					return new SuccessResult("Kullanıcı zaten bu role sahip.");
+
+				result = await _userManager.AddToRoleAsync(user, assignRoleDto.RoleName);
+			}
+			else
+			{
+				result = await _userManager.RemoveFromRoleAsync(user, assignRoleDto.RoleName);
+			}
+
+			
+			if (result.Succeeded) return new SuccessResult("İşlem başarılı.");
 			return new ErrorResult("Rol atama işlemi başarısız.");
 		}
 

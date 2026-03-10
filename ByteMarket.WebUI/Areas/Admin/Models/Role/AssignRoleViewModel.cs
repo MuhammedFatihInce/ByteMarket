@@ -3,6 +3,7 @@
 	public class AssignRoleViewModel
 	{
 		public string UserId { get; set; }
-		public string[] Roles { get; set; }
+		public string RoleName { get; set; }
+		public bool IsAdding { get; set; }
 	}
 }

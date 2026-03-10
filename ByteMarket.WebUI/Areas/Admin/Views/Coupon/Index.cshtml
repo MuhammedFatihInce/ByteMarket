@@ -305,7 +305,6 @@
 
 <style>
    
-    /* 1. ÖNCEKİ KURALI GÜNCELLİYORUZ (flex-wrap eklendi) */
     .select2-container--bootstrap-5 .select2-selection {
         border: 1px solid #dee2e6;
         padding: 0.3rem;
@@ -314,22 +313,20 @@
         transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
         display: flex;
         align-items: center;
-        flex-wrap: wrap; /* Seçilenler çoğaldıkça alta inmesini sağlar */
+        flex-wrap: wrap; 
     }
 
-    /* 2. ARAMA INPUTUNU DÜZELTİYORUZ (Kalın kutuyu kaldıran kısım burası!) */
     .select2-container--bootstrap-5 .select2-selection--multiple .select2-search--inline .select2-search__field {
         margin-top: 0;
         min-height: 28px;
-        background: transparent !important; /* Arka planı tamamen şeffaf yap */
-        border: none !important; /* Eğer bir kenarlık varsa kaldır */
-        box-shadow: none !important; /* Varsa gölgeleri kaldır */
-        color: #333 !important; /* Yazı rengini koyu gri yap */
+        background: transparent !important; 
+        border: none !important; 
+        box-shadow: none !important; 
+        color: #333 !important; 
         font-family: inherit;
-        outline: none !important; /* Tıklanma (focus) anındaki çizgiyi kaldır */
+        outline: none !important; 
     }
 
-    /* Eğer hala küçük görünüyorsa, Select2 kapsayıcısının %100 genişlikte olduğundan emin olalım */
     .select2-container {
         width: 100% !important;
     }

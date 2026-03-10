@@ -10,5 +10,6 @@ namespace ByteMarket.Business.Abstract
 		Task<IResult> CreateAsync(CreateUserDto createUserDto);
 		Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime refreshTokenDate);
 		Task<IDataResult<List<UserListDto>>> GetAllUsersWithRolesAsync();
+		Task<IDataResult<List<GetAllUsersByFilterDto>>> GetAllUsersByFilterAsync(string q);
 	}
 }

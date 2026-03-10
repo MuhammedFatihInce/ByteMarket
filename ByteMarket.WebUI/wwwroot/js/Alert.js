@@ -43,7 +43,10 @@
             successMessage: 'İşlem başarıyla tamamlandı.',
             onConfirm: async () => { }, 
             showSuccessAlert: true,
-            successAsToast: true
+            successAsToast: true,
+            didClose: () => { },
+            willClose: () => { },
+            onClose: () => { }
         };
 
         const settings = { ...defaults, ...options };
@@ -57,7 +60,9 @@
             cancelButtonColor: settings.cancelButtonColor,
             confirmButtonText: settings.confirmButtonText,
             cancelButtonText: settings.cancelButtonText,
-            reverseButtons: settings.reverseButtons
+            reverseButtons: settings.reverseButtons,
+            didClose: settings.didClose,
+            willClose: settings.willClose
         });
 
         if (result.isConfirmed) {

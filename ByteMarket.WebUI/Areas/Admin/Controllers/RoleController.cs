@@ -10,19 +10,23 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 	public class RoleController : Controller
 	{
 		private readonly IRoleService _roleService;
+		private readonly IUserService _userService;
 
-		public RoleController(IRoleService roleService)
+		public RoleController(IRoleService roleService, IUserService userService)
 		{
 			_roleService = roleService;
+			_userService = userService;
 		}
 
 		public async Task<IActionResult> Index()
 		{
-			var result = await _roleService.GetAllRolesAsync();
+			var usersResult = await _userService.GetAllUsersWithRolesAsync();
+
+			var allRolesResult = await _roleService.GetAllRolesAsync();
 
 			ViewBag.AllPermissions = AuthorizePolicies.GetSystemPermissions();
 
-			return View(result.Data ?? new List<RoleListViewModel>());
+			return View((usersResult.Data, allRolesResult.Data));
 		}
 
 		[HttpPost]
@@ -98,6 +102,49 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 				return Json(new { success = true, data = result.Data });
 			}
 			return Json(new { success = false, message = result.Message ?? "Yetkiler alınamadı." });
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> GetAllUsersForSelect([FromQuery] string q)
+		{
+
+			var users = await _userService.GetAllUsersByFilterAsync(q);
+
+			if (users?.Data == null)
+			{
+				return Json(new List<object>());
+			}
+
+			var result = users.Data.Select(u =>
+			{
+				return new
+				{
+					id = u.Id,
+					text = u.NameSurname,
+					email = u.Email,
+					roleIds = u.RoleIds
+				};
+			}).ToList();
+
+			return Json(result);
+		}
+
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AssignRole([FromBody] AssignRoleViewModel model)
+		{
+			if (model == null || string.IsNullOrEmpty(model.UserId))
+				return Json(new { success = false, message = "Geçersiz veri gönderildi." });
+
+			var result = await _roleService.AssignRoleAsync(model);
+
+			if (result.Success)
+			{
+				return Json(new { success = true, message = result.Message });
+			}
+
+			return Json(new { success = false, message = result.Message });
 		}
 	}
 }

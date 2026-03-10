@@ -10,10 +10,12 @@ namespace ByteMarket.Business.Concrete
 	public class UserManager : IUserService
 	{
 		private readonly UserManager<AppUser> _userManager;
+		private readonly RoleManager<AppRole> _roleManager;
 
-		public UserManager(UserManager<AppUser> userManager)
+		public UserManager(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
 		{
 			_userManager = userManager;
+			_roleManager = roleManager;
 		}
 
 		public async Task<IResult> CreateAsync(CreateUserDto createUserDto)
@@ -70,6 +72,38 @@ namespace ByteMarket.Business.Concrete
 			}
 
 			return new SuccessDataResult<List<UserListDto>>(userListDtos);
+		}
+
+
+		public async Task<IDataResult<List<GetAllUsersByFilterDto>>> GetAllUsersByFilterAsync(string q)
+		{
+			var users = await _userManager.Users.Where(x => x.NameSurname.Contains(q)).ToListAsync();
+
+			var allRoles = await _roleManager.Roles.ToListAsync();
+
+			var userListDtos = new List<GetAllUsersByFilterDto>();
+
+			foreach (var user in users)
+			{
+				var roleNames = await _userManager.GetRolesAsync(user);
+
+				var roleIds = allRoles
+					.Where(r => roleNames.Contains(r.Name))
+					.Select(r => r.Id.ToString())
+					.ToList();
+
+				var userDto = new GetAllUsersByFilterDto
+				{
+					Id = user.Id.ToString(),
+					NameSurname = user.NameSurname,
+					Email = user.Email,
+					RoleIds = roleIds
+				};
+
+				userListDtos.Add(userDto);
+			}
+
+			return new SuccessDataResult<List<GetAllUsersByFilterDto>>(userListDtos, "Kullanıcılar başarıyla listelendi.");
 		}
 	}
 }

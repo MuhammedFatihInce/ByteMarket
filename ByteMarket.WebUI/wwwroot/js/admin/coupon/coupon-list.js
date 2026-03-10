@@ -1,19 +1,15 @@
 ﻿$(document).ready(function () {
 
-    // 1. ADIM: Ortak AJAX ayarlarını tutan bir yapı oluşturalım.
-    // Bu sayede hem ekleme hem güncelleme modalında aynı kodu tekrar yazmayız.
     const select2AjaxConfig = {
         url: '/Admin/Coupon/GetAllProductsForSelect',
         dataType: 'json',
-        delay: 250, // Kullanıcı yazmayı bıraktıktan 250ms sonra istek atar (sunucuyu yormaz)
+        delay: 250,
         data: function (params) {
             return {
-                q: params.term || '', // Kullanıcının aradığı kelime
+                q: params.term || '',
             };
         },
         processResults: function (data) {
-            // C# tarafından gelen 'data' zaten tam Select2'nin istediği gibi!
-            // Bu yüzden ekstra bir map işlemine veya data.items yazmamıza gerek yok.
             return {
                 results: data
             };
@@ -21,7 +17,7 @@
         cache: true
     };
 
-    // 2. ADIM: Ekleme Modalı için Select2'yi başlatan fonksiyon
+    
     function initializeProductSelect() {
         $('.select2-products').select2({
             theme: 'bootstrap-5',
@@ -36,12 +32,11 @@
                 noResults: function () { return "Eşleşen ürün bulunamadı"; },
                 searching: function () { return "Aranıyor..."; }
             },
-            ajax: select2AjaxConfig, // Yukarıdaki AJAX ayarını kullanıyoruz
-            minimumInputLength: 2, // Arama yapmak için en az 2 harf girilmesini ister
+            ajax: select2AjaxConfig, 
+            minimumInputLength: 2, 
         });
     }
 
-    // 3. ADIM: Güncelleme Modalı için Select2'yi başlatan fonksiyon
     function initializeUpdateProductSelect() {
         $('.select2-products-update').select2({
             theme: 'bootstrap-5',
@@ -56,12 +51,11 @@
                 noResults: function () { return "Eşleşen ürün bulunamadı"; },
                 searching: function () { return "Aranıyor..."; }
             },
-            ajax: select2AjaxConfig, // Aynı AJAX ayarını burada da kullanıyoruz
+            ajax: select2AjaxConfig,
             minimumInputLength: 2,
         });
     }
 
-    // Görünüm formatlayıcı fonksiyonlar (Değişiklik yapmadık, gayet güzel)
     function formatProduct(product) {
         if (!product.id) return product.text;
         var $product = $(
@@ -121,7 +115,7 @@
             Target: parseInt($('#Target').val()),
             DiscountValue: parseFloat($('#DiscountValue').val()),
             IsPercentage: $('#IsPercentage').is(':checked'),
-            ProductIds: $('#ProductIds').val(), // Array döner ["1", "2"]
+            ProductIds: $('#ProductIds').val(), 
             ExpireTime: $('#calenderPicker').val(),
             IsStackable: $('#IsStackable').is(':checked'),
             UsageLimitPerUser: parseInt($('#UsageLimitPerUser').val())
@@ -173,34 +167,28 @@
                 if (response.target == 2 && productsList && productsList.length > 0) {
                     $('#updateProductSelectionArea').removeClass('d-none');
 
-                    // Select2'yi başlatalım
                     if (!$updateSelect.hasClass("select2-hidden-accessible")) {
                         initializeUpdateProductSelect();
                     }
 
-                    // 4. ADIM: AJAX MODUNDA ÖNCEDEN SEÇİLİ ÖĞELERİ EKLEME MANTIĞI
-                    // Select2'nin içini temizliyoruz.
                     $updateSelect.empty();
 
                     const selectedIds = []
 
-                    // Gelen her bir ürün için manuel bir <option> elementi oluşturuyoruz
                     productsList.forEach(function (p) {
                         const productId = p.id || p.Id;
-                        const productName = p.name || p.Title; // API yapına göre burayı kontrol et
+                        const productName = p.name || p.Title;
                         const productImage = p.image || p.Image;
 
-                        // Yeni bir HTML option oluşturup seçili (true, true) yapıyoruz
+                       
                         const option = new Option(productName, productId, true, true);
 
-                        // Resim vb. verileri de option'ın içine gömüyoruz ki formatlama fonksiyonu okuyabilsin
                         $(option).data('image', productImage);
 
                         $updateSelect.append(option);
                         selectedIds.push(productId);
                     });
 
-                    // Select2'ye değişiklikleri algılamasını söylüyoruz
                     $updateSelect.trigger('change');
 
                 } else {

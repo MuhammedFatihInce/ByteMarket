@@ -1,35 +1,45 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model List<ByteMarket.WebUI.Areas.Admin.Models.Role.RoleListViewModel>
+@using ByteMarket.WebUI.Areas.Admin.Models.User
+@using ByteMarket.WebUI.Areas.Admin.Models.Role
+@model (List<UserListViewModel> Users, List<RoleListViewModel> Roles)
+
+
 @{
     ViewData["Title"] = "Rol Yönetimi";
     var allPermissions = ViewBag.AllPermissions as List<string>;
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold"><i class="bi bi-shield-check me-2"></i>Rol Yönetimi</h2>
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-white rounded shadow-sm p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h5 class="fw-bold"><i class="bi bi-shield-check me-2 text-ty-orange"></i>Rol Yönetimi</h5>
+                <small class="text-muted">Sistemdeki rolleri buradan görebilirisiniz ve kullanıcılara rol atayabilirisiniz.</small>
+            </div>
+            <button type="button" class="btn btn-primary bg-ty-orange border-0 w-25 fw-bold" data-bs-toggle="modal" data-bs-target="#addRoleModal">
+                <i class="bi bi-plus-lg me-1"></i> Rol Ekle
+            </button>
 
-        <button type="button" class="btn btn-primary bg-ty-orange border-0 w-25 fw-bold" data-bs-toggle="modal" data-bs-target="#addRoleModal">
-            <i class="bi bi-plus-lg me-1"></i> Rol Ekle
-        </button>
+        </div>
 
-    </div>
-
-    <div class="card border-0 shadow-sm">
+        
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="bg-light">
-                <tr>
-                    <th class="ps-4">Rol İsmi</th>
-                    <th class="text-end pe-4">İşlemler</th>
-                </tr>
+            <table class="table table-hover border-top align-middle mb-0">
+                <thead>
+                    <tr class="text-secondary small text-uppercase" style="background-color: #fafafa;">
+                        <th class="ps-4">Rol İsmi</th>
+                        <th class="text-end pe-4">İşlemler</th>
+                    </tr>
                 </thead>
                 <tbody>
-                @foreach (var role in Model)
+                @foreach (var role in Model.Roles)
                 {
                     <tr>
                         <td class="ps-4 fw-semibold">@role.Name</td>
                         <td class="text-end pe-4">
+                            <button class="btn btn-sm btn-outline-primary border-0 me-1" onclick="openUserAuthorizeModal('@role.Id', '@role.Name')">
+                                <i class="bi bi-people"></i>
+                            </button>
                             <button class="btn btn-sm btn-outline-primary border-0 me-1" onclick="openEditModal('@role.Id', '@role.Name')">
                                 <i class="bi bi-shield-lock"></i>
                             </button>
@@ -44,6 +54,56 @@
         </div>
     </div>
 </div>
+
+<div class="container-fluid pt-4 px-4">
+    @Html.AntiForgeryToken()
+
+    <div class="bg-white rounded shadow-sm p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-people-fill me-2 text-ty-orange"></i>Kullanıcı Listesi</h5>
+                <small class="text-muted">Sistemdeki kullanıcıları buradan görebilirisiniz.</small>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle table-hover border-top">
+                <thead>
+                    <tr class="text-secondary small text-uppercase" style="background-color: #fafafa;">
+                        <th class="py-3 ps-3">Kullanıcı Bilgisi</th>
+                        <th class="py-3">Kullanıcı Adı</th>
+                        <th class="py-3">E-Posta</th>
+                        <th class="py-3 text-end pe-3">Mevcut Roller</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr id="user-row-@user.Id">
+                            <td class="ps-3">
+                                <div class="fw-bold text-dark">@user.NameSurname</div>
+                                <small class="text-muted" style="font-size: 11px;">ID: @user.Id</small>
+                            </td>
+                            <td>@user.UserName</td>
+                            <td>@user.Email</td>
+                            <td class ="text-end pe-3">
+                                @foreach (var role in user.Roles)
+                                {
+                                    <span class="badge @(role == "Admin" ? "bg-danger" : "bg-primary") bg-opacity-10 @(role == "Admin" ? "text-danger" : "text-primary") border @(role == "Admin" ? "border-danger" : "border-primary") border-opacity-25 px-2 py-1 me-1">
+                                        @role
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
 
 <div class="modal fade" id="addRoleModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -104,6 +164,100 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="createUserAuthorizeModal" tabindex="-1" aria-labelledby="createUserAuthorizeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header bg-light border-0">
+                <h5 class="modal-title fw-bold" id="createUserAuthorizeModalLabel">
+                    <i class="bi bi-people me-2 text-ty-orange"></i>Kullanıcı Rolünü Tanımla
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+
+            <form id="createUserAuthorizeForm">
+
+                <div class="modal-body p-4">
+
+                    <div id="userSelectionArea" class="mb-3">
+                        <label for="UserIds" class="form-label small fw-bold">Kullanıcıları Seçin</label>
+                        <select class="form-select select2-users" id="UserIds" name="UserIds"
+                                multiple="multiple" data-placeholder="Kullanıcıyı aramak için yazın...">
+                        </select>
+                        <small class="text-muted d-block mt-1">Arama yaparak kullanıcıları seçebilirsiniz.</small>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light fw-bold" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-ty-orange text-white fw-bold px-4">Yetkiyi Tanımla</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+
+    .select2-container--bootstrap-5 .select2-selection{
+        border: 2px solid #dee2e6;
+        border-radius: 0.5rem;
+        min-height: 45px;
+        display: flex;
+        align-items: center;
+    }
+
+    .select2-container--bootstrap-5.select2-container--focus .select2-selection {
+        border-color: #ff6600; /* ty-orange rengin */
+        box-shadow: 0 0 0 0.25rem rgba(255, 102, 0, 0.25);
+    }
+
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-search--inline .select2-search__field {
+        margin-top: 0;
+        min-height: 28px;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        color: #333 !important;
+        font-family: inherit;
+        outline: none !important;
+    }
+
+    .select2-container--bootstrap-5 .select2-results__option {
+        border-bottom: 1px solid #eee; 
+        padding: 8px 12px;
+        transition: background-color 0.2s ease;
+    }
+
+        .select2-container--bootstrap-5 .select2-results__option:last-child {
+            border-bottom: none;
+        }
+
+    .select2-container--bootstrap-5 .select2-results__option--highlighted[aria-selected] {
+        background-color: #f8f9fa !important;
+        color: #ff6600 !important;
+    }
+
+    .form-check-input.custom-switch:checked {
+        background-color: #ff6600;
+        border-color: #ff6600;
+    }
+
+    /* Select2 içindeki switch'lerin hizalaması */
+    .select2-results__option .form-check-switch {
+        margin-right: 0;
+        cursor: pointer;
+    }
+
+    /* Seçili olan satırın arka plan rengini hafifletelim */
+    .select2-results__option[aria-selected=true] {
+        background-color: #fff5ed !important;
+    }
+
+</style>
+
 
 @section Scripts {
     <script src="~/js/admin/role/role-managment.js" asp-append-version="true"></script>
