@@ -7,8 +7,8 @@ namespace ByteMarket.DataAccess.Concrete.EntityFramework.Basket
 {
 	public class BasketWriteRepository : WriteRepository<Entities.Concrete.Basket>, IBasketWriteRepository
 	{
-		public BasketWriteRepository(ByteMarketDbContext context): base(context)
-		{
-		}
+	public BasketWriteRepository(ByteMarketDbContext context) : base(context)
+	{
+	}
 	}
 }

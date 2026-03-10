@@ -1,6 +1,5 @@
 ﻿
 using ByteMarket.WebUI.Areas.Admin.Models.Coupon;
-using ByteMarket.WebUI.Areas.Admin.Models.Product;
 using ByteMarket.WebUI.Models.ResultModels;
 using ByteMarket.WebUI.Services.Interfaces;
 

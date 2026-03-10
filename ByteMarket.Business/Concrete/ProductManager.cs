@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using ByteMarket.Business.Abstract;
 using ByteMarket.Business.DTOs.Product;
 using ByteMarket.Business.Utilities.Results;
+using ByteMarket.DataAccess.Abstract.Basket;
 using ByteMarket.DataAccess.Abstract.Category;
 using ByteMarket.DataAccess.Abstract.Product;
 using ByteMarket.Entities.Concrete;
@@ -18,14 +19,16 @@ namespace ByteMarket.Business.Concrete
 		private readonly IMapper _mapper;
 		private readonly IProductImageService _productImageService;
 		private readonly ICategoryReadRepository _categoryReadRepository;
+		private readonly IBasketReadRepository _basketReadRepository;
 
-		public ProductManager(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IMapper mapper, IProductImageService productImageService, ICategoryReadRepository categoryReadRepository)
+		public ProductManager(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IMapper mapper, IProductImageService productImageService, ICategoryReadRepository categoryReadRepository, IBasketReadRepository basketReadRepository)
 		{
 			_productReadRepository = productReadRepository;
 			_productWriteRepository = productWriteRepository;
 			_mapper = mapper;
 			_productImageService = productImageService;
 			_categoryReadRepository = categoryReadRepository;
+			_basketReadRepository= basketReadRepository;
 		}
 
 		public async Task<IDataResult<List<ListProductDto>>> GetAllProductsAsync(string? categoryId = null, string? currentUserId = null)
@@ -64,6 +67,18 @@ namespace ByteMarket.Business.Concrete
 			}
 
 			var productDto = _mapper.Map<SingleProductDto>(product, opt=> opt.Items["CurrentUserId"] = currentUserId);
+
+			if (currentUserId != null)
+			{
+				var hasPurchased = await _basketReadRepository
+					.AnyAsync(b => b.UserId == Guid.Parse(currentUserId) &&
+					               b.Order != null &&
+					               b.BasketItems.Any(bi => bi.ProductId == product.Id));
+
+				productDto.IsPurchased = hasPurchased;
+			}
+
+
 			return new SuccessDataResult<SingleProductDto>(productDto, "Ürün başarıyla getirildi.");
 		}
 

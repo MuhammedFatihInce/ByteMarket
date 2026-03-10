@@ -84,3 +84,121 @@ function initProductDetailCarousel(carouselID) {
         imageZoom(`image-${e.to}`, "zoom-result", `lens-${e.to}`);
     });
 }
+
+
+$(document).ready(function () {
+
+    $("#productReviewForm").on("submit", async function (e) {
+        e.preventDefault();
+
+        var productId = $("#productId").val();
+        var rating = $("input[name='rating']:checked").val();
+        var comment = $("#comment").val();
+
+        const data = {
+            Comment: comment,
+            Rating: rating,
+            ProductId: productId
+        };
+
+        if (!rating) {
+            $("#responseMessage").html('<div class="alert alert-danger">Lütfen bir puan seçiniz!</div>');
+            return;
+        }
+        $("#responseMessage").addClass("d-none");
+
+        try {
+            const response = await CustomAjax.post('Product/AddReview', data);
+
+            if (response && response.success) {
+                Alert.toast({ title: response.message, icon: 'success' });
+                setTimeout(() => location.reload(), 1500);
+            }
+        } catch (error) {
+            console.error("Yorum hatası:", error);
+        }
+
+    });
+
+
+    $(".btn-edit-review").on("click", function (e) {
+        e.preventDefault();
+
+        var $btn = $(this);
+
+        const reviewId = $(this).data("id");
+        const comment = $(this).data("comment");
+        const rating = $(this).data("rating");
+
+        $("#editReviewId").val(reviewId);
+        $("#editComment").val(comment);
+
+        $(`input[name="editRating"][value="${rating}"]`).prop("checked", true);
+
+        const editModal = new bootstrap.Modal(document.getElementById('editReviewModal'));
+        editModal.show();
+
+    });
+
+    $("#btnUpdateReview").on("click", async function () {
+
+        const reviewId = $("#editReviewId").val();
+        const comment = $("#editComment").val();
+        const rating = $("input[name='editRating']:checked").val();
+
+        if (!rating) {
+            $("#editModelResponseMessage").html('<div class="alert alert-danger">Lütfen bir puan seçiniz!</div>');
+            return;
+        }
+        $("#responseMessage").addClass("d-none");
+
+
+        const data = {
+            Id: reviewId,
+            Comment: comment,
+            Rating: rating
+        };
+
+        try {
+            const response = await CustomAjax.put('Product/UpdateReview', data);
+
+            if (response && response.success) {
+                Alert.toast({ title: response.message, icon: 'success' });
+                setTimeout(() => location.reload(), 1500);
+            }
+        } catch (error) {
+            console.error("Yorum hatası:", error);
+        }
+    });
+
+
+    $(".btn-delete-review").on("click", async function () {
+
+        var reviewId = $(this).data("id");
+        var reviewCard = $("#review-" + reviewId);
+
+        Alert.fire({
+            title: 'Yorum Silinecek!',
+            text: `Bu yorumu silmek istediğinize emin misiniz?`,
+            icon: 'warning',
+            confirmButtonText: 'Evet, Sil',
+            onConfirm: async () => {
+                try {
+                    const response = await CustomAjax.delete(`/Product/DeleteReview/${reviewId}`);
+
+                    if (response && response.success) {
+                        Alert.toast({ title: response.message, icon: 'success' });
+                        reviewCard.fadeOut(500, function () { $(this).remove(); });
+
+                    } else {
+                        Alert.error({ title: "Hata", text: response.message });
+                    }
+                } catch (error) {
+                    Alert.error({ title: "Hata", text: "Bağlantı kurulamadı!" });
+                } 
+            },
+            successMessage: 'Yorum başarıyla silindi!'
+        });
+        
+    });
+});

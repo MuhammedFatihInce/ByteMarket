@@ -8,6 +8,7 @@ using ByteMarket.DataAccess.Abstract.File;
 using ByteMarket.DataAccess.Abstract.Order;
 using ByteMarket.DataAccess.Abstract.Product;
 using ByteMarket.DataAccess.Abstract.ProductImageFile;
+using ByteMarket.DataAccess.Abstract.ProductReview;
 using ByteMarket.DataAccess.Abstract.WishList;
 using ByteMarket.DataAccess.Concrete.EntityFramework.Basket;
 using ByteMarket.DataAccess.Concrete.EntityFramework.BasketItem;
@@ -19,6 +20,7 @@ using ByteMarket.DataAccess.Concrete.EntityFramework.File;
 using ByteMarket.DataAccess.Concrete.EntityFramework.Order;
 using ByteMarket.DataAccess.Concrete.EntityFramework.Product;
 using ByteMarket.DataAccess.Concrete.EntityFramework.ProductImageFile;
+using ByteMarket.DataAccess.Concrete.EntityFramework.ProductReview;
 using ByteMarket.DataAccess.Concrete.EntityFramework.WishList;
 using ByteMarket.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -73,6 +75,9 @@ namespace ByteMarket.DataAccess
 			services.AddScoped<ICouponReadRepository, CouponReadRepository>();
 			services.AddScoped<ICouponWriteRepository, CouponWriteRepository>();
 
+			//Yorum
+			services.AddScoped<IProductReviewReadRepository, ProductReviewReadRepository>();
+			services.AddScoped<IProductReviewWriteRepository, ProductReviewWriteRepository>();
 
 		}
 	}

@@ -101,5 +101,8 @@ namespace ByteMarket.Business.Concrete
 
 			return new SuccessDataResult<SingleOrderDto>(singleOrder);
 		}
+
+
+		
 	}
 }

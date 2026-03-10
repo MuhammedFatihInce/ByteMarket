@@ -30,6 +30,7 @@ namespace ByteMarket.Business.Mapping
 			CreateMap<Product, SingleProductDto>()
 				.ForMember(dest => dest.ProductImageFiles, opt => opt.MapFrom(src => src.ProductImageFiles))
 				.ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.Categories))
+				.ForMember(dest => dest.IsPurchased, opt => opt.Ignore())
 				.ForMember(dest => dest.IsInWishlist, opt=> opt.MapFrom((src, dest, destMember, context) =>
 				{
 					var currentUserId = context.Items["CurrentUserId"] as string;
