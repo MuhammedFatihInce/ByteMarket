@@ -8,5 +8,6 @@ namespace ByteMarket.WebUI.Services.Interfaces
 		Task<ApiDataResponse<object>> CreateOrder(CreateOrderViewModel model);
 		Task<ApiDataResponse<List<OrderListDetailViewModel>>> GetAllOrders();
 		Task<ApiDataResponse<SingleOrderViewModel>> GetOrderById(string id);
+		Task<ApiDataResponse<object>> SendInvoice(string id);
 	}
 }

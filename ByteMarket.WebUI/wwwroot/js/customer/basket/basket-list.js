@@ -120,7 +120,7 @@ $(document).ready(function () {
 
             if (response && response.success) {
                 Alert.toast({ title: response.message, icon: 'success' });
-                setTimeout(() => { window.location.href = "/Order/Success"; }, 2000);
+                setTimeout(() => { window.location.href = `/Order/Success/${basketId}`; }, 2000);
                         
             } else {
                 Alert.toast({ title: response.message || "İşlem başarısız", icon: 'error' });

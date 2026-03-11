@@ -67,9 +67,28 @@ namespace ByteMarket.WebUI.Controllers
 		}
 
 		
-		public IActionResult Success()
+
+		public async Task<IActionResult> Success(string id)
 		{
-			return View();
+			var result = await _orderService.GetOrderById(id);
+
+			if (result.Success)
+			{
+				return View(result.Data);
+			}
+
+			TempData["Error"] = result.Message;
+			return View(new SingleOrderViewModel());
+		}
+
+
+		[HttpPost("/Order/SendInvoice/{id}")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> SendInvoice(string id)
+		{
+			var result = await _orderService.SendInvoice(id);
+
+			return Json(new { success = result.Success, message = result.Message });
 		}
 	}
 }

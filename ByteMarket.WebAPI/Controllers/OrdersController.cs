@@ -36,5 +36,12 @@ namespace ByteMarket.WebAPI.Controllers
 			return CreateActionResult(result, errorStatusCode:404);
 		}
 
+		[HttpPost("SendInvoice/{id}")]
+		public async Task<IActionResult> SendInvoice(string id)
+		{
+			var result = await _orderService.SendInvoiceMassegeAsync(id);
+			return CreateActionResult(result, errorStatusCode: 404);
+		}
+
 	}
 }
