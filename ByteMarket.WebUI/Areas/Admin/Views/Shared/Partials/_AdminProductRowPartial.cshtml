@@ -5,9 +5,12 @@
 @{
     var apiBaseUrl = Configuration["ApiSettings:BaseStorageAdress"];
     string noImageUrl = "https://placehold.co/600x400?text=Resim+Yok";
-    var fullImagePath = !string.IsNullOrEmpty(Model.ImagePath)
-                        ? $"{apiBaseUrl}{Model.ImagePath.Replace("\\", "/")}"
-                        : noImageUrl;
+
+    var firstImage = Model.ImagePath?.FirstOrDefault();
+
+    var fullImagePath = !string.IsNullOrEmpty(firstImage)
+        ? $"{apiBaseUrl}{firstImage.Replace("\\", "/")}"
+        : noImageUrl;
 }
 <tr id="row-@Model.Id">
     <td class="py-3 ps-3">

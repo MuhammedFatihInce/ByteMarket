@@ -10,6 +10,8 @@
         didOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
+            toast.parentElement.style.paddingTop = '55px';
+            toast.parentElement.style.paddingRight = '25px';
         }
     }),
 

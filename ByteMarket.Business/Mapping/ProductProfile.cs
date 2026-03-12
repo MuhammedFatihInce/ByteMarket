@@ -20,8 +20,8 @@ namespace ByteMarket.Business.Mapping
 			CreateMap<Product, ListProductDto>()
 				.ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src =>
 						src.ProductImageFiles != null && src.ProductImageFiles.Any()
-							? $"{src.ProductImageFiles.FirstOrDefault().Path}"
-							: null
+							? src.ProductImageFiles.Select(x => x.Path).Take(2).ToList()
+							: new List<string>()
 				))
 				.ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Categories.FirstOrDefault().Name))
 				.ForMember(dest=> dest.IsInWishlist, opt=>opt.MapFrom(src=> currentUserId != null && src.WishList.Any(w=>w.UserId==Guid.Parse(currentUserId))))

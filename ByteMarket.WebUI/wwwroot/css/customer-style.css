@@ -42,6 +42,7 @@
 	height: 200px;
 	background-color: #fff;
 	position: relative;
+	z-index: 11;
 }
 
 .image-box-basket {
