@@ -7,9 +7,11 @@
     var apiBaseUrl = Configuration["ApiSettings:BaseStorageAdress"];
     string noImageUrl = "https://placehold.co/600x400?text=Resim+Yok";
 
-    var currentImagePath = !string.IsNullOrEmpty(Model.ImagePath)
-        ? $"{apiBaseUrl}{Model.ImagePath.Replace("\\", "/")}"
-        : noImageUrl;
+    var currentImagePaths = (Model.ImagePath != null && Model.ImagePath.Any())
+        ? Model.ImagePath
+            .Select(path => $"{apiBaseUrl}{path.Replace("\\", "/")}")
+            .ToList()
+        : new List<string> { noImageUrl };
 }
 
 @Html.AntiForgeryToken()
@@ -22,8 +24,8 @@
         <i class="bi bi-x-lg"></i>
     </button>
 
-    <div class="image-box d-flex align-items-center justify-content-center p-3">
-        <img src="@currentImagePath"
+    <div class="image-box d-flex align-items-center justify-content-center p-3" data-images="@(string.Join(",", currentImagePaths))">
+        <img src="@currentImagePaths.FirstOrDefault()"
              class="img-fluid object-fit-contain h-100"
              alt="@Model.Name"
              onerror="this.src='@noImageUrl'">
@@ -31,9 +33,10 @@
 
     <div class="d-flex align-items-center justify-content-center px-2 mb-2">
         <div>
-            <span class="dot active"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
+            @for (int i = 0; i < currentImagePaths.Count; i++)
+            {
+                <span class="dot @(i == 0 ? "active" : "")"></span>
+            }
         </div>
     </div>
 
