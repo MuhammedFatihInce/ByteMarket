@@ -18,6 +18,7 @@ namespace ByteMarket.WebUI.Areas.Admin.Models.Product
 		[Range(0, 100000, ErrorMessage = "Stok 0 ile 100.000 arasında olmalıdır.")]
 		[Display(Name = "Stok Miktarı")]
 		public int Stock { get; set; }
+		public string? Description { get; set; }
 
 		public List<string> CategoryIds { get; set; }
 

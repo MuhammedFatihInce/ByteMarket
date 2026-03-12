@@ -17,6 +17,8 @@
         if (!this.input) return;
 
         this.input.addEventListener('change', (e) => {
+            e.stopImmediatePropagation();
+
             const newFiles = e.target.files;
             let rejectedFiles = [];
 

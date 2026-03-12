@@ -12,7 +12,7 @@ namespace ByteMarket.WebUI.Services.Implementations
 
 		public async Task<ApiDataResponse<string>> AddProductAsync(CreateProductViewModel model)
 		{
-			var productResponse = await _apiService.PostAsync<string>("Product", new {model.Name, model.Price, model.Stock, model.CategoryIds});
+			var productResponse = await _apiService.PostAsync<string>("Product", new {model.Name, model.Price, model.Stock, model.CategoryIds, model.Description});
 
 			if (!productResponse.Success) return productResponse;
 
@@ -57,6 +57,7 @@ namespace ByteMarket.WebUI.Services.Implementations
 				model.Id,
 				model.Name,
 				model.Price,
+				model.Description,
 				model.Stock,
 				model.CategoryIds
 			});

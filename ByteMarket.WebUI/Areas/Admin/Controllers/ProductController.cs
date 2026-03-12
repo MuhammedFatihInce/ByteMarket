@@ -14,12 +14,14 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 		private readonly IProductService _productService;
 		private readonly IApiService _apiService;
 		private readonly ICategoryService _categoryService;
+		private readonly IEditorService _editorService;
 
-		public ProductController(IProductService productService, IApiService apiService, ICategoryService categoryService)
+		public ProductController(IProductService productService, IApiService apiService, ICategoryService categoryService, IEditorService editorService)
 		{
 			_productService = productService;
 			_apiService = apiService;
 			_categoryService = categoryService;
+			_editorService = editorService;
 		}
 
 		public async Task<IActionResult> Index()
@@ -77,6 +79,7 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 				Name = product.Name,
 				Stock = product.Stock,
 				Price = product.Price,
+				Description = product.Description,
 				CategoryIds = product.Categories.Select(c => c.Id.ToString()).ToList(),
 				CategoryList = await _categoryService.GetCategorySelectListAsync(),
 				ProductImageFiles = product.ProductImageFiles
@@ -132,6 +135,22 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 			}
 
 			return Json(new { success = false, message = result.Message });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> UploadEditorImage(IFormFile file)
+		{
+			var result = await _editorService.Upload(file);
+			return Json(new { url = result.Data, success = result.Success, message = result.Message });
+		}
+
+		[HttpDelete]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteEditorImage(string url)
+		{
+			var result = await _editorService.Delete(url);
+			return Json(new { success = result.Success, message = result.Message });
 		}
 
 	}

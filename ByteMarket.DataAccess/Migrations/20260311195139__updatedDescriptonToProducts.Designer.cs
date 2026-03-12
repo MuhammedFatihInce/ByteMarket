@@ -4,6 +4,7 @@ using ByteMarket.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ByteMarket.DataAccess.Migrations
 {
     [DbContext(typeof(ByteMarketDbContext))]
-    partial class ByteMarketDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260311195139__updatedDescriptonToProducts")]
+    partial class updatedDescriptonToProducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -83,6 +83,12 @@
                             <span asp-validation-for="CategoryIds" class="text-danger small"></span>
                         </div>
 
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label fw-semibold">Ürün Açıklaması</label>
+                            <textarea id="summernote" asp-for="Description" class="form-control"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
                         <div class="d-grid pt-3">
                             <button type="submit" class="btn btn-primary py-2 fw-bold bg-ty-orange border-0 shadow-sm text-white">
                                 DEĞİŞİKLİKLERİ KAYDET

@@ -34,6 +34,7 @@ namespace ByteMarket.Business
 			services.AddScoped<IOrderService, OrderManager>();
 			services.AddScoped<ICouponService, CouponManager>();
 			services.AddScoped<IProductReviewService, ProductReviewManager>();
+			services.AddScoped<IEditorService, EditorManager>();
 		}
 	}
 }

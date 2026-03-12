@@ -10,6 +10,8 @@ namespace ByteMarket.WebUI.Models.Product
 		public string Name { get; set; }
 		public int Stock { get; set; }
 		public decimal Price { get; set; }
+		public string? Description { get; set; }
+
 		public List<ProductImageViewModel> ProductImageFiles { get; set; }
 		public List<SingleCategoryViewModel> Categories { get; set; }
 		public bool IsInWishlist { get; set; }

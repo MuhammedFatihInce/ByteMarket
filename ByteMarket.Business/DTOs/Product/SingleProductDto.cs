@@ -9,6 +9,8 @@ namespace ByteMarket.Business.DTOs.Product
 		public string Name { get; set; }
 		public int Stock { get; set; }
 		public decimal Price { get; set; }
+		public string? Description { get; set; }
+
 		public List<ProductImageDto.ProductImageDto> ProductImageFiles { get; set; }
 		public List<SingleCategoryDto> Categories { get; set; }
 		public bool IsInWishlist { get; set; }
