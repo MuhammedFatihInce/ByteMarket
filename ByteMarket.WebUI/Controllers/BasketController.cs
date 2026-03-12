@@ -9,9 +9,11 @@ namespace ByteMarket.WebUI.Controllers
 	public class BasketController : Controller
 	{
 		private readonly IBasketService _basketService;
-		public BasketController(IBasketService basketService)
+		private readonly ICurrencyService _currencyService;
+		public BasketController(IBasketService basketService, ICurrencyService currencyService)
 		{
 			_basketService = basketService;
+			_currencyService = currencyService;
 		}
 
 		[HttpPost]
@@ -87,6 +89,14 @@ namespace ByteMarket.WebUI.Controllers
 			var result = await _basketService.RemoveCouponFromBasket(couponId);
 
 			return Json(new { success = result.Success, message = result.Message });
+		}
+
+		[HttpGet("Basket/GetCurrency/{code}")]
+		public async Task<IActionResult> GetCurrencyByCode([FromRoute]string code)
+		{
+			var result = await _currencyService.GetbyCode(code);
+
+			return Json(new { data = result.Data , success = result.Success, message = result.Message });
 		}
 	}
 }

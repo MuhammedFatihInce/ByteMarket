@@ -204,4 +204,68 @@ $(document).ready(function () {
 
     });
 });
-  
+
+
+
+
+let usdRate = 1;
+
+async function getUsdRate() {
+    try {
+
+        const response = await CustomAjax.get(`/Basket/GetCurrency/USD`);
+
+        usdRate = response.data.sellingRate;
+        return usdRate;
+    } catch (error) {
+        console.error("Kur çekilirken hata oluştu:", error);
+        Alert.toast({ title: "Bir hata oluştu", icon: 'error' });
+    }
+}
+
+function updatePrices(currency) {
+    
+    $('.basket-item-price, .summary-price, .discount-price').each(function () {
+        let $el = $(this);
+
+        let originalPrice = parseFloat($el.attr('data-price').toString().replace(',', '.'));
+
+        if (currency === 'USD') {
+            let convertedPrice = (originalPrice / usdRate).toFixed(2);
+            $el.text('$' + convertedPrice);
+        } else {
+            
+            let formattedPrice = new Intl.NumberFormat('tr-TR', {
+                style: 'currency',
+                currency: 'TRY'
+            }).format(originalPrice);
+
+            $el.text(formattedPrice);
+        }
+    });
+}
+
+$(document).ready(function () {
+
+    
+    $('#btnUSD').on('click', async function () {
+
+        if (usdRate === 1) {
+            await getUsdRate();
+        }
+
+        
+        $(this).addClass('active btn-ty-orange text-white').removeClass('btn-outline-secondary');
+        $('#btnTRY').removeClass('active btn-ty-orange text-white').addClass('btn-outline-secondary');
+
+        updatePrices('USD');
+    });
+
+    $('#btnTRY').on('click', function () {
+       
+        $(this).addClass('active btn-ty-orange text-white').removeClass('btn-outline-secondary');
+        $('#btnUSD').removeClass('active btn-ty-orange text-white').addClass('btn-outline-secondary');
+
+        updatePrices('TRY');
+    });
+});

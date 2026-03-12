@@ -23,6 +23,7 @@ namespace ByteMarket.DataAccess.Contexts
 		public DbSet<WishList> WhisLists { get; set; }
 		public DbSet<Coupon> Coupons { get; set; }
 		public DbSet<ProductReview> ProductReviews { get; set; }
+		public DbSet<Currency> Currencies { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{

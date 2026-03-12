@@ -3,6 +3,7 @@ using ByteMarket.DataAccess.Abstract.BasketItem;
 using ByteMarket.DataAccess.Abstract.Category;
 using ByteMarket.DataAccess.Abstract.CategoryImageFile;
 using ByteMarket.DataAccess.Abstract.Coupon;
+using ByteMarket.DataAccess.Abstract.Currency;
 using ByteMarket.DataAccess.Abstract.Customer;
 using ByteMarket.DataAccess.Abstract.File;
 using ByteMarket.DataAccess.Abstract.Order;
@@ -15,6 +16,7 @@ using ByteMarket.DataAccess.Concrete.EntityFramework.BasketItem;
 using ByteMarket.DataAccess.Concrete.EntityFramework.Category;
 using ByteMarket.DataAccess.Concrete.EntityFramework.CategoryImageFile;
 using ByteMarket.DataAccess.Concrete.EntityFramework.Coupon;
+using ByteMarket.DataAccess.Concrete.EntityFramework.Currency;
 using ByteMarket.DataAccess.Concrete.EntityFramework.Customer;
 using ByteMarket.DataAccess.Concrete.EntityFramework.File;
 using ByteMarket.DataAccess.Concrete.EntityFramework.Order;
@@ -78,6 +80,10 @@ namespace ByteMarket.DataAccess
 			//Yorum
 			services.AddScoped<IProductReviewReadRepository, ProductReviewReadRepository>();
 			services.AddScoped<IProductReviewWriteRepository, ProductReviewWriteRepository>();
+
+			//Kur Bilgileri
+			services.AddScoped<ICurrencyReadRepository, CurrencyReadRepository>();
+			services.AddScoped<ICurrencyWriteRepository, CurrencyWriteRepository>();
 
 		}
 	}

@@ -1,17 +1,19 @@
 using ByteMarket.Business;
-using ByteMarket.Entities.Constants;
 using ByteMarket.Business.Validators.Products;
 using ByteMarket.DataAccess;
 using ByteMarket.DataAccess.Contexts;
 using ByteMarket.DataAccess.SeedData;
 using ByteMarket.Entities.Concrete.Identity;
+using ByteMarket.Entities.Constants;
 using ByteMarket.WebAPI.Filters;
 using ByteMarket.WebAPI.Middleware;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
 using System.Text;
+using ByteMarket.Business.Jobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -105,6 +107,18 @@ builder.Services.AddAuthorization(options =>
 		policy.RequireClaim("Permission",
 			AuthorizePolicies.CouponPermissions));
 });
+
+builder.Services.AddQuartz(q =>
+{
+	
+	var jobKey = new JobKey("CurrencyUpdateJob");
+	q.AddJob<CurrencyUpdateJob>(opts => opts.WithIdentity(jobKey));
+
+	q.AddTrigger(opts => opts
+		.ForJob(jobKey)
+		.WithIdentity("CurrencyUpdateJob-trigger")
+		.WithCronSchedule("0 35 15 * * ?"));
+}).AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
