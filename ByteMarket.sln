@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36930.0 d17.14
+VisualStudioVersion = 17.14.36930.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ByteMarket.Entities", "ByteMarket.Entity\ByteMarket.Entities.csproj", "{0507474F-6C2A-42B0-AFE4-F3D2D273FADF}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{76CBB364-BF43-4816-A300-A27BEC6EC919}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ByteMarket.WebUI", "ByteMarket.WebUI\ByteMarket.WebUI.csproj", "{1AA8DCE1-4610-4E0C-A4D8-33CCE243478D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ByteMarket.Payment.System", "ByteMarket.Payment.System\ByteMarket.Payment.System.csproj", "{20E12AB8-EFC5-4919-82A7-2CC8CE7C7E46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{1AA8DCE1-4610-4E0C-A4D8-33CCE243478D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AA8DCE1-4610-4E0C-A4D8-33CCE243478D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AA8DCE1-4610-4E0C-A4D8-33CCE243478D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20E12AB8-EFC5-4919-82A7-2CC8CE7C7E46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20E12AB8-EFC5-4919-82A7-2CC8CE7C7E46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20E12AB8-EFC5-4919-82A7-2CC8CE7C7E46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20E12AB8-EFC5-4919-82A7-2CC8CE7C7E46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
