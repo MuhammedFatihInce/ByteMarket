@@ -20,5 +20,6 @@ namespace ByteMarket.WebUI.Areas.Admin.Models.Product
 		public IFormFileCollection? Files { get; set; }
 
 		public List<string>? DeletedImageIds { get; set; } = new List<string>();
+		public List<string> OrderedImageIds { get; set; } = new List<string>(); 
 	}
 }

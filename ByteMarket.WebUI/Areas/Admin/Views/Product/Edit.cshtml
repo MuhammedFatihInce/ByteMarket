@@ -25,7 +25,7 @@
                                 {
                                     @foreach (var img in Model.ProductImageFiles)
                                     {
-                                        <div class="col-3 col-md-2 position-relative" id="img-wrapper-@img.Id">
+                                        <div class="col-3 col-md-2 position-relative cursor-move" id="img-wrapper-@img.Id" data-id="@img.Id">
                                             <div class="ratio ratio-1x1 border rounded overflow-hidden shadow-sm bg-white">
                                                 <img src="@(apiBaseStorageUrl + img.Path.Replace("\\", "/"))" class="img-fluid object-fit-cover">
                                             </div>
@@ -36,6 +36,7 @@
                                     }
                                 }
                             </div>
+                            <input type="hidden" id="ordered-image-ids" name="OrderedImageIds" />
                         </div>
 
                         <div class="mb-3">

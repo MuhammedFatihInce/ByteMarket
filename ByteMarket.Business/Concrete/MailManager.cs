@@ -51,21 +51,13 @@ namespace ByteMarket.Business.Concrete
 
 		public async Task SendMailAsync(string to, string subject, string body, bool isHtml = true)
 		{
-			var email = new MimeMessage();
-			email.From.Add(new MailboxAddress(_configuration["MailSettings:DisplayName"], _configuration["MailSettings:Email"]));
-			email.To.Add(MailboxAddress.Parse(to));
-			email.Subject = subject;
+
+			var email = CreateBaseMessage(to, subject);
 
 			var bodyBuilder = new BodyBuilder { HtmlBody = isHtml ? body : null, TextBody = !isHtml ? body : null };
 			email.Body = bodyBuilder.ToMessageBody();
 
-			using var smtp = new SmtpClient();
-			await smtp.ConnectAsync(_configuration["MailSettings:Host"], int.Parse(_configuration["MailSettings:Port"]), MailKit.Security.SecureSocketOptions.StartTls);
-
-			await smtp.AuthenticateAsync(_configuration["MailSettings:Email"], _configuration["MailSettings:Password"]);
-
-			await smtp.SendAsync(email);
-			await smtp.DisconnectAsync(true);
+			await SendEmailInternalAsync(email);
 		}
 
 		public async Task SendPasswordResetMailAsync(string to, string resetLink)
@@ -101,24 +93,22 @@ namespace ByteMarket.Business.Concrete
 
 				string mailHtmlContent = GetInvoiceHtmlTemplate(orderDto, itemsHtml.ToString());
 
-				// 3. PDF Byte dizisini oluştur
 				var pdfBytes = await GeneratePdfBytes(mailHtmlContent);
 
-				// 4. Mesajı Hazırla
+				
 				var email = CreateBaseMessage(to, $"Sipariş Faturası - #{orderDto.OrderCode}");
 
 				var bodyBuilder = new BodyBuilder
 				{
 					HtmlBody = $@"<p>Sayın Müşterimiz,</p>
                              <p>#{orderDto.OrderCode} nolu siparişinize ait fatura detayları aşağıdadır ve ekte PDF olarak sunulmuştur.</p>
-                             <hr/>" + mailHtmlContent // Mailin içine faturayı gömer
+                             <hr/>" + mailHtmlContent 
 				};
 
-				// PDF Eki Ekleme
+				
 				bodyBuilder.Attachments.Add($"Fatura_{orderDto.OrderCode}.pdf", pdfBytes);
 				email.Body = bodyBuilder.ToMessageBody();
 
-				// 5. Ana motoru kullanarak gönder
 				await SendEmailInternalAsync(email);
 			}
 			catch (Exception ex)
@@ -131,25 +121,21 @@ namespace ByteMarket.Business.Concrete
 
 		private async Task<byte[]> GeneratePdfBytes(string htmlContent)
 		{
-			// HATA BURADAYDI: 'using' ifadesini kaldırdık
+			
 			var browserFetcher = new BrowserFetcher();
-
-			// Tarayıcı yerel dizinde yoksa indirir. 
-			// Not: Bu işlem internet hızına bağlı olarak ilk seferde zaman alabilir.
 			await browserFetcher.DownloadAsync();
 
-			// Tarayıcıyı başlatıyoruz (Bu nesneler hala IDisposable'dır, using kalmalı)
+			
 			using var browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
-			using var page = await browser.NewPageAsync();
 
-			// HTML içeriğini sayfaya yüklüyoruz
+			using var page = await browser.NewPageAsync();
 			await page.SetContentAsync(htmlContent);
 
-			// PDF seçeneklerini ayarlayıp byte array olarak alıyoruz
+			
 			return await page.PdfDataAsync(new PdfOptions
 			{
 				Format = PaperFormat.A4,
-				PrintBackground = true, // CSS renkleri ve görsellerin çıkması için şart
+				PrintBackground = true, 
 				MarginOptions = new MarginOptions
 				{
 					Top = "10mm",

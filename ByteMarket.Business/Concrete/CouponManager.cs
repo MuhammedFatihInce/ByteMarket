@@ -81,7 +81,7 @@ namespace ByteMarket.Business.Concrete
 					Id = p.Id.ToString(),
 					Name = p.Name,
 					ImagePath = (p.ProductImageFiles != null && p.ProductImageFiles.Any())
-						? p.ProductImageFiles.FirstOrDefault().Path
+						? p.ProductImageFiles.OrderBy(x => x.DisplayOrder).FirstOrDefault().Path
 						: null
 				}).ToList()
 			}).ToList();
@@ -124,7 +124,7 @@ namespace ByteMarket.Business.Concrete
 					Id = p.Id.ToString(),
 					Name = p.Name,
 					ImagePath = (p.ProductImageFiles != null && p.ProductImageFiles.Any())
-						? p.ProductImageFiles.FirstOrDefault().Path
+						? p.ProductImageFiles.OrderBy(x => x.DisplayOrder).FirstOrDefault().Path
 						: null
 				}).ToList()
 			};

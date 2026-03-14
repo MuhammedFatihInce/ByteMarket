@@ -20,7 +20,7 @@ namespace ByteMarket.Business.Mapping
 			CreateMap<Product, ListProductDto>()
 				.ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src =>
 						src.ProductImageFiles != null && src.ProductImageFiles.Any()
-							? src.ProductImageFiles.Select(x => x.Path).Take(2).ToList()
+							? src.ProductImageFiles.OrderBy(x => x.DisplayOrder).Select(x => x.Path).Take(2).ToList()
 							: new List<string>()
 				))
 				.ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Categories.FirstOrDefault().Name))
@@ -28,7 +28,7 @@ namespace ByteMarket.Business.Mapping
 				;
 
 			CreateMap<Product, SingleProductDto>()
-				.ForMember(dest => dest.ProductImageFiles, opt => opt.MapFrom(src => src.ProductImageFiles))
+				.ForMember(dest => dest.ProductImageFiles, opt => opt.MapFrom(src => src.ProductImageFiles.OrderBy(x => x.DisplayOrder)))
 				.ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.Categories))
 				.ForMember(dest => dest.IsPurchased, opt => opt.Ignore())
 				.ForMember(dest => dest.IsInWishlist, opt=> opt.MapFrom((src, dest, destMember, context) =>
@@ -44,7 +44,7 @@ namespace ByteMarket.Business.Mapping
 			CreateMap<Product, GetAllProductByFilterDto>()
 				.ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src =>
 					src.ProductImageFiles != null && src.ProductImageFiles.Any()
-						? $"{src.ProductImageFiles.FirstOrDefault().Path}"
+						? $"{src.ProductImageFiles.OrderBy(x => x.DisplayOrder).FirstOrDefault().Path}"
 						: null
 				));
 		}

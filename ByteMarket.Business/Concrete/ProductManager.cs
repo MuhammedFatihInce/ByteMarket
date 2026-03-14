@@ -108,7 +108,9 @@ namespace ByteMarket.Business.Concrete
 		{
 			var product = await _productReadRepository
 				.GetWhere(p => p.Id == Guid.Parse(updateProductDto.Id))
-				.Include(p => p.Categories).FirstOrDefaultAsync();
+				.Include(p => p.Categories)
+				.Include(p => p.ProductImageFiles)
+				.FirstOrDefaultAsync();
 
 			if (product == null) return new ErrorResult("Ürün bulunamadı.");
 
@@ -123,6 +125,20 @@ namespace ByteMarket.Business.Concrete
 			else
 			{
 				product.Categories.Clear();
+			}
+
+			if (updateProductDto.OrderedImageIds != null && updateProductDto.OrderedImageIds.Any())
+			{
+				for (int i = 0; i < updateProductDto.OrderedImageIds.Count; i++)
+				{
+					var imageId = Guid.Parse(updateProductDto.OrderedImageIds[i]);
+					var image = product.ProductImageFiles.FirstOrDefault(x => x.Id == imageId);
+
+					if (image != null)
+					{
+						image.DisplayOrder = i + 1; 
+					}
+				}
 			}
 
 			_productWriteRepository.Update(product);

@@ -27,17 +27,30 @@ namespace ByteMarket.Business.Concrete
 
 		public async Task<IResult> AddImagesAsync(string productId, IFormFileCollection files)
 		{
+			var product = await _productReadRepository.GetByIdAsync(productId);
+
+
+			var existingImageCount = _productImageFileReadRepository
+				.GetWhere(x => x.Products.Any(p => p.Id == Guid.Parse(productId)))
+				.Count();
+
 			List<(string fileName, string pathOrContainerName)> fileResult = await _storageService.UploadAsync("photo-images", files);
 			   
-			var product = await _productReadRepository.GetByIdAsync(productId);
-			   
-			var productImages = fileResult.Select(r => new ProductImageFile
+
+			var productImages = new List<ProductImageFile>();
+
+			for (int i = 0; i < fileResult.Count; i++)
 			{
-			   	FileName = r.fileName,
-			   	Path = r.pathOrContainerName,
-			   	Storage = _storageService.StorageName,
-			   	Products = new List<Product>{product}
-			}).ToList();
+				var r = fileResult[i];
+				productImages.Add(new ProductImageFile
+				{
+					FileName = r.fileName,
+					Path = r.pathOrContainerName,
+					Storage = _storageService.StorageName,
+					Products = new List<Product> { product },
+					DisplayOrder = existingImageCount + i + 1 
+				});
+			}
 			   
 			var result = await _productImageFileWriteRepository.AddRangeAsync(productImages);
 			   

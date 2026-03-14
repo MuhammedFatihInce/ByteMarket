@@ -98,6 +98,13 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 				return View(model);
 			}
 
+			if (model.OrderedImageIds.Count == 1 && model.OrderedImageIds[0].Contains(","))
+			{
+				model.OrderedImageIds = model.OrderedImageIds[0]
+					.Split(',', StringSplitOptions.RemoveEmptyEntries)
+					.ToList();
+			}
+
 			var result = await _productService.UpdateProductWithImagesAsync(model);
 			if (result.Success)
 			{
