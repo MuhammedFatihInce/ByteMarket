@@ -147,7 +147,7 @@
                         <div class="flex-column">
                             <div class="coupon-form d-flex flex-xl-row flex-column align-items-start align-items-xl-center justify-content-between gap-2">
                                 <label class="fw-bold" style="white-space: nowrap;" for="couponCode">Kupon Kodu</label>
-                                <input style="border-radius: 15px; padding: 5px;" type="text" id="couponCode" name="couponCode" placeholder="Kupon kodunu giriniz..." />
+                                <input type="text" id="couponCode" name="couponCode"  class="custom-coupon-input" placeholder="Kupon kodunu giriniz..." />
                             </div>
                             <div class="text-xl-end text-start mt-3">
                                 <button class="coupon-apply-button btn btn-ty-orange text-white" style="border-radius: 5px">
@@ -251,6 +251,26 @@
     </div>
 </div>
 
+
+<style>
+    
+    .custom-coupon-input {
+        outline: none;
+        border: 1px solid #ddd; 
+        border-radius: 8px;
+        padding: 8px 12px; 
+        transition: all 0.3s ease; 
+        width: 100%; 
+        max-width: 300px;
+    }
+
+       
+        .custom-coupon-input:focus {
+            border-color: #3498db; 
+            box-shadow: 0 0 12px rgba(52, 152, 219, 0.25);
+            background-color: #fff;
+        }
+</style>
 
 @section Scripts {
     <script src="~/js/customer/basket/basket-list.js" asp-append-version="false"></script>
