@@ -77,9 +77,12 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer border-0">
-                <button type="button" id="btnSendInvoice" class="btn btn-success w-100 py-2" data-orderid="@Model.Id">
-                    <i class="fa fa-paper-plane me-2"></i>Faturamı Mesaj Olarak Gönder
+            <div class="modal-footer border-0 d-flex gap-2">
+                <button type="button" id="btnDownloadPdf" class="btn btn-danger flex-grow-1 py-2">
+                    <i class="fa fa-file-pdf me-2"></i>PDF Olarak İndir
+                </button>
+                <button type="button" id="btnSendInvoice" class="btn btn-success flex-grow-1 py-2" data-orderid="@Model.Id">
+                    <i class="fa fa-paper-plane me-2"></i>Mesaj Gönder
                 </button>
             </div>
         </div>

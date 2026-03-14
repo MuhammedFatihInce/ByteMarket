@@ -4,6 +4,8 @@ using ByteMarket.Business.DTOs.Order;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
+using PuppeteerSharp;
+using PuppeteerSharp.Media;
 using System.Text;
 
 namespace ByteMarket.Business.Concrete
@@ -11,10 +13,40 @@ namespace ByteMarket.Business.Concrete
 	public class MailManager : IMailService
 	{
 		private readonly IConfiguration _configuration;
+		
 
 		public MailManager(IConfiguration configuration)
 		{
 			_configuration = configuration;
+			
+		}
+
+		private MimeMessage CreateBaseMessage(string to, string subject)
+		{
+			var email = new MimeMessage();
+			email.From.Add(new MailboxAddress(_configuration["MailSettings:DisplayName"], _configuration["MailSettings:Email"]));
+			email.To.Add(MailboxAddress.Parse(to));
+			email.Subject = subject;
+			return email;
+		}
+		private async Task SendEmailInternalAsync(MimeMessage email)
+		{
+			using var smtp = new SmtpClient();
+			try
+			{
+				await smtp.ConnectAsync(_configuration["MailSettings:Host"],
+					int.Parse(_configuration["MailSettings:Port"]),
+					MailKit.Security.SecureSocketOptions.StartTls);
+
+				await smtp.AuthenticateAsync(_configuration["MailSettings:Email"],
+					_configuration["MailSettings:Password"]);
+
+				await smtp.SendAsync(email);
+			}
+			finally
+			{
+				await smtp.DisconnectAsync(true);
+			}
 		}
 
 		public async Task SendMailAsync(string to, string subject, string body, bool isHtml = true)
@@ -52,73 +84,106 @@ namespace ByteMarket.Business.Concrete
 
 		public async Task SendInvoiceMailAsync(string to, SingleOrderDto orderDto)
 		{
-
-			StringBuilder itemsHtml = new StringBuilder();
-			foreach (var item in orderDto.BasketItems)
+			try
 			{
-				itemsHtml.Append($@"
-	            <tr>
-	                <td style='padding: 8px; border-bottom: 1px solid #eee;'>{item.Name}</td>
-	                <td style='padding: 8px; border-bottom: 1px solid #eee; text-align: center;'>{item.Quantity}</td>
-	                <td style='padding: 8px; border-bottom: 1px solid #eee; text-align: right;'>{item.Price:C2}</td>
-	                <td style='padding: 8px; border-bottom: 1px solid #eee; text-align: right;'>{(item.Price * item.Quantity):C2}</td>
-	            </tr>");
+				StringBuilder itemsHtml = new StringBuilder();
+				foreach (var item in orderDto.BasketItems)
+				{
+					itemsHtml.Append($@"
+                    <tr>
+                        <td style='padding: 8px; border-bottom: 1px solid #eee;'>{item.Name}</td>
+                        <td style='padding: 8px; border-bottom: 1px solid #eee; text-align: center;'>{item.Quantity}</td>
+                        <td style='padding: 8px; border-bottom: 1px solid #eee; text-align: right;'>{item.Price:C2}</td>
+                        <td style='padding: 8px; border-bottom: 1px solid #eee; text-align: right;'>{(item.Price * item.Quantity):C2}</td>
+                    </tr>");
+				}
+
+
+				string mailHtmlContent = GetInvoiceHtmlTemplate(orderDto, itemsHtml.ToString());
+
+				// 3. PDF Byte dizisini oluştur
+				var pdfBytes = await GeneratePdfBytes(mailHtmlContent);
+
+				// 4. Mesajı Hazırla
+				var email = CreateBaseMessage(to, $"Sipariş Faturası - #{orderDto.OrderCode}");
+
+				var bodyBuilder = new BodyBuilder
+				{
+					HtmlBody = $@"<p>Sayın Müşterimiz,</p>
+                             <p>#{orderDto.OrderCode} nolu siparişinize ait fatura detayları aşağıdadır ve ekte PDF olarak sunulmuştur.</p>
+                             <hr/>" + mailHtmlContent // Mailin içine faturayı gömer
+				};
+
+				// PDF Eki Ekleme
+				bodyBuilder.Attachments.Add($"Fatura_{orderDto.OrderCode}.pdf", pdfBytes);
+				email.Body = bodyBuilder.ToMessageBody();
+
+				// 5. Ana motoru kullanarak gönder
+				await SendEmailInternalAsync(email);
+			}
+			catch (Exception ex)
+			{
+				Console.Write(ex);
 			}
 
+			
+		}
 
-			string mailBody = $@"
-					<div style='font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px;'>
-						<div style='display: flex; justify-content: space-between; margin-bottom: 20px;'>
-							<div style='width: 50%;'>
-								<h4 style='color: #0d6efd; margin-bottom: 5px;'>ByteMarket</h4>
-								<p style='font-size: 12px; color: #666;'>{orderDto.Address}</p>
-							</div>
-							<div style='width: 50%; text-align: right;'>
-								<h6 style='margin: 0;'>Fatura Tarihi: {orderDto.CreatedDate:dd.MM.yyyy}</h6>
-								<h6 style='margin: 0;'>Sipariş No: #{orderDto.OrderCode}</h6>
-							</div>
-						</div>
+		private async Task<byte[]> GeneratePdfBytes(string htmlContent)
+		{
+			// HATA BURADAYDI: 'using' ifadesini kaldırdık
+			var browserFetcher = new BrowserFetcher();
 
-						<table style='width: 100%; border-collapse: collapse; margin-bottom: 20px;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='text-align: left; padding: 10px;'>Ürün</th>
-									<th style='text-align: center; padding: 10px;'>Adet</th>
-									<th style='text-align: right; padding: 10px;'>Fiyat</th>
-									<th style='text-align: right; padding: 10px;'>Toplam</th>
-								</tr>
-							</thead>
-							<tbody>
-								{itemsHtml}
-							</tbody>
-						</table>
+			// Tarayıcı yerel dizinde yoksa indirir. 
+			// Not: Bu işlem internet hızına bağlı olarak ilk seferde zaman alabilir.
+			await browserFetcher.DownloadAsync();
 
-						<hr style='border: 0; border-top: 1px solid #eee;' />
+			// Tarayıcıyı başlatıyoruz (Bu nesneler hala IDisposable'dır, using kalmalı)
+			using var browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
+			using var page = await browser.NewPageAsync();
 
-						<div style='display: flex; justify-content: flex-end;'>
-							<div style='width: 40%; float: right;'>
-								<div style='display: flex; justify-content: space-between; margin-bottom: 5px;'>
-									<span>Ara Toplam:</span>
-									<span>{orderDto.TotalBasePrice:C2}</span>
-								</div>
-								<div style='display: flex; justify-content: space-between; margin-bottom: 5px; color: #dc3545;'>
-									<span>İndirim:</span>
-									<span>-{orderDto.DiscountAmount:C2}</span>
-								</div>
-								<div style='display: flex; justify-content: space-between; border-top: 2px solid #eee; pt-2; font-weight: bold; color: #0d6efd;'>
-									<span>Genel Toplam:</span>
-									<span>{orderDto.FinalTotalPrice:C2}</span>
-								</div>
-							</div>
-							<div style='clear: both;'></div>
-						</div>
-		            
-						<div style='margin-top: 30px; text-align: center; font-size: 12px; color: #999;'>
-							Bizi tercih ettiğiniz için teşekkür ederiz!
-						</div>
-					</div>";
+			// HTML içeriğini sayfaya yüklüyoruz
+			await page.SetContentAsync(htmlContent);
 
-			await SendMailAsync(to, $"Sipariş Faturası - #{orderDto.OrderCode}", mailBody);
+			// PDF seçeneklerini ayarlayıp byte array olarak alıyoruz
+			return await page.PdfDataAsync(new PdfOptions
+			{
+				Format = PaperFormat.A4,
+				PrintBackground = true, // CSS renkleri ve görsellerin çıkması için şart
+				MarginOptions = new MarginOptions
+				{
+					Top = "10mm",
+					Bottom = "10mm",
+					Left = "10mm",
+					Right = "10mm"
+				}
+			});
+		}
+
+		private string GetInvoiceHtmlTemplate(SingleOrderDto orderDto, string itemsHtml)
+		{
+			return $@"
+                <div style='font-family: Arial, sans-serif; color: #333;'>
+                    <h2 style='color: #0d6efd;'>ByteMarket Faturası</h2>
+                    <p><strong>Sipariş No:</strong> #{orderDto.OrderCode}<br>
+                    <strong>Tarih:</strong> {orderDto.CreatedDate:dd.MM.yyyy}</p>
+                    <table style='width: 100%; border-collapse: collapse;'>
+                        <thead style='background-color: #f8f9fa;'>
+                            <tr>
+                                <th style='text-align:left; padding:10px;'>Ürün</th>
+                                <th style='text-align:center;'>Adet</th>
+                                <th style='text-align:right;'>Fiyat</th>
+                                <th style='text-align:right; padding:10px;'>Toplam</th>
+                            </tr>
+                        </thead>
+                        <tbody>{itemsHtml}</tbody>
+                    </table>
+                    <div style='text-align: right; margin-top: 20px;'>
+                        <p>Ara Toplam: {orderDto.TotalBasePrice:C2}</p>
+                        <p style='color:red;'>İndirim: -{orderDto.DiscountAmount:C2}</p>
+                        <h3 style='color: #0d6efd;'>Genel Toplam: {orderDto.FinalTotalPrice:C2}</h3>
+                    </div>
+                </div>";
 		}
 	}
 }

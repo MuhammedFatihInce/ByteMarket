@@ -22,7 +22,7 @@ async function openEditModal(roleId, roleName) {
     $('#editRoleModal').modal('show');
 
     try {
-        // fetch ve .json() yerine doğrudan CustomAjax.get() kullanıyoruz
+      
         const result = await CustomAjax.get(`/Admin/Role/GetPermissions?roleId=${roleId}`);
 
         if (result && result.success && result.data && result.data.permissions) {
@@ -40,8 +40,6 @@ async function openEditModal(roleId, roleName) {
             $('#editPermissionsContainer').html('<div class="text-danger">Yetkiler yüklenirken bir hata oluştu.</div>');
         }
     } catch (error) {
-        // CustomAjax kendi içinde Alert.toast gösterse de, modal içindeki yükleniyor 
-        // yazısının da hata mesajıyla değişmesi kullanıcı deneyimi için iyidir.
         $('#editPermissionsContainer').html('<div class="text-danger">Bağlantı hatası. Lütfen tekrar deneyin.</div>');
     }
 }
@@ -65,7 +63,7 @@ $(document).ready(function () {
         });
     });
 
-    // Düzenleme Formunu Gönderme İşlemi
+    
     $('#roleEditForm').on('submit', function (e) {
         e.preventDefault();
 
@@ -87,7 +85,6 @@ $(document).ready(function () {
             icon: 'warning',
             confirmButtonText: 'Evet, Güncelle',
             onConfirm: async () => {
-                // Burada senin CustomAjax post yapını kullanıyoruz
                 const response = await CustomAjax.post('/Admin/Role/UpdatePermissions', data);
                 if (response && response.success) {
                     location.reload();
@@ -136,61 +133,171 @@ function formatUserSelection(user) {
 
 let isConfirming = false;
 
-async function updateUserRole(roleName, userId, isAdding) {
-
-    isConfirming = true;
+async function updateUserRolesBulk(roleName, changes) {
 
     const data = {
-        UserId: userId,
         RoleName: roleName,
-        IsAdding: isAdding
+        Changes: changes.map(c => ({
+            UserId: c.userId,
+            IsAdding: c.status
+        }))
     };
 
-    return new Promise((resolve) => {
+    try {
+        const response = await CustomAjax.post('/Admin/Role/AssignRole', data);
 
-        Alert.fire({
-            title: 'Yetki güncellenecek!',
-            text: `Kullanıcı yetkisini değiştirmek istediğinize emin misiniz?`,
-            icon: 'warning',
-            confirmButtonText: 'Evet, Güncelle',
-            onConfirm: async () => {
-                try {
-                    const response = await CustomAjax.post('/Admin/Role/AssignRole', data);
-
-                    if (response && response.success) {
-                        Alert.toast({ title: response.message, icon: 'success' });
-                        resolve(true);
-
-                    } else {
-                        Alert.error({ title: "Hata", text: response.message });
-                        resolve(false);
-                    }
-                } catch (error) {
-                    Alert.error({ title: "Hata", text: "Bağlantı kurulamadı!" });
-                    resolve(false);
-                } finally {
-                    isConfirming = false;
-                }
-            },
-            onCancel: () => {
-                resolve(false);
-            },
-            didClose: () => {
-                isConfirming = false; 
-                console.log("Kilit kaldırıldı!");
-            },
-            successMessage: 'Yetkiler başarıyla güncellendi!'
-        });
-
-
-    });
+        if (response && response.success) {
+            Alert.toast({ title: response.message, icon: 'success' });
+            return true;
+        } else {
+            Alert.toast({ title: response.message, icon: 'error' });
+            return false;
+        }
+    } catch (error) {
+        Alert.toast({ title: "Sunucuyla bağlantı kurulamadı!", icon: 'error' });
+        return false;
+    }
 
     
 };
 
+async function getUserByRole(roleName) {
+
+    try {
+        const response = await CustomAjax.get(`/Admin/Role/GetAllUsersWithRolesAsync/${roleName}`);
+
+        if (response && response.success) {
+            return response.data;
+
+        } else {
+            Alert.toast({ title: "Hata", icon: 'error' });
+            return null;
+        }
+    } catch (error) {
+        Alert.toast({ title: "Hata", icon: 'error' });
+        return null;
+    } 
+
+
+};
+function createUserRow(user) {
+    const templateHtml = $('#user-row-template').html();
+    const $row = $(templateHtml);
+
+    $row.find('.user-namesurname').text(user.nameSurname || '---');
+    $row.find('.user-id').text(`ID: ${user.id}`);
+    $row.find('.user-username').text(user.userName);
+    $row.find('.user-email').text(user.email);
+
+    const $rolesContainer = $row.find('.user-roles');
+
+    $.each(user.roles || [], function (i, role) {
+        const isAdmin = role === "Admin";
+        const $badge = $('<span></span>')
+            .addClass(`badge bg-opacity-10 border border-opacity-25 px-2 py-1 me-1`)
+            .addClass(isAdmin ? 'bg-danger text-danger border-danger' : 'bg-primary text-primary border-primary')
+            .text(role);
+        $rolesContainer.append($badge);
+    });
+
+    $row.attr('id', `user-row-${user.id}`);
+    return $row;
+}
+
+async function refreshUserTable(roleName) {
+    const $tbody = $('#user-table-body');
+    const roleTitle = `<i class="bi bi-people-fill me-2 text-ty-orange"></i>${roleName} Rolü Listesi`;
+
+    $('#tableUsersListTitle').html(roleTitle);
+
+    await $tbody.fadeOut(200).promise();
+
+    const users = await getUserByRole(roleName);
+
+    if (!users) {
+        $tbody.fadeIn(200);
+        return;
+    }
+
+    $tbody.empty();
+
+    if (users.length === 0) {
+        $tbody.append('<tr><td colspan="4" class="text-center py-4">Kullanıcı bulunamadı.</td></tr>');
+        $tbody.fadeIn(400);
+        return;
+    }
+
+    let rows = [];
+    $.each(users, function (index, user) {
+        const $row = createUserRow(user);
+        $row.hide(); 
+        rows.push($row);
+    });
+
+   
+    $tbody.append(rows);
+
+    
+    $tbody.show(); 
+
+   
+    $tbody.find('tr').each(function (i) {
+        $(this).delay(i * 30).fadeIn(400);
+    });
+}
+
+let pendingChanges = {};
+function refreshPendingChangesTable() {
+    const $body = $('#pending-changes-body');
+    const $area = $('#pendingChangesArea');
+    const templateHtml = $('#pending-row-template').html();
+    const changes = Object.values(pendingChanges);
+
+    if (changes.length === 0) {
+        $area.fadeOut(200, function () { $(this).addClass('d-none'); });
+        return;
+    }
+
+    $area.removeClass('d-none').fadeIn(200);
+    $('#pendingCount').text(changes.length);
+    $body.empty();
+
+    let rows = [];
+
+    $.each(changes, function (index, user) {
+        const $row = $(templateHtml);
+
+        $row.find('.pending-namesurname').text(user.nameSurname || '---');
+        $row.find('.pending-id').text(`ID: ${user.userId}`);
+        $row.find('.pending-username').text(user.userName);
+        $row.find('.pending-email').text(user.email);
+
+        $row.addClass(user.status ? 'table-success' : 'table-danger');
+
+        const isAdding = user.status;
+        const $badge = $('<span></span>')
+            .addClass(`badge bg-opacity-10 border border-opacity-25 px-2 py-1`)
+            .addClass(isAdding ? 'bg-success text-success border-success' : 'bg-danger text-danger border-danger')
+            .html(`<i class="bi ${isAdding ? 'bi-plus-circle' : 'bi-dash-circle'} me-1"></i> ${isAdding ? 'Role Ekle' : 'Rolden Çıkar'}`);
+
+        $row.find('.pending-status-container').append($badge);
+
+        $row.hide();
+        rows.push($row);
+    });
+
+    $body.append(rows);
+    $body.find('tr').fadeIn(300);
+}
+
 async function openUserAuthorizeModal(roleId, roleName) {
+    $('#createUserAuthorizeModal').data('active-role-name', roleName);
+    pendingChanges = {};
+
+    await refreshUserTable(roleName);
 
     $('#createUserAuthorizeModalLabel').html(`<i class="bi bi-people me-2 text-ty-orange"></i>Kullanıcıya ${roleName} Rolünü Tanımla`);
+
 
 
     const $selectElement = $('.select2-users');
@@ -230,7 +337,10 @@ async function openUserAuthorizeModal(roleId, roleName) {
                         id: item.id.toLowerCase(),
                         text: item.text,
                         email: item.email,
-                        selected: alreadyHasRole
+                        userName: item.userName,
+                        roles: item.roleNames,
+                        selected: alreadyHasRole,
+                        wasSelected: alreadyHasRole
                     };
 
                 });
@@ -265,38 +375,92 @@ async function openUserAuthorizeModal(roleId, roleName) {
 
         e.preventDefault();
 
-        const isSuccess = await updateUserRole(roleName, userId, !data.selected);
 
-        if (isSuccess) {
-            data.selected = !data.selected;
+        data.selected = !data.selected;
 
-            $('.user-switch-' + userId).prop('checked', data.selected);
-
-            var currentValues = $(this).val() || [];
-            if (data.selected) {
-                currentValues.push(userId);
-            } else {
-                currentValues = currentValues.filter(v => v.toLowerCase() !== userId.toLowerCase());
-            }
-            $(this).val(currentValues).trigger('change.select2');
+        if (data.selected === data.wasSelected) {
+            delete pendingChanges[userId];
+        } else {
             
+            pendingChanges[userId] = {
+                userId: userId,
+                status: data.selected, 
+                userName: data.userName,
+                nameSurname: data.text,
+                email: data.email,
+                roles: data.roles || []
+            };
         }
+
+        refreshPendingChangesTable();
+
+        $('.user-switch-' + userId).prop('checked', data.selected);
+
+        var currentValues = $(this).val() || [];
+        if (data.selected) {
+            currentValues.push(userId);
+        } else {
+            
+            currentValues = currentValues.filter(v => v.toLowerCase() !== userId.toLowerCase());
+        }
+        $(this).val(currentValues).trigger('change.select2');
+
+       
     });
 
 
     $('#createUserAuthorizeModal').modal('show');
 }
 
-$('#createUserAuthorizeModal').on('hidden.bs.modal', function () {
-    const $select = $('.select2-users');
-    $select.off('select2:selecting select2:closing');
+$(document).ready(function () {
 
-    if ($select.data('select2')) {
-        $select.select2('destroy');
-        $select.empty();
-    }
+    $('#btnUserRoles').off('click').on('click', async function () {
+        const changesArray = Object.values(pendingChanges);
+        const activeRoleName = $('#createUserAuthorizeModal').data('active-role-name');
 
-    location.reload();
+        if (changesArray.length === 0) {
+            Alert.toast({ title: "Herhangi bir değişiklik yapmadınız.", icon: 'warning' });
+            return;
+        }
+
+        Alert.fire({
+            title: 'Emin misiniz?',
+            text: `${changesArray.length} adet yetkilendirme işlemi tek seferde uygulanacaktır.`,
+            icon: 'question',
+            confirmButtonText: 'Evet, Onayla',
+            onConfirm: async () => {
+                isConfirming = true;
+                $(this).prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> İşleniyor...');
+
+                const isSuccess = await updateUserRolesBulk(activeRoleName, changesArray);
+
+                if (isSuccess) {
+                    pendingChanges = {};
+                    refreshPendingChangesTable();
+                    await refreshUserTable(activeRoleName);
+                }
+
+                isConfirming = false;
+                $(this).prop('disabled', false).text('Yetkiyi Tanımla');
+            }
+        });
+    });
+
+
+    $('#createUserAuthorizeModal').on('hidden.bs.modal', function () {
+        pendingChanges = {};
+        refreshPendingChangesTable();
+        const $select = $('.select2-users');
+        $select.off('select2:selecting select2:closing');
+
+        if ($select.data('select2')) {
+            $select.select2('destroy');
+            $select.empty();
+        }
+    });
 });
+
+
+
 
 

@@ -90,5 +90,6 @@ namespace ByteMarket.WebUI.Controllers
 
 			return Json(new { success = result.Success, message = result.Message });
 		}
+
 	}
 }

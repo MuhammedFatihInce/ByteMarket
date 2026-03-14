@@ -77,7 +77,10 @@ namespace ByteMarket.Business.Concrete
 
 		public async Task<IDataResult<List<GetAllUsersByFilterDto>>> GetAllUsersByFilterAsync(string q)
 		{
-			var users = await _userManager.Users.Where(x => x.NameSurname.Contains(q)).ToListAsync();
+
+			var users = await _userManager.Users.
+				Where(x => string.IsNullOrEmpty(q) || x.NameSurname.Contains(q))
+				.ToListAsync();
 
 			var allRoles = await _roleManager.Roles.ToListAsync();
 
@@ -92,18 +95,44 @@ namespace ByteMarket.Business.Concrete
 					.Select(r => r.Id.ToString())
 					.ToList();
 
-				var userDto = new GetAllUsersByFilterDto
+				userListDtos.Add(new GetAllUsersByFilterDto
 				{
 					Id = user.Id.ToString(),
 					NameSurname = user.NameSurname,
+					UserName = user.UserName,
 					Email = user.Email,
-					RoleIds = roleIds
-				};
-
-				userListDtos.Add(userDto);
+					RoleIds = roleIds,
+					RoleNames = roleNames.ToList()
+				});
 			}
 
 			return new SuccessDataResult<List<GetAllUsersByFilterDto>>(userListDtos, "Kullanıcılar başarıyla listelendi.");
+		}
+
+
+		public async Task<IDataResult<List<UserListDto>>> GetAllUsersByRoleAsync(string roleName)
+		{
+			var users = await _userManager.GetUsersInRoleAsync(roleName);
+
+			if (users == null)
+				return new ErrorDataResult<List<UserListDto>>();
+
+			var userListDtos = new List<UserListDto>();
+
+			foreach (var user in users)
+			{
+				var roles = await _userManager.GetRolesAsync(user);
+				userListDtos.Add(new UserListDto
+				{
+					Id = user.Id.ToString(),
+					NameSurname = user.NameSurname,
+					UserName = user.UserName,
+					Email = user.Email,
+					Roles = roles
+				});
+			}
+
+			return new SuccessDataResult<List<UserListDto>>(userListDtos);
 		}
 	}
 }

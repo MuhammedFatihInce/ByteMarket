@@ -6,6 +6,7 @@
     var apiBaseUrl = Configuration["ApiSettings:BaseStorageAdress"];
     string noImageUrl = "https://placehold.co/600x400?text=Resim+Yok";
 }
+@Html.AntiForgeryToken()
 
 <div class="container mt-5 mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -13,9 +14,15 @@
             <h2 class="fw-bold mb-0">Sipariş Detayı</h2>
             <small class="text-muted">Sipariş No: <span class="fw-bold text-dark">#@Model.OrderCode</span></small>
         </div>
-        <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
-            <i class="fa fa-arrow-left me-1"></i> Siparişlerime Dön
-        </a>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-dark btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#invoiceModal">
+                <i class="fa fa-file-invoice me-1"></i> Faturayı Görüntüle
+            </button>
+
+            <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                <i class="fa fa-arrow-left me-1"></i> Siparişlerime Dön
+            </a>
+        </div>
     </div>
 
     <div class="row g-4">
@@ -102,6 +109,78 @@
     </div>
 </div>
 
+<div class="modal fade" id="invoiceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Sipariş Faturası</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4" id="invoiceContainer">
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <h4 class="text-dark">ByteMarket</h4>
+                        <p class="small text-muted">@Model.Address</p>
+                    </div>
+                    <div class="col-6 text-end">
+                        <h6>Fatura Tarihi: @Model.CreatedDate.ToString("dd.MM.yyyy")</h6>
+                        <h6>Sipariş No: #<strong>@Model.OrderCode</strong></h6>
+                    </div>
+                </div>
+
+                <table class="table table-borderless">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Ürün</th>
+                            <th class="text-center">Adet</th>
+                            <th class="text-end">Fiyat</th>
+                            <th class="text-end">Toplam</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.BasketItems)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td class="text-center">@item.Quantity</td>
+                                <td class="text-end">@item.Price.ToString("C2")</td>
+                                <td class="text-end">@((item.Price * item.Quantity).ToString("C2"))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <hr />
+
+                <div class="row justify-content-end">
+                    <div class="col-5">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Ara Toplam:</span>
+                            <span>@Model.TotalBasePrice.ToString("C2")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 text-danger">
+                            <span>İndirim:</span>
+                            <span>-@Model.DiscountAmount.ToString("C2")</span>
+                        </div>
+                        <div class="d-flex justify-content-between border-top pt-2 fw-bold">
+                            <span>Genel Toplam:</span>
+                            <span class="text-primary">@Model.FinalTotalPrice.ToString("C2")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 d-flex gap-2">
+                <button type="button" id="btnDownloadPdf" class="btn btn-danger flex-grow-1 py-2">
+                    <i class="fa fa-file-pdf me-2"></i>PDF Olarak İndir
+                </button>
+                <button type="button" id="btnSendInvoice" class="btn btn-success flex-grow-1 py-2" data-orderid="@Model.Id">
+                    <i class="fa fa-paper-plane me-2"></i>Mesaj Gönder
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
     .bg-light {
         background-color: #f8f9fa !important;
@@ -111,3 +190,7 @@
         object-fit: contain;
     }
 </style>
+
+@section Scripts {
+    <script src="~/js/customer/order/order-success.js" asp-append-version="false"></script>
+}

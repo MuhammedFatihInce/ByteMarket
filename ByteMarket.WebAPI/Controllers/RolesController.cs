@@ -31,7 +31,7 @@ namespace ByteMarket.WebAPI.Controllers
 		}
 
 		[HttpPost("AssignRole")]
-		public async Task<IActionResult> AssignRole(AssignRoleDto assignRoleDto)
+		public async Task<IActionResult> AssignRole(BulkAssignRoleDto assignRoleDto)
 		{
 			var result = await _roleService.AssignRoleToUserAsync(assignRoleDto);
 			return CreateActionResult(result);

@@ -24,4 +24,24 @@
         }
 
     });
+
+
+    $("#btnDownloadPdf").click(function () {
+
+        const element = $('#invoiceContainer')[0];
+
+        const opt = {
+            margin: [10, 10, 10, 10],
+            filename: 'Fatura_#' + document.querySelector('strong').innerText + '.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: {
+                scale: 2,
+                useCORS: true,
+                logging: true
+            },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save();
+    });
 });

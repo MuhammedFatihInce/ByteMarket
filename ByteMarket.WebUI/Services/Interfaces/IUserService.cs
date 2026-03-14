@@ -7,5 +7,6 @@ namespace ByteMarket.WebUI.Services.Interfaces
 	{
 		Task<ApiDataResponse<List<UserListViewModel>>> GetAllUsersWithRolesAsync();
 		Task<ApiDataResponse<List<GetAllUsersByFilterViewModel>>> GetAllUsersByFilterAsync(string q);
+		Task<ApiDataResponse<List<UserListViewModel>>> GetAllUsersWithRolesAsync(string roleName);
 	}
 }

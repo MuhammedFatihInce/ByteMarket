@@ -38,28 +38,51 @@ namespace ByteMarket.Business.Concrete
 			return new SuccessDataResult<List<RoleListDto>>(roles);
 		}
 
-		public async Task<IResult> AssignRoleToUserAsync(AssignRoleDto assignRoleDto)
+		public async Task<IResult> AssignRoleToUserAsync(BulkAssignRoleDto assignRoleDto)
 		{
-			AppUser? user = await _userManager.FindByIdAsync(assignRoleDto.UserId);
-			if (user == null) return new ErrorResult("Kullanıcı bulunamadı.");
+			var errors = new List<string>();
 
-			IdentityResult result;
-
-			if (assignRoleDto.IsAdding)
+			foreach (var change in assignRoleDto.Changes)
 			{
-				if (await _userManager.IsInRoleAsync(user, assignRoleDto.RoleName))
-					return new SuccessResult("Kullanıcı zaten bu role sahip.");
+				AppUser? user = await _userManager.FindByIdAsync(change.UserId);
 
-				result = await _userManager.AddToRoleAsync(user, assignRoleDto.RoleName);
+				if (user == null)
+				{
+					errors.Add($"{change.UserId} ID'li kullanıcı bulunamadı.");
+					continue;
+				}
+
+				IdentityResult result;
+
+				if (change.IsAdding)
+				{
+					if (await _userManager.IsInRoleAsync(user, assignRoleDto.RoleName))
+						continue;
+
+					result = await _userManager.AddToRoleAsync(user, assignRoleDto.RoleName);
+				}
+				else
+				{
+					if (!(await _userManager.IsInRoleAsync(user, assignRoleDto.RoleName)))
+						continue;
+
+					result = await _userManager.RemoveFromRoleAsync(user, assignRoleDto.RoleName);
+				}
+
+				if (!result.Succeeded)
+				{
+					errors.Add($"{user.UserName} için işlem başarısız: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+				}
+
 			}
-			else
+
+			if (errors.Any())
 			{
-				result = await _userManager.RemoveFromRoleAsync(user, assignRoleDto.RoleName);
+				return new ErrorResult("Bazı işlemler tamamlanamadı: " + string.Join(" | ", errors));
 			}
 
-			
-			if (result.Succeeded) return new SuccessResult("İşlem başarılı.");
-			return new ErrorResult("Rol atama işlemi başarısız.");
+			return new SuccessResult("Tüm yetkilendirme işlemleri başarıyla tamamlandı.");
+
 		}
 
 		public async Task<IResult> DeleteRoleAsync(string id)

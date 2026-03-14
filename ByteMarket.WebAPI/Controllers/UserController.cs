@@ -28,5 +28,13 @@ namespace ByteMarket.WebAPI.Controllers
 			var result = await _userService.GetAllUsersByFilterAsync(q);
 			return CreateActionResult(result);
 		}
+
+
+		[HttpGet("GetAllUsersByRole/{roleName}")]
+		public async Task<IActionResult> GetAllUsersByRole(string roleName)
+		{
+			var result = await _userService.GetAllUsersByRoleAsync(roleName);
+			return CreateActionResult(result);
+		}
 	}
 }

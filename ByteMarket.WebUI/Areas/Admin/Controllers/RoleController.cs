@@ -121,8 +121,10 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 				{
 					id = u.Id,
 					text = u.NameSurname,
+					userName = u.UserName,
 					email = u.Email,
-					roleIds = u.RoleIds
+					roleIds = u.RoleIds,
+					roleNames = u.RoleNames
 				};
 			}).ToList();
 
@@ -132,19 +134,23 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> AssignRole([FromBody] AssignRoleViewModel model)
+		public async Task<IActionResult> AssignRole([FromBody] BulkAssignRoleViewModel model)
 		{
-			if (model == null || string.IsNullOrEmpty(model.UserId))
-				return Json(new { success = false, message = "Geçersiz veri gönderildi." });
+			if (model == null || model.Changes == null || !model.Changes.Any())
+				return Json(new { success = false, message = "Değişiklik listesi boş." });
 
 			var result = await _roleService.AssignRoleAsync(model);
 
-			if (result.Success)
-			{
-				return Json(new { success = true, message = result.Message });
-			}
+			return Json(new { success = result.Success, message = result.Message });
+		}
 
-			return Json(new { success = false, message = result.Message });
+
+		[HttpGet("/Admin/Role/GetAllUsersWithRolesAsync/{roleName}")]
+		public async Task<IActionResult> GetAllUsersWithRolesAsync(string roleName)
+		{
+			var result = await _userService.GetAllUsersWithRolesAsync(roleName);
+
+			return Json(new { data = result.Data, success = result.Success, message = result.Message });
 		}
 	}
 }

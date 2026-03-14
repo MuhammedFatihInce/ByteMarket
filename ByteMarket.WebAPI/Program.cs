@@ -1,4 +1,5 @@
 using ByteMarket.Business;
+using ByteMarket.Business.Jobs;
 using ByteMarket.Business.Validators.Products;
 using ByteMarket.DataAccess;
 using ByteMarket.DataAccess.Contexts;
@@ -13,7 +14,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Quartz;
 using System.Text;
-using ByteMarket.Business.Jobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -119,7 +119,6 @@ builder.Services.AddQuartz(q =>
 		.WithIdentity("CurrencyUpdateJob-trigger")
 		.WithCronSchedule("0 35 15 * * ?"));
 }).AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
-
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
