@@ -2,6 +2,8 @@
 using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+
 
 namespace ByteMarket.WebUI.Controllers
 {
@@ -49,24 +51,54 @@ namespace ByteMarket.WebUI.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create([FromBody]CheckoutRequest checkoutRequest)
 		{
-			var isSuccess = _paymentService.ProcessPayment(checkoutRequest.PaymentModel);
+			var paymentResult = await _paymentService.ProcessPayment(checkoutRequest.PaymentModel);
 
-			if (isSuccess)
+			if (paymentResult.Success && paymentResult.Data != null && checkoutRequest.OrderModel != null)
 			{
-				var result = await _orderService.CreateOrder(checkoutRequest.OrderModel);
+				var orderDataJson = JsonSerializer.Serialize(checkoutRequest.OrderModel);
 
-				if (result.Success)
-				{
-					return Json(new { success = true, message = result.Message });
-				}
+				HttpContext.Session.SetString("TransactionToken", paymentResult.Data.TransactionToken);
+				HttpContext.Session.SetString("PendingOrder", orderDataJson);
 
-				return Json(new { success = false, message = result.Message });
+				return Json(new { success = true,
+					redirectUrl = paymentResult.Data.RedirectUrl
+				});
 			}
 
-			return Json(new { success = false, message = "Ödeme yapılamadı." });
+			return Json(new { success = false, message = "Ödeme başlatılamadı: " + paymentResult.Message });
 		}
 
-		
+		[HttpGet]
+		public async Task<IActionResult> PaymentCallback(string token, bool success)
+		{
+			var transactionToken = HttpContext.Session.GetString("TransactionToken");
+
+			if (success && transactionToken == token)
+			{
+				var orderJson = HttpContext.Session.GetString("PendingOrder");
+
+				if (!string.IsNullOrEmpty(orderJson))
+				{
+					var orderModel = JsonSerializer.Deserialize<CreateOrderViewModel>(orderJson); // Kendi modeline göre cast et
+
+					// 2. Ödeme başarılı olduğuna göre artık SİPARİŞİ OLUŞTURABİLİRİZ
+					var result = await _orderService.CreateOrder(orderModel);
+
+					if (result.Success)
+					{
+						// Session'ı temizle
+						HttpContext.Session.Remove("TransactionToken");
+						HttpContext.Session.Remove("PendingOrder");
+						return RedirectToAction("Success", new { id = orderModel.BasketId }); // "Tebrikler" sayfası
+					}
+				}
+			}
+
+			TempData["Error"] = "Ödeme onaylandı ancak sipariş oluşturulurken bir hata oluştu.";
+			return RedirectToAction("Index", "Basket");
+		}
+
+
 
 		public async Task<IActionResult> Success(string id)
 		{
@@ -90,6 +122,8 @@ namespace ByteMarket.WebUI.Controllers
 
 			return Json(new { success = result.Success, message = result.Message });
 		}
+
+		
 
 	}
 }

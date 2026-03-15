@@ -37,6 +37,11 @@ namespace ByteMarket.Business
 			services.AddScoped<IEditorService, EditorManager>();
 			services.AddScoped<ICurrencyService, CurrencyManager>();
 
+			services.AddHttpClient();
+			services.AddScoped<IPaymentService, PaymentManager>();
+
+			
+
 		}
 	}
 }

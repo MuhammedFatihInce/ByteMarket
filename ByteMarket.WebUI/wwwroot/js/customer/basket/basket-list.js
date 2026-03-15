@@ -119,18 +119,23 @@ $(document).ready(function () {
             const response = await CustomAjax.post(`/Order/Create`, requestData);
 
             if (response && response.success) {
-                Alert.toast({ title: response.message, icon: 'success' });
-                setTimeout(() => { window.location.href = `/Order/Success/${basketId}`; }, 2000);
+                Alert.toast({ title: "Ödeme başarılı! Yönlendiriliyorsunuz...", icon: 'success' });
+                //setTimeout(() => { window.location.href = `/Order/Success/${basketId}`; }, 2000);
+                setTimeout(() => { window.location.href = response.redirectUrl; }, 2000);
                         
             } else {
-                Alert.toast({ title: response.message || "İşlem başarısız", icon: 'error' });
+                console.log("Hata Mesajı:", response.message);
+                Alert.toast({
+                    title: response.message || "Ödeme onaylanmadı, bilgilerinizi kontrol edin.",
+                    icon: 'error'
+                });
             }
         } catch (error) {
             console.error("Hata:", error);
             Alert.toast({ title: "Bir hata oluştu", icon: 'error' });
         }
                
-        Alert.toast({ title: "Ödemeniz alınıyor, lütfen bekleyin...", icon: 'info' });
+       
     });
 });
 

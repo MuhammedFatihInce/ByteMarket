@@ -1,0 +1,18 @@
+﻿
+<h2>Banka 3D Secure Simülasyonu</h2>
+<p>Telefonunuza gelen şifreyi giriniz. (Demo Şifre: @ViewBag.DemoCode)</p>
+
+@if (ViewBag.Error != null)
+{
+    <p style="color:red">@ViewBag.Error</p>
+}
+
+<form asp-action="Verify3DSubmit" method="post">
+    <input type="hidden" name="token" value="@ViewBag.Token" />
+    <div class="form-group">
+        <label>Doğrulama Kodu:</label>
+        <input type="text" name="enteredCode" class="form-control" required />
+    </div>
+    <br/>
+    <button type="submit" class="btn btn-primary">Ödemeyi Tamamla</button>
+</form>

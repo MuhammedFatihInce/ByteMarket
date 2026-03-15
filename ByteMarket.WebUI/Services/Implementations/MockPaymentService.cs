@@ -1,18 +1,21 @@
 ﻿using ByteMarket.WebUI.Models.Payment;
+using ByteMarket.WebUI.Models.ResultModels;
 using ByteMarket.WebUI.Services.Interfaces;
 
 namespace ByteMarket.WebUI.Services.Implementations
 {
 	public class MockPaymentService: IPaymentService
 	{
-		public bool ProcessPayment(PaymentRequestViewModel request)
-		{
-			if (request.CardNumber.StartsWith("1111"))
-			{
-				return true; 
-			}
+		private readonly IApiService _apiService;
 
-			return false;
+		public MockPaymentService(IApiService apiService)
+		{
+			_apiService = apiService;
+		}
+
+		public async Task<ApiDataResponse<GatewayResponseViewModel>> ProcessPayment(PaymentRequestViewModel request)
+		{
+			return await _apiService.PostAsync<GatewayResponseViewModel>("Payments/initialize", request);
 		}
 	}
 }

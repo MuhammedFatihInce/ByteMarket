@@ -1,9 +1,10 @@
 ﻿using ByteMarket.WebUI.Models.Payment;
+using ByteMarket.WebUI.Models.ResultModels;
 
 namespace ByteMarket.WebUI.Services.Interfaces
 {
 	public interface IPaymentService
 	{
-		bool ProcessPayment(PaymentRequestViewModel request);
+		Task<ApiDataResponse<GatewayResponseViewModel>> ProcessPayment(PaymentRequestViewModel request);
 	}
 }

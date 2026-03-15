@@ -93,6 +93,16 @@ builder.Services.AddHttpClient("MyApiClient", client =>
 	client.BaseAddress = new Uri(apiBaseAddress);
 }).AddHttpMessageHandler<AuthTokenHandler>();
 
+
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+	options.IdleTimeout = TimeSpan.FromMinutes(20); 
+	options.Cookie.HttpOnly = true; 
+	options.Cookie.IsEssential = true; 
+});
+
 builder.Services.AddScoped<IApiService, ApiService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -109,6 +119,9 @@ builder.Services.AddScoped<IProductReviewService, ProductReviewService>();
 builder.Services.AddScoped<IEditorService, EditorService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -123,6 +136,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();
