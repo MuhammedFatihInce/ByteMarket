@@ -21,7 +21,7 @@ namespace ByteMarket.WebUI.ViewComponents
 
 
 
-				if (result.Success && result.Data != null)
+				if (result != null && result.Success && result.Data != null)
 				{
 					basketCount = result.Data.BasketItem.Sum(x => x.Quantity);
 

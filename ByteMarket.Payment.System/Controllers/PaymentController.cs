@@ -7,10 +7,12 @@ namespace ByteMarket.Payment.System.Controllers
 	public class PaymentController : Controller
 	{
 		private readonly IMemoryCache _memoryCache;
+		private readonly IConfiguration _configuration;
 
-		public PaymentController(IMemoryCache memoryCache)
+		public PaymentController(IMemoryCache memoryCache, IConfiguration configuration)
 		{
 			_memoryCache = memoryCache;
+			_configuration = configuration;
 		}
 
 		
@@ -40,7 +42,9 @@ namespace ByteMarket.Payment.System.Controllers
 
 			_memoryCache.Set(transactionToken, cacheData, TimeSpan.FromMinutes(5));
 
-			string redirectUrl = $"https://localhost:44338/Payment/Verify3D?token={transactionToken}";
+			string baseUrl = _configuration["PaymentSettings:Verify3DUrl"];
+
+			string redirectUrl = $"{baseUrl}?token={transactionToken}";
 
 			var response = new GatewayResponse
 			{
@@ -77,7 +81,10 @@ namespace ByteMarket.Payment.System.Controllers
 				
 				if (data.Code == enteredCode)
 				{
-					return Redirect($"{data.ReturnUrl}?success=true&token={token}");
+					data.IsApproved = true;
+					_memoryCache.Set(token, data, TimeSpan.FromMinutes(5));
+
+					return Redirect($"{data.ReturnUrl}?token={token}");
 				}
 				else
 				{
@@ -87,6 +94,20 @@ namespace ByteMarket.Payment.System.Controllers
 				}
 			}
 			return Content("İşlem zaman aşımına uğradı.");
+		}
+
+		[HttpPost] 
+		public IActionResult CheckPaymentStatus([FromBody] string token)
+		{
+			if (_memoryCache.TryGetValue(token, out CachePaymentData data))
+			{
+				if (data.IsApproved)
+				{
+					_memoryCache.Remove(token); 
+					return Ok(new GatewayResponse { IsSuccess = true, Message = "Ödeme doğrulandı." });
+				}
+			}
+			return Ok(new GatewayResponse { IsSuccess = false, Message = "Ödeme onaylanmamış." });
 		}
 
 		public bool IsCardValid(PaymentRequest paymentRequest)

@@ -33,12 +33,12 @@ namespace ByteMarket.WebUI.Controllers
 		{
 			var result = await _wishListService.GetAllWishListProductsAsync();
 
-			if (result.Success)
+			if (result != null && result.Success)
 			{
 				return View(result.Data);
 			}
 
-			TempData["Error"] = result.Message;
+			TempData["Error"] = result != null ? result.Message : "İstek listesi boş." ;
 			return View(new List<WishListProductViewModel>());
 		}
 

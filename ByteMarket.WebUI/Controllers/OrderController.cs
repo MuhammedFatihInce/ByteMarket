@@ -51,9 +51,14 @@ namespace ByteMarket.WebUI.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create([FromBody]CheckoutRequest checkoutRequest)
 		{
+			if (checkoutRequest == null || checkoutRequest.PaymentModel == null)
+			{
+				return Json(new { success = false, message = "Geçersiz istek. Lütfen bilgilerinizi kontrol edip tekrar deneyin." });
+			}
+
 			var paymentResult = await _paymentService.ProcessPayment(checkoutRequest.PaymentModel);
 
-			if (paymentResult.Success && paymentResult.Data != null && checkoutRequest.OrderModel != null)
+			if (paymentResult != null && paymentResult.Data != null && checkoutRequest.OrderModel != null && paymentResult.Success)
 			{
 				var orderDataJson = JsonSerializer.Serialize(checkoutRequest.OrderModel);
 
@@ -65,36 +70,59 @@ namespace ByteMarket.WebUI.Controllers
 				});
 			}
 
-			return Json(new { success = false, message = "Ödeme başlatılamadı: " + paymentResult.Message });
+			string errorMessage = paymentResult != null && !string.IsNullOrEmpty(paymentResult.Message)
+				? paymentResult.Message
+				: "Ödeme servisi yanıt vermedi veya işlem reddedildi.";
+
+			return Json(new { success = false, message = "Ödeme başlatılamadı: " + errorMessage });
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> PaymentCallback(string token, bool success)
+		public async Task<IActionResult> PaymentCallback(string token)
 		{
 			var transactionToken = HttpContext.Session.GetString("TransactionToken");
 
-			if (success && transactionToken == token)
+			if (!string.IsNullOrEmpty(token) && transactionToken == token)
 			{
-				var orderJson = HttpContext.Session.GetString("PendingOrder");
 
-				if (!string.IsNullOrEmpty(orderJson))
+				var verificationResult = await _paymentService.VerifyPayment(token);
+
+				if (verificationResult != null && verificationResult.Success)
 				{
-					var orderModel = JsonSerializer.Deserialize<CreateOrderViewModel>(orderJson); // Kendi modeline göre cast et
+					var orderJson = HttpContext.Session.GetString("PendingOrder");
 
-					// 2. Ödeme başarılı olduğuna göre artık SİPARİŞİ OLUŞTURABİLİRİZ
-					var result = await _orderService.CreateOrder(orderModel);
-
-					if (result.Success)
+					if (!string.IsNullOrEmpty(orderJson))
 					{
-						// Session'ı temizle
-						HttpContext.Session.Remove("TransactionToken");
-						HttpContext.Session.Remove("PendingOrder");
-						return RedirectToAction("Success", new { id = orderModel.BasketId }); // "Tebrikler" sayfası
+						var orderModel = JsonSerializer.Deserialize<CreateOrderViewModel>(orderJson);
+
+						
+						var result = await _orderService.CreateOrder(orderModel);
+
+						if (result.Success)
+						{
+							
+							HttpContext.Session.Remove("TransactionToken");
+							HttpContext.Session.Remove("PendingOrder");
+							return RedirectToAction("Success", new { id = orderModel.BasketId });
+						}
+						else
+						{
+							TempData["ErrorMessage"] = "Ödeme alındı ancak sipariş oluşturulurken hata çıktı: " + result.Message;
+						}
 					}
 				}
+				else
+				{
+					TempData["ErrorMessage"] = "Ödeme doğrulanamadı! Sahte işlem şüphesi.";
+				}
+
+				
+			}
+			else
+			{
+				TempData["ErrorMessage"] = "Geçersiz işlem oturumu.";
 			}
 
-			TempData["Error"] = "Ödeme onaylandı ancak sipariş oluşturulurken bir hata oluştu.";
 			return RedirectToAction("Index", "Basket");
 		}
 

@@ -7,5 +7,6 @@ namespace ByteMarket.Business.Abstract
 	public interface IPaymentService
 	{
 		Task<IDataResult<GatewayResponse>> InitializePaymentAsync(PaymentRequest request);
+		Task<IDataResult<GatewayResponse>> VerifyPaymentAsync(string token);
 	}
 }

@@ -17,5 +17,10 @@ namespace ByteMarket.WebUI.Services.Implementations
 		{
 			return await _apiService.PostAsync<GatewayResponseViewModel>("Payments/initialize", request);
 		}
+
+		public async Task<ApiDataResponse<GatewayResponseViewModel>> VerifyPayment(string token)
+		{
+			return await _apiService.PostAsync<GatewayResponseViewModel>("Payments/verify", token);
+		}
 	}
 }

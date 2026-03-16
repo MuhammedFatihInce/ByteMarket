@@ -21,5 +21,12 @@ namespace ByteMarket.WebAPI.Controllers
 			return CreateActionResult(result);
 		}
 
+		[HttpPost("verify")]
+		public async Task<IActionResult> Verify([FromBody] string token)
+		{
+			var result = await _paymentService.VerifyPaymentAsync(token);
+			return CreateActionResult(result);
+		}
+
 	}
 }

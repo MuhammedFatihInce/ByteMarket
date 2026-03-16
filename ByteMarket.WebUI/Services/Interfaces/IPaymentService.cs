@@ -6,5 +6,6 @@ namespace ByteMarket.WebUI.Services.Interfaces
 	public interface IPaymentService
 	{
 		Task<ApiDataResponse<GatewayResponseViewModel>> ProcessPayment(PaymentRequestViewModel request);
+		Task<ApiDataResponse<GatewayResponseViewModel>> VerifyPayment(string token);
 	}
 }

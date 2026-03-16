@@ -52,7 +52,6 @@ namespace ByteMarket.WebUI.Utilities.Handlers
 				}
 				else
 				{
-					response.Dispose();
 					if (context != null)
 					{
 						await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

@@ -4,6 +4,6 @@
 	{
 		public string Code { get; set; }
 		public string ReturnUrl { get; set; }
-		public string OrderData { get; set; }
+		public bool IsApproved { get; set; } = false;
 	}
 }

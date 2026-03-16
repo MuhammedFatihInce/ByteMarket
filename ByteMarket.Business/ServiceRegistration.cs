@@ -37,10 +37,13 @@ namespace ByteMarket.Business
 			services.AddScoped<IEditorService, EditorManager>();
 			services.AddScoped<ICurrencyService, CurrencyManager>();
 
-			services.AddHttpClient();
-			services.AddScoped<IPaymentService, PaymentManager>();
+			services.AddHttpClient<IPaymentService, PaymentManager>()
+				.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+				{
+					ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+				});
 
-			
+
 
 		}
 	}

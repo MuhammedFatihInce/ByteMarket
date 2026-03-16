@@ -20,7 +20,7 @@
 
     <a asp-controller="Product" asp-action="Detail" asp-route-id="@Model.Id" class="stretched-link"></a>
 
-    <button class="wishlist-btn-group wishlist-btn bg-white border rounded-circle position-absolute" id="whishListBtn" data-productId="@Model.Id" data-isInWishlist="@Model.IsInWishlist">
+    <button class="wishlist-btn-group wishlist-btn bg-white border rounded-circle position-absolute" id="whishListBtn" data-productId="@Model.Id" data-isInWishlist="@Model.IsInWishlist" style="z-index: 12;">
         <i class="bi @(Model.IsInWishlist ? "bi-heart-fill text-ty-orange" : "bi-heart")"></i>
     </button>
 

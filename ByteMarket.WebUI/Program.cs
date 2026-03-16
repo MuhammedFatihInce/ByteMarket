@@ -91,7 +91,15 @@ var apiBaseAddress = builder.Configuration.GetSection("ApiSettings:BaseAddress")
 builder.Services.AddHttpClient("MyApiClient", client =>
 {
 	client.BaseAddress = new Uri(apiBaseAddress);
-}).AddHttpMessageHandler<AuthTokenHandler>();
+}).AddHttpMessageHandler<AuthTokenHandler>()
+	.ConfigurePrimaryHttpMessageHandler(() =>
+	{
+		return new HttpClientHandler
+		{
+			// DÝKKAT: Bu kod yerel (localhost) SSL sertifikasý hatalarýný görmezden gelir.
+			ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+		};
+	}); 
 
 
 builder.Services.AddDistributedMemoryCache();

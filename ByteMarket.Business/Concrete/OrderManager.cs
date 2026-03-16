@@ -51,24 +51,41 @@ namespace ByteMarket.Business.Concrete
 
 		public async Task<IDataResult<List<OrderListDetailDto>>> GetAllOrdersAsync()
 		{
-			var query = _orderReadRepository.Table
-				.Include(o => o.Basket)
-				.ThenInclude(b => b.User)
-				.Include(o => o.Basket)
-				.ThenInclude(b => b.BasketItems)
-				.Include(o => o.Basket);
+			var currentUserId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-			if (query == null) new ErrorDataResult<List<OrderListDetailDto>>("Siparişler bulunamadı.");
-
-			var orders = await query.Select(o => new OrderListDetailDto()
+			if (string.IsNullOrEmpty(currentUserId))
 			{
-				Id = o.Id.ToString(),
-				OrderCode = o.OrderCode,
-				CreatedDate = o.CreateDate,
-				UserName = o.Basket.User.UserName,
-				TotalPrice = o.FinalTotalPrice
-			}).ToListAsync();
+				return new ErrorDataResult<List<OrderListDetailDto>>("Kullanıcı oturumu bulunamadı.");
+			}
 
+			//var query = _orderReadRepository.Table
+			//	.Include(o => o.Basket)
+			//	.ThenInclude(b => b.User)
+			//	.Include(o => o.Basket)
+			//	.ThenInclude(b => b.BasketItems)
+			//	.Include(o => o.Basket);
+
+			//if (query == null) new ErrorDataResult<List<OrderListDetailDto>>("Siparişler bulunamadı.");
+
+			//var orders = await query.Select(o => new OrderListDetailDto()
+			//{
+			//	Id = o.Id.ToString(),
+			//	OrderCode = o.OrderCode,
+			//	CreatedDate = o.CreateDate,
+			//	UserName = o.Basket.User.UserName,
+			//	TotalPrice = o.FinalTotalPrice
+			//}).ToListAsync();
+
+			var orders = await _orderReadRepository.Table
+				.Where(o => o.Basket.UserId == Guid.Parse(currentUserId))
+				.Select(o => new OrderListDetailDto()
+				{
+					Id = o.Id.ToString(),
+					OrderCode = o.OrderCode,
+					CreatedDate = o.CreateDate,
+					UserName = o.Basket.User.UserName,
+					TotalPrice = o.FinalTotalPrice
+				}).ToListAsync();
 
 			return new SuccessDataResult<List<OrderListDetailDto>>(orders);
 
