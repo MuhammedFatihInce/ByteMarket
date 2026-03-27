@@ -56,7 +56,7 @@ namespace ByteMarket.WebUI.Controllers
 				return Json(new { success = false, message = "Geçersiz istek. Lütfen bilgilerinizi kontrol edip tekrar deneyin." });
 			}
 
-			var paymentResult = await _paymentService.ProcessPayment(checkoutRequest.PaymentModel);
+			var paymentResult = await _paymentService.ProcessPayment(checkoutRequest.PaymentModel, checkoutRequest.OrderModel.BasketId);
 
 			if (paymentResult != null && paymentResult.Data != null && checkoutRequest.OrderModel != null && paymentResult.Success)
 			{

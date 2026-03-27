@@ -82,7 +82,8 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 				Description = product.Description,
 				CategoryIds = product.Categories.Select(c => c.Id.ToString()).ToList(),
 				CategoryList = await _categoryService.GetCategorySelectListAsync(),
-				ProductImageFiles = product.ProductImageFiles
+				ProductImageFiles = product.ProductImageFiles,
+				RowVersion = product.RowVersion
 			};
 
 			return View(model);
@@ -111,6 +112,7 @@ namespace ByteMarket.WebUI.Areas.Admin.Controllers
 				TempData["SuccessMessage"] = result.Message;
 				return RedirectToAction("Index");
 			}
+			TempData["ErrorMessage"] = result.Message;
 
 			ModelState.AddModelError(String.Empty, result.Message);
 			return View(model);

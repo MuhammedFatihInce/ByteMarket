@@ -13,5 +13,7 @@ namespace ByteMarket.WebUI.Areas.Admin.Models.Product
 		public string Description { get; set; }
 		public List<ProductImageAdminViewModel> ProductImageFiles { get; set; }
 		public List<SingleCategoryAdminViewModel> Categories { get; set; }
+		public byte[] RowVersion { get; set; }
+
 	}
 }

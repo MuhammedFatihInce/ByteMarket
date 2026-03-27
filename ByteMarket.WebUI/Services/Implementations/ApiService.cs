@@ -21,9 +21,13 @@ namespace ByteMarket.WebUI.Services.Implementations
 		{
 			var json = await response.Content.ReadAsStringAsync();
 
-			if (!response.IsSuccessStatusCode || string.IsNullOrWhiteSpace(json))
+			//if (string.IsNullOrWhiteSpace(json))
+			//{
+			//	return default;
+			//}
+			if (json == null || json.Length == 0 && !response.IsSuccessStatusCode)
 			{
-				return default;
+				return new ApiDataResponse<T> { Success = false, Message = "Sunucu yanıt vermedi.", StatusCode = (int)response.StatusCode };
 			}
 
 			var result = JsonSerializer.Deserialize<ApiDataResponse<T>>(json, JsonOptionsHelper.Default);

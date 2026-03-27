@@ -7,6 +7,7 @@ using ByteMarket.DataAccess.Abstract.Basket;
 using ByteMarket.DataAccess.Abstract.Category;
 using ByteMarket.DataAccess.Abstract.Product;
 using ByteMarket.Entities.Concrete;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using IResult = ByteMarket.Business.Utilities.Results.IResult;
 
@@ -114,6 +115,9 @@ namespace ByteMarket.Business.Concrete
 
 			if (product == null) return new ErrorResult("Ürün bulunamadı.");
 
+			_productWriteRepository.Table.Entry(product)
+				.Property(p => p.RowVersion).OriginalValue = updateProductDto.RowVersion;
+
 			_mapper.Map(updateProductDto, product);
 
 			if (updateProductDto.CategoryIds != null && updateProductDto.CategoryIds.Any())
@@ -141,10 +145,20 @@ namespace ByteMarket.Business.Concrete
 				}
 			}
 
-			_productWriteRepository.Update(product);
-			await _productWriteRepository.SaveAsync();
-
-			return new SuccessResult("Ürün bilgileri güncellendi.");
+			try
+			{
+				_productWriteRepository.Update(product);
+				await _productWriteRepository.SaveAsync();
+				return new SuccessResult("Ürün bilgileri güncellendi.");
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				return new ErrorResult("Bu ürün siz düzenleme yaparken başka bir kullanıcı tarafından güncellendi. Lütfen sayfayı yenileyip tekrar deneyin.");
+			}
+			catch (Exception ex)
+			{
+				return new ErrorResult($"Bir hata oluştu: {ex.Message}");
+			}
 		}
 
 		public async Task<IResult> DeleteProductAsync(string id)
@@ -173,8 +187,5 @@ namespace ByteMarket.Business.Concrete
 
 			return new SuccessDataResult<List<GetAllProductByFilterDto>>(products, "Ürünler başarıyla listelendi.");
 		}
-
-
-
 	}
 }

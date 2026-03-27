@@ -43,6 +43,7 @@ namespace ByteMarket.Business
 					ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
 				});
 
+			services.AddScoped<IStockService, StockManager>();
 
 
 		}

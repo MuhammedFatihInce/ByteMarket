@@ -13,9 +13,9 @@ namespace ByteMarket.WebUI.Services.Implementations
 			_apiService = apiService;
 		}
 
-		public async Task<ApiDataResponse<GatewayResponseViewModel>> ProcessPayment(PaymentRequestViewModel request)
+		public async Task<ApiDataResponse<GatewayResponseViewModel>> ProcessPayment(PaymentRequestViewModel request, string basketId)
 		{
-			return await _apiService.PostAsync<GatewayResponseViewModel>("Payments/initialize", request);
+			return await _apiService.PostAsync<GatewayResponseViewModel>($"Payments/initialize?basketId={basketId}", request);
 		}
 
 		public async Task<ApiDataResponse<GatewayResponseViewModel>> VerifyPayment(string token)

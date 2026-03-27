@@ -1,11 +1,11 @@
 ﻿
-using System.Security.Claims;
 using ByteMarket.Business.Abstract;
 using ByteMarket.Business.DTOs.Order;
 using ByteMarket.Business.Utilities.Results;
 using ByteMarket.DataAccess.Abstract.Order;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using IResult = ByteMarket.Business.Utilities.Results.IResult;
 
 namespace ByteMarket.Business.Concrete
@@ -17,16 +17,27 @@ namespace ByteMarket.Business.Concrete
 		readonly IOrderReadRepository _orderReadRepository;
 		readonly IMailService _mailService;
 
-		public OrderManager(IOrderWriteRepository orderWriteRepository, IOrderReadRepository orderReadRepository, IMailService mailService, IHttpContextAccessor httpContextAccessor)
+		private readonly IStockService _stockService;
+
+
+		public OrderManager(IOrderWriteRepository orderWriteRepository, IOrderReadRepository orderReadRepository, IMailService mailService, IHttpContextAccessor httpContextAccessor, IStockService stockService)
 		{
 			_orderWriteRepository = orderWriteRepository;
 			_orderReadRepository = orderReadRepository;
 			_mailService = mailService;
 			_httpContextAccessor = httpContextAccessor;
+			_stockService = stockService;
 		}
 
 		public async Task<IResult> CreateOrderAsync(CreateOrderDto createOrderDto)
 		{
+			var stockCheckResult = await _stockService.CheckAndDecreaseStockAsync(createOrderDto.BasketId);
+
+			if (!stockCheckResult.Success)
+			{
+				return stockCheckResult;
+			}
+
 			var orderCode = new Random().Next(100000, 999999).ToString() + DateTime.Now.Ticks.ToString().Substring(10);
 
 			var result = await _orderWriteRepository.AddAsync(new()
@@ -57,24 +68,6 @@ namespace ByteMarket.Business.Concrete
 			{
 				return new ErrorDataResult<List<OrderListDetailDto>>("Kullanıcı oturumu bulunamadı.");
 			}
-
-			//var query = _orderReadRepository.Table
-			//	.Include(o => o.Basket)
-			//	.ThenInclude(b => b.User)
-			//	.Include(o => o.Basket)
-			//	.ThenInclude(b => b.BasketItems)
-			//	.Include(o => o.Basket);
-
-			//if (query == null) new ErrorDataResult<List<OrderListDetailDto>>("Siparişler bulunamadı.");
-
-			//var orders = await query.Select(o => new OrderListDetailDto()
-			//{
-			//	Id = o.Id.ToString(),
-			//	OrderCode = o.OrderCode,
-			//	CreatedDate = o.CreateDate,
-			//	UserName = o.Basket.User.UserName,
-			//	TotalPrice = o.FinalTotalPrice
-			//}).ToListAsync();
 
 			var orders = await _orderReadRepository.Table
 				.Where(o => o.Basket.UserId == Guid.Parse(currentUserId))

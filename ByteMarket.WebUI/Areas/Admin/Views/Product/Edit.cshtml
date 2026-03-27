@@ -17,6 +17,7 @@
                     <form asp-action="Edit" method="post" enctype="multipart/form-data">
                         @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="RowVersion" />
 
                         <div class="mb-4">
                             <label class="form-label fw-bold">Yayındaki Resimler</label>

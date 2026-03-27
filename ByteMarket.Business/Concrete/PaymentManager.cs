@@ -2,8 +2,8 @@
 using ByteMarket.Business.Abstract;
 using ByteMarket.Business.DTOs.Payment;
 using ByteMarket.Business.Utilities.Results;
-using System.Net.Http.Json;
 using Microsoft.Extensions.Configuration;
+using System.Net.Http.Json;
 
 namespace ByteMarket.Business.Concrete
 {
@@ -11,16 +11,25 @@ namespace ByteMarket.Business.Concrete
 	{
 		private readonly HttpClient _httpClient;
 		private readonly IConfiguration _configuration;
+		private readonly IStockService _stockService;
 
-		public PaymentManager(HttpClient httpClient, IConfiguration configuration)
+		public PaymentManager(HttpClient httpClient, IConfiguration configuration, IStockService stockService)
 		{
 			_httpClient = httpClient;
 			_configuration = configuration;
+			_stockService = stockService;
 		}
 
 
-		public async Task<IDataResult<GatewayResponse>> InitializePaymentAsync(PaymentRequest request)
+		public async Task<IDataResult<GatewayResponse>> InitializePaymentAsync(PaymentRequest request, string basketId)
 		{
+			var checkStock = await _stockService.CheckStockAsync(basketId);
+
+			if (!checkStock.Success)
+			{
+				return new ErrorDataResult<GatewayResponse>(checkStock.Message);
+			}
+
 			var gatewayData = new
 			{
 				PaymentRequest = request,

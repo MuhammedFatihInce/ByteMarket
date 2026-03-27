@@ -39,6 +39,7 @@ namespace ByteMarket.Business.Mapping
 				}));
 
 			CreateMap<UpdateProductDto, Product>().ForMember(dest => dest.Categories, opt => opt.Ignore())
+				.ForMember(dest => dest.RowVersion, opt => opt.Ignore())
 				.ReverseMap();
 
 			CreateMap<Product, GetAllProductByFilterDto>()

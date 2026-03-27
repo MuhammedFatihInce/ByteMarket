@@ -10,5 +10,7 @@ namespace ByteMarket.Business.DTOs.Product
 		public string? Description { get; set; }
 		public List<string> CategoryIds { get; set; }
 		public List<string> OrderedImageIds { get; set; }
+		public byte[] RowVersion { get; set; }
+
 	}
 }

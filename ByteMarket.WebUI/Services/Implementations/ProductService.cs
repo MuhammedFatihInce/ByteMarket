@@ -60,7 +60,8 @@ namespace ByteMarket.WebUI.Services.Implementations
 				model.Description,
 				model.Stock,
 				model.CategoryIds,
-				model.OrderedImageIds
+				model.OrderedImageIds,
+				model.RowVersion
 			});
 
 			if (!updateResponse.Success) return updateResponse;

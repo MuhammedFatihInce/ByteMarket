@@ -11,7 +11,7 @@ namespace ByteMarket.WebUI.Areas.Admin.Models.Product
 
 		public string? Description { get; set; }
 
-
+		public byte[] RowVersion { get; set; }
 		public List<string> CategoryIds { get; set; } = new();
 		public List<SelectListItem>? CategoryList { get; set; }
 

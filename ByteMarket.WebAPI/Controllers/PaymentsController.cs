@@ -14,9 +14,9 @@ namespace ByteMarket.WebAPI.Controllers
 		}
 
 		[HttpPost("initialize")]
-		public async Task<IActionResult> Initialize([FromBody] PaymentRequest request)
+		public async Task<IActionResult> Initialize([FromBody] PaymentRequest request, [FromQuery]string basketId)
 		{
-			var result = await _paymentService.InitializePaymentAsync(request);
+			var result = await _paymentService.InitializePaymentAsync(request, basketId);
 
 			return CreateActionResult(result);
 		}

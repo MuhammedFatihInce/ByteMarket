@@ -1,4 +1,5 @@
 ﻿using ByteMarket.Entities.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace ByteMarket.Entities.Concrete
 {
@@ -8,6 +9,10 @@ namespace ByteMarket.Entities.Concrete
 		public int Stock { get; set; }
 		public decimal Price { get; set; }
 		public string? Description { get; set; }
+
+		[Timestamp]
+		public byte[] RowVersion { get; set; }
+
 		public ICollection<ProductImageFile> ProductImageFiles { get; set; }
 		public ICollection<BasketItem> BasketItems { get; set; }
 		public ICollection<Category> Categories { get; set; }
