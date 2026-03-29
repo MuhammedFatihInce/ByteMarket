@@ -1,6 +1,7 @@
 ﻿
 using ByteMarket.Business.Abstract;
 using ByteMarket.Business.DTOs.Order;
+using ByteMarket.Business.DTOs.Stock;
 using ByteMarket.Business.Utilities.Results;
 using ByteMarket.DataAccess.Abstract.Order;
 using Microsoft.AspNetCore.Http;
@@ -29,7 +30,7 @@ namespace ByteMarket.Business.Concrete
 			_stockService = stockService;
 		}
 
-		public async Task<IResult> CreateOrderAsync(CreateOrderDto createOrderDto)
+		public async Task<IDataResult<List<StockUpdateDto>>> CreateOrderAsync(CreateOrderDto createOrderDto)
 		{
 			var stockCheckResult = await _stockService.CheckAndDecreaseStockAsync(createOrderDto.BasketId);
 
@@ -54,10 +55,10 @@ namespace ByteMarket.Business.Concrete
 			if (result)
 			{
 				await _orderWriteRepository.SaveAsync();
-				return new SuccessResult("Sipariş oluşturuldu.");
+				return new SuccessDataResult<List<StockUpdateDto>>(stockCheckResult.Data, "Sipariş oluşturuldu.");
 			}
 
-			return new ErrorResult("Sipariş oluşturulamadı.");
+			return new ErrorDataResult<List<StockUpdateDto>>("Sipariş oluşturulamadı.");
 		}
 
 		public async Task<IDataResult<List<OrderListDetailDto>>> GetAllOrdersAsync()

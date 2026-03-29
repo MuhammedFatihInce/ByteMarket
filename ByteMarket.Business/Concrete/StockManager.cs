@@ -1,6 +1,7 @@
 ﻿
 
 using ByteMarket.Business.Abstract;
+using ByteMarket.Business.DTOs.Stock;
 using ByteMarket.Business.Utilities.Results;
 using ByteMarket.DataAccess.Abstract.Basket;
 using ByteMarket.DataAccess.Abstract.Product;
@@ -19,18 +20,42 @@ namespace ByteMarket.Business.Concrete
 			_productWriteRepository = productWriteRepository;
 		}
 
-		public async Task<IResult> CheckAndDecreaseStockAsync(string basketId)
+		public async Task<IDataResult<List<StockUpdateDto>>> CheckAndDecreaseStockAsync(string basketId)
 		{
-			return await ProcessStockAsync(basketId, true);
+			var basket = await _basketReadRepository.Table
+				.Include(b => b.BasketItems)
+				.ThenInclude(bi => bi.Product)
+				.FirstOrDefaultAsync(b => b.Id == Guid.Parse(basketId));
+
+			if (basket == null || !basket.BasketItems.Any())
+			{
+				return new ErrorDataResult<List<StockUpdateDto>>();
+			}
+
+			var updatedStocks = new List<StockUpdateDto>();
+
+			foreach (var basketItem in basket.BasketItems)
+			{
+				var product = basketItem.Product;
+
+				if (product.Stock < basketItem.Quantity)
+				{
+					return new ErrorDataResult<List<StockUpdateDto>>($"'{product.Name}' isimli ürün için yeterli stok bulunmuyor. Kalan Stok: {product.Stock}");
+				}
+
+				product.Stock -= basketItem.Quantity;
+
+				updatedStocks.Add(new StockUpdateDto
+				{
+					ProductId = product.Id.ToString(),
+					NewStock = product.Stock
+				});
+
+			}
+			return new SuccessDataResult<List<StockUpdateDto>>(updatedStocks);
 		}
 
 		public async Task<IResult> CheckStockAsync(string basketId)
-		{
-			return await ProcessStockAsync(basketId, false);
-		}
-
-
-		private async Task<IResult> ProcessStockAsync(string basketId, bool decrease)
 		{
 			var basket = await _basketReadRepository.Table
 				.Include(b => b.BasketItems)
@@ -51,12 +76,8 @@ namespace ByteMarket.Business.Concrete
 					return new ErrorResult($"'{product.Name}' isimli ürün için yeterli stok bulunmuyor. Kalan Stok: {product.Stock}");
 				}
 
-				if (decrease)
-				{
-					product.Stock -= basketItem.Quantity;
-				}
-
 			}
+
 			return new SuccessResult();
 		}
 	}

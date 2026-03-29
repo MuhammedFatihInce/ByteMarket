@@ -7,7 +7,10 @@ using ByteMarket.DataAccess.SeedData;
 using ByteMarket.Entities.Concrete.Identity;
 using ByteMarket.Entities.Constants;
 using ByteMarket.WebAPI.Filters;
+using ByteMarket.WebAPI.Hubs;
 using ByteMarket.WebAPI.Middleware;
+using ByteMarket.WebAPI.SignalRServices.Abstract;
+using ByteMarket.WebAPI.SignalRServices.Concrete;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -36,9 +39,12 @@ builder.Services.AddCors(options =>
 {
 	options.AddPolicy("AllowWebUI", policy =>
 	{
-		policy.WithOrigins("https://localhost:44380")
+		string uiUrl = builder.Configuration["ClientSettings:WebUI_Url"];
+
+		policy.WithOrigins(uiUrl)
 			.AllowAnyHeader()
-			.AllowAnyMethod(); 
+			.AllowAnyMethod()
+			.AllowCredentials();
 	});
 });
 
@@ -126,6 +132,9 @@ builder.Services.AddQuartz(q =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSignalR();
+builder.Services.AddScoped<IStockNotificationService, StockNotificationManager>();
+
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
@@ -141,6 +150,8 @@ app.UseStaticFiles();
 app.UseHttpsRedirection();
 
 app.UseCors("AllowWebUI");
+
+app.MapHub<StockHub>("/stockHub");
 
 await DbInitializer.SeedAsync(app.Services);
 

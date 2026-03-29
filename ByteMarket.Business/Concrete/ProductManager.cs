@@ -7,7 +7,6 @@ using ByteMarket.DataAccess.Abstract.Basket;
 using ByteMarket.DataAccess.Abstract.Category;
 using ByteMarket.DataAccess.Abstract.Product;
 using ByteMarket.Entities.Concrete;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using IResult = ByteMarket.Business.Utilities.Results.IResult;
 

@@ -56,7 +56,7 @@
                     @Model.Price.ToString("N0") <span style="font-size: 0.85rem">TL</span>
                 </h5>
                 <small class="text-muted fw-semibold">
-                    <i class="bi bi-box-seam me-1"></i>Stok: @Model.Stock
+                    <i class="bi bi-box-seam me-1"></i><span id="stock-@Model.Id.ToLower()">Stok: @Model.Stock</span>
                 </small>
             </div>
 

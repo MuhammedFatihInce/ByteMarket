@@ -1,4 +1,5 @@
 ﻿
+using ByteMarket.Business.DTOs.Stock;
 using ByteMarket.Business.Utilities.Results;
 
 namespace ByteMarket.Business.Abstract
@@ -7,6 +8,6 @@ namespace ByteMarket.Business.Abstract
 	{
 		Task<IResult> CheckStockAsync(string basketId);
 
-		Task<IResult> CheckAndDecreaseStockAsync(string basketId);
+		Task<IDataResult<List<StockUpdateDto>>> CheckAndDecreaseStockAsync(string basketId);
 	}
 }

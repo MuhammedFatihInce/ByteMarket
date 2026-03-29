@@ -1,7 +1,11 @@
 ﻿using ByteMarket.Business.Abstract;
 using ByteMarket.Business.DTOs.Order;
+using ByteMarket.Business.Utilities.Results;
+using ByteMarket.WebAPI.Hubs;
+using ByteMarket.WebAPI.SignalRServices.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ByteMarket.WebAPI.Controllers
 {
@@ -9,17 +13,30 @@ namespace ByteMarket.WebAPI.Controllers
 	public class OrdersController : BaseController
 	{
 		readonly IOrderService _orderService;
+		readonly IStockNotificationService _stockNotificationService;
 
-		public OrdersController(IOrderService orderService)
+		public OrdersController(IOrderService orderService, IStockNotificationService stockNotificationService)
 		{
 			_orderService = orderService;
+			_stockNotificationService = stockNotificationService;
 		}
 
 		[HttpPost]
 		public async Task<IActionResult> CreateOrder(CreateOrderDto createOrderDto)
 		{
 			var result = await _orderService.CreateOrderAsync(createOrderDto);
-			return CreateActionResult(result);
+
+			if (result.Success && result.Data != null)
+			{
+				foreach (var stockInfo in result.Data)
+				{
+					await _stockNotificationService.SendStockUpdateAsync(stockInfo.ProductId, stockInfo.NewStock);
+				}
+			}
+
+			var response = new Result(result.Success, result.Message);
+			
+			return CreateActionResult(response);
 		}
 
 		[HttpGet]

@@ -97,7 +97,7 @@
                     <i class="bi bi-box-seam fs-4 text-ty-orange me-3"></i>
                     <div>
                         <span class="fw-bold d-block">Stok Durumu</span>
-                        <small class="@(Model.Product.Stock > 0 ? "text-success" : "text-danger")">
+                        <small id="stock-detail-@Model.Product.Id.ToLower()"  class="@(Model.Product.Stock > 0 ? "text-success" : "text-danger")">
                             @(Model.Product.Stock > 0 ? $"Şu an stokta {Model.Product.Stock} adet var!" : "Tükendi")
                         </small>
                     </div>
@@ -330,5 +330,6 @@
     </script>
     <script src="~/js/customer/wishList/wishList-add.js" asp-append-version="false"></script>
     <script src="~/js/customer/basket/basket-add.js" asp-append-version="false"></script>
+    <script src="~/js/customer/stock-tracking.js" asp-append-version="false"></script>
 }
 
