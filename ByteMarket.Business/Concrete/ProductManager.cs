@@ -8,6 +8,7 @@ using ByteMarket.DataAccess.Abstract.Category;
 using ByteMarket.DataAccess.Abstract.Product;
 using ByteMarket.Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using IResult = ByteMarket.Business.Utilities.Results.IResult;
 
 namespace ByteMarket.Business.Concrete
@@ -20,8 +21,9 @@ namespace ByteMarket.Business.Concrete
 		private readonly IProductImageService _productImageService;
 		private readonly ICategoryReadRepository _categoryReadRepository;
 		private readonly IBasketReadRepository _basketReadRepository;
+		private readonly ILogger<ProductManager> _logger;
 
-		public ProductManager(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IMapper mapper, IProductImageService productImageService, ICategoryReadRepository categoryReadRepository, IBasketReadRepository basketReadRepository)
+		public ProductManager(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IMapper mapper, IProductImageService productImageService, ICategoryReadRepository categoryReadRepository, IBasketReadRepository basketReadRepository, ILogger<ProductManager> logger)
 		{
 			_productReadRepository = productReadRepository;
 			_productWriteRepository = productWriteRepository;
@@ -29,6 +31,7 @@ namespace ByteMarket.Business.Concrete
 			_productImageService = productImageService;
 			_categoryReadRepository = categoryReadRepository;
 			_basketReadRepository= basketReadRepository;
+			_logger = logger;
 		}
 
 		public async Task<IDataResult<List<ListProductDto>>> GetAllProductsAsync(string? categoryId = null, string? currentUserId = null)
@@ -98,6 +101,8 @@ namespace ByteMarket.Business.Concrete
 			if (result)
 			{
 				await _productWriteRepository.SaveAsync();
+				_logger.LogInformation("Yeni ürün sisteme eklendi. Ürün Adı: {ProductName}, Fiyatı: {ProductPrice}", product.Name, product.Price);
+
 				return new SuccessDataResult<string>(product.Id.ToString(),"Ürün başarıyla eklendi.");
 			}
 

@@ -1,4 +1,5 @@
 ﻿using ByteMarket.Business.Utilities.Results;
+using System;
 using System.Net;
 using System.Text.Json;
 
@@ -23,6 +24,10 @@ namespace ByteMarket.WebAPI.Middleware
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError(ex, "Sistemde beklenmeyen bir kritik hata oluştu! İstek Yolu: {Method} {Path}",
+					httpContext.Request.Method,
+					httpContext.Request.Path);
+
 				await HandleExceptionAsync(httpContext, ex);
 			}
 		}
@@ -32,7 +37,7 @@ namespace ByteMarket.WebAPI.Middleware
 			context.Response.ContentType = "application/json";
 			context.Response.StatusCode = (int)HttpStatusCode.InternalServerError; // 500
 
-			_logger.LogError($"Beklenmedik bir hata oluştu: {exception.Message}");
+			
 
 			var response = new ErrorDataResult<string>(
 				 "Sunucu tarafında beklenmedik bir hata oluştu."
