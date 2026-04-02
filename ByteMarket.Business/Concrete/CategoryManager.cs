@@ -6,6 +6,9 @@ using ByteMarket.Business.Utilities.Results;
 using ByteMarket.DataAccess.Abstract.Category;
 using ByteMarket.Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text;
+using System.Text.Json;
 
 namespace ByteMarket.Business.Concrete
 {
@@ -40,6 +43,7 @@ namespace ByteMarket.Business.Concrete
 
 		public async Task<IDataResult<List<ListCategoryDto>>> GetAllAsync()
 		{
+
 			var categoryDtos = await _categoryReadRepository.GetAll(false)
 				.ProjectTo<ListCategoryDto>(_mapper.ConfigurationProvider)
 				.ToListAsync();
@@ -57,7 +61,6 @@ namespace ByteMarket.Business.Concrete
 			await _categoryImageFileService.DeleteImageByCategoryIdAsync(id);
 			await _categoryWriteRepository.RemoveAsync(id);
 			await _categoryWriteRepository.SaveAsync();
-
 			return new SuccessResult("Kategori başarıyla silindi.");
 		}
 

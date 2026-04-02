@@ -163,6 +163,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IStockNotificationService, StockNotificationManager>();
 
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+	options.Configuration = builder.Configuration.GetConnectionString("Redis");
+	options.InstanceName = "ByteMarket_";
+});
+
 
 var app = builder.Build(); 
 
