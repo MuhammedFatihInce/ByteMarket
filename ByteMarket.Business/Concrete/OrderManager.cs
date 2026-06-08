@@ -105,6 +105,7 @@ namespace ByteMarket.Business.Concrete
 				CreatedDate = data.CreateDate,
 				BasketItems = data.Basket.BasketItems.Select(bi => new OrderItemDto
 				{
+					Id = bi.Product.Id.ToString(),
 					Name = bi.Product.Name,
 					ImagePath = bi.Product.ProductImageFiles.FirstOrDefault() != null
 						? bi.Product.ProductImageFiles.FirstOrDefault().Path
