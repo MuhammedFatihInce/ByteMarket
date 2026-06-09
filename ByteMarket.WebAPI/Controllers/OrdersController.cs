@@ -6,6 +6,7 @@ using ByteMarket.WebAPI.SignalRServices.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 namespace ByteMarket.WebAPI.Controllers
 {
@@ -49,7 +50,9 @@ namespace ByteMarket.WebAPI.Controllers
 		[HttpGet("{id}")]
 		public async Task<IActionResult> GetOrderById(string id)
 		{
-			var result = await _orderService.GetOrderByIdAsync(id);
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+			var result = await _orderService.GetOrderByIdAsync(id, userId);
 			return CreateActionResult(result, errorStatusCode:404);
 		}
 
@@ -60,5 +63,11 @@ namespace ByteMarket.WebAPI.Controllers
 			return CreateActionResult(result, errorStatusCode: 404);
 		}
 
+		[HttpGet("Invoice/{id}")]
+		public async Task<IActionResult> GetInvoiceById(string id)
+		{
+			var result = await _orderService.GetInvoiceOrderByIdAsync(id);
+			return CreateActionResult(result, errorStatusCode: 404);
+		}
 	}
 }

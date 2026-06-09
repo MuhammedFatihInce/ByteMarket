@@ -3,6 +3,7 @@ using ByteMarket.Business.DTOs.Category;
 using ByteMarket.Business.DTOs.ProductReview;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ByteMarket.WebAPI.Controllers
 {
@@ -43,6 +44,14 @@ namespace ByteMarket.WebAPI.Controllers
 		{
 			var result = await _productReviewService.UpdateProductReviewAsync(updateDto);
 			return CreateActionResult(result, errorStatusCode: 404);
+		}
+
+		[HttpGet("has-reviewed/{productId}")]
+		public async Task<IActionResult> HasReviewedAsync([FromRoute]string productId)
+		{
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var result = await _productReviewService.HasUserReviewedProductAsync(userId, productId);
+			return CreateActionResult(result);
 		}
 	}
 }

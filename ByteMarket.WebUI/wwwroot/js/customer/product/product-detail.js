@@ -88,38 +88,6 @@ function initProductDetailCarousel(carouselID) {
 
 $(document).ready(function () {
 
-    $("#productReviewForm").on("submit", async function (e) {
-        e.preventDefault();
-
-        var productId = $("#productId").val();
-        var rating = $("input[name='rating']:checked").val();
-        var comment = $("#comment").val();
-
-        const data = {
-            Comment: comment,
-            Rating: rating,
-            ProductId: productId
-        };
-
-        if (!rating) {
-            $("#responseMessage").html('<div class="alert alert-danger">Lütfen bir puan seçiniz!</div>');
-            return;
-        }
-        $("#responseMessage").addClass("d-none");
-
-        try {
-            const response = await CustomAjax.post('Product/AddReview', data);
-
-            if (response && response.success) {
-                Alert.toast({ title: response.message, icon: 'success' });
-                setTimeout(() => location.reload(), 1500);
-            }
-        } catch (error) {
-            console.error("Yorum hatası:", error);
-        }
-
-    });
-
 
     $(".btn-edit-review").on("click", function (e) {
         e.preventDefault();

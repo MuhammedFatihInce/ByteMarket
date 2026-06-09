@@ -138,5 +138,12 @@ namespace ByteMarket.Business.Concrete
 			return new ErrorResult("Yorum silinemedi.");
 		}
 
+		public async Task<IDataResult<bool>> HasUserReviewedProductAsync(string userId, string productId)
+		{
+			var hasReviewed = await _productReviewReadRepository
+				.AnyAsync(r => r.UserId == Guid.Parse(userId) && r.ProductId == Guid.Parse(productId));
+			return new SuccessDataResult<bool>(hasReviewed);
+		}
+
 	}
 }

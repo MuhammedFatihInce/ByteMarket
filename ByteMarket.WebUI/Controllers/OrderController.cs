@@ -1,4 +1,5 @@
 ﻿using ByteMarket.WebUI.Models.Order;
+using ByteMarket.WebUI.Models.ProductReview;
 using ByteMarket.WebUI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,12 @@ namespace ByteMarket.WebUI.Controllers
 	{
 		private readonly IOrderService _orderService;
 		private readonly IPaymentService _paymentService;
-		public OrderController(IOrderService orderService, IPaymentService paymentService)
+		private readonly IProductReviewService _productReviewService;
+		public OrderController(IOrderService orderService, IPaymentService paymentService, IProductReviewService productReviewService)
 		{
 			_orderService = orderService;
 			_paymentService = paymentService;
+			_productReviewService = productReviewService;
 		}
 
 		[HttpGet]
@@ -130,7 +133,7 @@ namespace ByteMarket.WebUI.Controllers
 
 		public async Task<IActionResult> Success(string id)
 		{
-			var result = await _orderService.GetOrderById(id);
+			var result = await _orderService.GetInvoiceOrderByIdAsync(id);
 
 			if (result.Success)
 			{
@@ -138,7 +141,7 @@ namespace ByteMarket.WebUI.Controllers
 			}
 
 			TempData["Error"] = result.Message;
-			return View(new SingleOrderViewModel());
+			return View(new InvoiceOrderViewmodel());
 		}
 
 
@@ -151,7 +154,15 @@ namespace ByteMarket.WebUI.Controllers
 			return Json(new { success = result.Success, message = result.Message });
 		}
 
-		
+		[HttpPost("Order/AddReview")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AddReview([FromBody] CreateProductReviewViewModel model)
+		{
+			var result = await _productReviewService.AddProductReviewAsync(model);
+
+			return Json(new { success = result.Success, message = result.Message });
+		}
+
 
 	}
 }

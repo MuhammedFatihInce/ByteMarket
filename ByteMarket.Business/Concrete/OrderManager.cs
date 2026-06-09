@@ -17,15 +17,17 @@ namespace ByteMarket.Business.Concrete
 		readonly IOrderWriteRepository _orderWriteRepository;
 		readonly IOrderReadRepository _orderReadRepository;
 		readonly IMailService _mailService;
+		readonly IProductReviewService _productReviewService;
 
 		private readonly IStockService _stockService;
 
 
-		public OrderManager(IOrderWriteRepository orderWriteRepository, IOrderReadRepository orderReadRepository, IMailService mailService, IHttpContextAccessor httpContextAccessor, IStockService stockService)
+		public OrderManager(IOrderWriteRepository orderWriteRepository, IOrderReadRepository orderReadRepository, IMailService mailService, IProductReviewService productReviewService, IHttpContextAccessor httpContextAccessor, IStockService stockService)
 		{
 			_orderWriteRepository = orderWriteRepository;
 			_orderReadRepository = orderReadRepository;
 			_mailService = mailService;
+			_productReviewService = productReviewService;
 			_httpContextAccessor = httpContextAccessor;
 			_stockService = stockService;
 		}
@@ -85,7 +87,7 @@ namespace ByteMarket.Business.Concrete
 
 		}
 
-		public async Task<IDataResult<SingleOrderDto>> GetOrderByIdAsync(string id)
+		public async Task<IDataResult<SingleOrderDto>> GetOrderByIdAsync(string id, string userId)
 		{
 			var data = await _orderReadRepository.Table
 				.Include(o => o.Basket)
@@ -96,6 +98,24 @@ namespace ByteMarket.Business.Concrete
 
 			if (data == null) new ErrorDataResult<SingleOrderDto>("Sipariş bulunamadı.");
 
+			var productIds = data?.Basket.BasketItems
+			.Select(bi => bi.Product.Id.ToString())
+			.Distinct()
+			.ToList();
+
+			List<string> reviewedProductIds = new List<string>();
+
+			if (productIds != null) {
+				foreach (var productId in productIds)
+				{
+					var reviewed = await _productReviewService.HasUserReviewedProductAsync(userId, productId);
+					if (reviewed.Data)
+					{
+						reviewedProductIds.Add(productId);
+					}
+				}
+			}
+
 			var singleOrder =  new SingleOrderDto()
 			{
 				Id = data.Id.ToString(),
@@ -103,7 +123,7 @@ namespace ByteMarket.Business.Concrete
 				Address = data.Address,
 				Description = data.Description,
 				CreatedDate = data.CreateDate,
-				BasketItems = data.Basket.BasketItems.Select(bi => new OrderItemDto
+				BasketItems = data.Basket.BasketItems.Select(bi => new OrderItemDetailDto
 				{
 					Id = bi.Product.Id.ToString(),
 					Name = bi.Product.Name,
@@ -111,7 +131,8 @@ namespace ByteMarket.Business.Concrete
 						? bi.Product.ProductImageFiles.FirstOrDefault().Path
 						: null,
 					Price = bi.Price,
-					Quantity = bi.Quantity
+					Quantity = bi.Quantity,
+					IsReviewed = reviewedProductIds.Contains(bi.Product.Id.ToString())
 				}),
 				DiscountAmount = data.DiscountAmount,
 				FinalTotalPrice = data.FinalTotalPrice,
@@ -138,7 +159,7 @@ namespace ByteMarket.Business.Concrete
 			if (data == null)
 				return new ErrorResult("Sipariş bulunamadı.");
 
-			var singleOrder = new SingleOrderDto()
+			var singleOrder = new InvoiceOrderDto()
 			{
 				Id = data.Id.ToString(),
 				OrderCode = data.OrderCode,
@@ -163,6 +184,43 @@ namespace ByteMarket.Business.Concrete
 
 			return new SuccessResult("Fatura başarıyla e-posta adresinize gönderildi.");
 		}
+
+		public async Task<IDataResult<InvoiceOrderDto>> GetInvoiceOrderByIdAsync(string id)
+		{
+			var data = await _orderReadRepository.Table
+				.Include(o=>o.Basket)
+				.ThenInclude(b=>b.BasketItems)
+				.ThenInclude(bi=>bi.Product)
+				.ThenInclude(p => p.ProductImageFiles)
+				.FirstOrDefaultAsync(o => o.Id == Guid.Parse(id));
+
+			if (data == null)
+				return new ErrorDataResult<InvoiceOrderDto>("Sipariş bulunamadı.");
+
+			var invoiceOrder = new InvoiceOrderDto()
+			{
+				Id = data.Id.ToString(),
+				OrderCode = data.OrderCode,
+				Address = data.Address,
+				Description = data.Description,
+				CreatedDate = data.CreateDate,
+				BasketItems = data.Basket.BasketItems.Select(bi => new OrderItemDto
+				{
+					Name = bi.Product.Name,
+					ImagePath = bi.Product.ProductImageFiles.FirstOrDefault() != null
+						? bi.Product.ProductImageFiles.FirstOrDefault().Path
+						: null,
+					Price = bi.Price,
+					Quantity = bi.Quantity
+				}),
+				DiscountAmount = data.DiscountAmount,
+				FinalTotalPrice = data.FinalTotalPrice,
+				TotalBasePrice = data.TotalBasePrice
+			};
+
+			return new SuccessDataResult<InvoiceOrderDto>(invoiceOrder);
+		}
+
 
 	}
 }

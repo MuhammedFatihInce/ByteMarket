@@ -32,15 +32,6 @@ namespace ByteMarket.WebUI.Controllers
 			return View((product.Data, review.Data));
 		}
 
-		[HttpPost("Product/AddReview")]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> AddReview([FromBody] CreateProductReviewViewModel model)
-		{
-			var result = await _productReviewService.AddProductReviewAsync(model);
-
-			return Json(new { success = result.Success, message = result.Message });
-		}
-
 		[HttpPut("Product/UpdateReview")]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> UpdateReview([FromBody] UpdateProductReviewViewModel model)

@@ -9,7 +9,9 @@ namespace ByteMarket.Business.Abstract
 	{
 		Task<IDataResult<List<StockUpdateDto>>> CreateOrderAsync(CreateOrderDto createOrderDto);
 		Task<IDataResult<List<OrderListDetailDto>>> GetAllOrdersAsync();
-		Task<IDataResult<SingleOrderDto>> GetOrderByIdAsync(string id);
+		Task<IDataResult<SingleOrderDto>> GetOrderByIdAsync(string id, string userId);
 		Task<IResult> SendInvoiceMassegeAsync(string id);
+		Task<IDataResult<InvoiceOrderDto>> GetInvoiceOrderByIdAsync(string id);
+
 	}
 }

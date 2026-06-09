@@ -28,5 +28,10 @@ namespace ByteMarket.WebUI.Services.Implementations
 		{
 			return await _apiService.DeleteAsync<object>("ProductReview", id);
 		}
+
+		public async Task<ApiDataResponse<bool>> HasUserReviewedProductAsync(string productId)
+		{
+			return await _apiService.GetAsync<bool>($"ProductReview/has-reviewed/{productId}");
+		}
 	}
 }

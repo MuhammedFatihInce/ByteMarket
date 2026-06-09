@@ -33,5 +33,9 @@ namespace ByteMarket.WebUI.Services.Implementations
 		{
 			return await _apiService.PostAsync<object>($"Orders/SendInvoice/{id}", new{});
 		}
+		public async Task<ApiDataResponse<InvoiceOrderViewmodel>> GetInvoiceOrderByIdAsync(string id)
+		{
+			return await _apiService.GetByIdAsync<InvoiceOrderViewmodel>("Orders/Invoice", id);
+		}
 	}
 }

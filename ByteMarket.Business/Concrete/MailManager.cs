@@ -74,7 +74,7 @@ namespace ByteMarket.Business.Concrete
 			await SendMailAsync(to, "Şifre Sıfırlama Talebi", mailBody);
 		}
 
-		public async Task SendInvoiceMailAsync(string to, SingleOrderDto orderDto)
+		public async Task SendInvoiceMailAsync(string to, InvoiceOrderDto orderDto)
 		{
 			try
 			{
@@ -146,7 +146,7 @@ namespace ByteMarket.Business.Concrete
 			});
 		}
 
-		private string GetInvoiceHtmlTemplate(SingleOrderDto orderDto, string itemsHtml)
+		private string GetInvoiceHtmlTemplate(InvoiceOrderDto orderDto, string itemsHtml)
 		{
 			return $@"
                 <div style='font-family: Arial, sans-serif; color: #333;'>

@@ -7,6 +7,6 @@ namespace ByteMarket.Business.Abstract
 	{
 		Task SendMailAsync(string to, string subject, string body, bool isHtml = true);
 		Task SendPasswordResetMailAsync(string to, string resetLink);
-		Task SendInvoiceMailAsync(string to, SingleOrderDto orderDto);
+		Task SendInvoiceMailAsync(string to, InvoiceOrderDto orderDto);
 	}
 }
