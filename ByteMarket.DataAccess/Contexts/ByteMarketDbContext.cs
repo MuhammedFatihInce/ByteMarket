@@ -4,6 +4,7 @@ using ByteMarket.Entities.Concrete;
 using ByteMarket.Entities.Concrete.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace ByteMarket.DataAccess.Contexts
 {
@@ -64,6 +65,24 @@ namespace ByteMarket.DataAccess.Contexts
 			builder.Entity<Basket>()
 				.HasMany(b => b.Coupons)
 				.WithMany(c => c.Baskets);
+
+			builder.Entity<ProductReview>()
+			.HasOne(pr => pr.Order)          
+			.WithMany(o => o.ProductReviews) 
+			.HasForeignKey(pr => pr.OrderId) 
+			.OnDelete(DeleteBehavior.NoAction);
+
+			//builder.Entity<ProductReview>()
+			//.HasOne(pr => pr.Product)
+			//.WithMany(p => p.Reviews)
+			//.HasForeignKey(pr => pr.ProductId)
+			//.OnDelete(DeleteBehavior.Cascade);
+
+			//builder.Entity<ProductReview>()
+			//.HasOne(pr => pr.User)
+			//.WithMany(u => u.ProductReviews)
+			//.HasForeignKey(pr => pr.UserId)
+			//.OnDelete(DeleteBehavior.NoAction);
 
 			base.OnModelCreating(builder);
 		}

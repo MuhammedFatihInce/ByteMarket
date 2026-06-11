@@ -6,5 +6,7 @@ namespace ByteMarket.Business.DTOs.ProductReview
 		public string Comment { get; set; }
 		public string ProductId { get; set; }
 		public int Rating { get; set; }
+		public string OrderId { get; set; }
+
 	}
 }

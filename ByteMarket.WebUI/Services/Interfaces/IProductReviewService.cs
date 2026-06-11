@@ -12,6 +12,5 @@ namespace ByteMarket.WebUI.Services.Interfaces
 		Task<ApiDataResponse<object>> UpdateProductReviewAsync(UpdateProductReviewViewModel model);
 
 		Task<ApiDataResponse<object>> DeleteProductReviewAsync(string id);
-		Task<ApiDataResponse<bool>> HasUserReviewedProductAsync(string productId);
 	}
 }

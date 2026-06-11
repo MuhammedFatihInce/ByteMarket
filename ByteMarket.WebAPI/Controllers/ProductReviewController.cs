@@ -45,13 +45,5 @@ namespace ByteMarket.WebAPI.Controllers
 			var result = await _productReviewService.UpdateProductReviewAsync(updateDto);
 			return CreateActionResult(result, errorStatusCode: 404);
 		}
-
-		[HttpGet("has-reviewed/{productId}")]
-		public async Task<IActionResult> HasReviewedAsync([FromRoute]string productId)
-		{
-			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-			var result = await _productReviewService.HasUserReviewedProductAsync(userId, productId);
-			return CreateActionResult(result);
-		}
 	}
 }

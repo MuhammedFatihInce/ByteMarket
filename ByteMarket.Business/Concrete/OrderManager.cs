@@ -108,7 +108,7 @@ namespace ByteMarket.Business.Concrete
 			if (productIds != null) {
 				foreach (var productId in productIds)
 				{
-					var reviewed = await _productReviewService.HasUserReviewedProductAsync(userId, productId);
+					var reviewed = await _productReviewService.HasUserReviewedProductAsync(userId, productId, id);
 					if (reviewed.Data)
 					{
 						reviewedProductIds.Add(productId);

@@ -10,6 +10,6 @@ namespace ByteMarket.Business.Abstract
 		Task<IDataResult<List<ProductReviewListDto>>> GetReviewsByProductIdAsync(string productId);
 		Task<IResult> UpdateProductReviewAsync(UpdateProductReviewDto updateDto);
 		Task<IResult> DeleteProductReviewAsync(string reviewId);
-		Task<IDataResult<bool>> HasUserReviewedProductAsync(string userId, string productId);
+		Task<IDataResult<bool>> HasUserReviewedProductAsync(string userId, string productId, string orderId);
 	}
 }

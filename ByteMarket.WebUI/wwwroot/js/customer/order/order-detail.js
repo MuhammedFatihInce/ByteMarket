@@ -5,10 +5,12 @@
 		const button = $(event.relatedTarget);
 
 		const productId = button.data('bs-product-id');
+		const orderId = button.data('bs-order-id');
 		const productName = button.data('bs-product-name');
 		const producImageUrl = button.data('bs-product-image');
 
 		$(this).find('#productId').val(productId);
+		$(this).find('#orderId').val(orderId);
 		$(this).find('#productName').text(`${productName}`);
 		
 		if (producImageUrl) {
@@ -20,13 +22,17 @@
 		e.preventDefault();
 
 		const productId = $('#productId').val();
+		const orderId = $('#orderId').val();
 		const rating = $("input[name='rating']:checked").val();
 		const comment = $('#comment').val();
+
+		console.log(orderId);
 
 		const data = {
 			Comment: comment,
 			Rating: rating,
-			ProductId: productId
+			ProductId: productId,
+			OrderId: orderId
 		}
 
 		if (!rating) {

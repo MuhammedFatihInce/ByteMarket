@@ -10,7 +10,7 @@ namespace ByteMarket.Entities.Concrete.Identity
 
 		public string? RefreshToken { get; set; }
 		public DateTime? RefreshTokenEndDate { get; set; }
-
 		public ICollection<Basket> Baskets { get; set; }
+		public ICollection<ProductReview> ProductReviews { get; set; }
 	}
 }

@@ -12,6 +12,7 @@ namespace ByteMarket.Entities.Concrete
 		public decimal TotalBasePrice { get; set; }
 		public decimal DiscountAmount { get; set; }
 		public decimal FinalTotalPrice { get; set; }
+		public ICollection<ProductReview>? ProductReviews { get; set; }
 
 		//public ICollection<Product> Products { get; set; }
 

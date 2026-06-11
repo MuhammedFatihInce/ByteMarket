@@ -52,12 +52,18 @@
                                             <h6 class="mb-1 fw-bold text-dark">@item.Name</h6>
                                             <small class="text-muted">Adet: @item.Quantity</small>
                                         </td>
-                                        <td class=text-end>
+                                        <td class="text-end pe-4">
+                                            <span class="fw-bold text-ty-orange">@((item.Price * item.Quantity).ToString("C2"))</span>
+                                            <br />
+                                            <small class="text-muted" style="font-size: 0.7rem;">Birim: @item.Price.ToString("C2")</small>
+                                        </td>
+                                        <td class="text-end pe-4">
                                             @if (!item.IsReviewed)
                                             {
-                                                <button type="button" class="btn btn-ty-orange btn-sm text-white btn-outline-secondary rounded-pill"
+                                                <button type="button" class="btn btn-primary btn-sm text-white btn-outline-white rounded-pill"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#productReviewModal"
+                                                        data-bs-order-id="@Model.Id"
                                                         data-bs-product-id="@item.Id"
                                                         data-bs-product-name="@item.Name"
                                                         data-bs-product-image="@currentImagePath">
@@ -66,13 +72,10 @@
                                             }
                                             else
                                             {
-                                                <span class="badge bg-success">Değerlendirildi</span>
+                                                <button type="button" class="btn btn-secondary btn-sm text-white btn-outline-white rounded-pill">
+                                                    <i class="bi bi-pencil-square me-1"></i> Değerlendirmeyi Düzenle
+                                                </button>
                                             }
-                                        </td>
-                                        <td class="text-end pe-4">
-                                            <span class="fw-bold text-ty-orange">@((item.Price * item.Quantity).ToString("C2"))</span>
-                                            <br />
-                                            <small class="text-muted" style="font-size: 0.7rem;">Birim: @item.Price.ToString("C2")</small>
                                         </td>
                                     </tr>
                                 }
@@ -219,6 +222,7 @@
                
 
                 <form id="productReviewForm">
+                    <input type="hidden" id="orderId" name="order_id" />
                     <input type="hidden" id="productId" name="product_id" />
 
                     <div class="mb-3">

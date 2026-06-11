@@ -35,6 +35,7 @@ namespace ByteMarket.Business.Concrete
 
 			var userGuid = Guid.Parse(currentUserId);
 			var productGuid = Guid.Parse(createProductReviewDto.ProductId);
+			var OrderGuid = Guid.Parse(createProductReviewDto.OrderId);
 
 			var hasPurchased = await _basketReadRepository
 				.AnyAsync(b => b.UserId == userGuid &&
@@ -48,6 +49,7 @@ namespace ByteMarket.Business.Concrete
 			{
 				ProductId = productGuid,
 				UserId = userGuid,
+				OrderId = OrderGuid,
 				Comment = createProductReviewDto.Comment,
 				Rating = createProductReviewDto.Rating
 			};
@@ -138,10 +140,10 @@ namespace ByteMarket.Business.Concrete
 			return new ErrorResult("Yorum silinemedi.");
 		}
 
-		public async Task<IDataResult<bool>> HasUserReviewedProductAsync(string userId, string productId)
+		public async Task<IDataResult<bool>> HasUserReviewedProductAsync(string userId, string productId, string orderId)
 		{
 			var hasReviewed = await _productReviewReadRepository
-				.AnyAsync(r => r.UserId == Guid.Parse(userId) && r.ProductId == Guid.Parse(productId));
+				.AnyAsync(r => r.UserId == Guid.Parse(userId) && r.ProductId == Guid.Parse(productId) && r.OrderId == Guid.Parse(orderId));
 			return new SuccessDataResult<bool>(hasReviewed);
 		}
 
