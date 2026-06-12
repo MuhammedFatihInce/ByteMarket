@@ -140,13 +140,13 @@
     
 
     <div class="mt-5">
-        <div class="d-flex align-items-center justify-content-between mb-4">
-            <h3 class="fw-bold mb-0">Ürün Yorumları (@Model.Reviews.Count)</h3>
+        <div class="d-flex align-items-center justify-content-between mb-4" id="commentsHeader">
+            <h3 class="fw-bold mb-0">Ürün Yorumları (<span id="comment-count">@Model.Reviews.Count</span>)</h3>
             @if (Model.Reviews.Any())
             {
                 <div class="d-flex align-items-center">
                     <span class="badge bg-ty-orange text-white fs-6 me-2">
-                        @(Model.Reviews.Average(x => x.Rating).ToString("0.0")) / 5
+                        <span id="average-comment-rating">@(Model.Reviews.Average(x => x.Rating).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))</span> / 5
                     </span>
                     <div class="text-warning">
                         <i class="bi bi-star-fill"></i>
@@ -193,7 +193,8 @@
                                                 </li>
                                                 <li>
                                                     <a class="dropdown-item text-danger btn-delete-review" href="javascript:void(0)"
-                                                       data-id="@review.Id">
+                                                       data-id="@review.Id"
+                                                       data-rating="@review.Rating">
                                                         <i class="bi bi-trash3 me-2"></i> Sil
                                                     </a>
                                                 </li>

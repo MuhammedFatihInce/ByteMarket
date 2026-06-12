@@ -94,24 +94,31 @@ namespace ByteMarket.Business.Concrete
 				.ThenInclude(b => b.BasketItems)
 				.ThenInclude(bi => bi.Product)
 				.ThenInclude(p=>p.ProductImageFiles)
+				.Include(o=>o.ProductReviews)
 				.FirstOrDefaultAsync(o => o.Id == Guid.Parse(id));
 
-			if (data == null) new ErrorDataResult<SingleOrderDto>("Sipariş bulunamadı.");
+			if (data == null) return new ErrorDataResult<SingleOrderDto>("Sipariş bulunamadı.");
+
+			var userGuid = Guid.Parse(userId);
+			var orderGuid = Guid.Parse(id);
+
+			var reviewedProducts = new List<(string ProductId, string? ReviewId, string? Comment, int? Rating)>();
 
 			var productIds = data?.Basket.BasketItems
 			.Select(bi => bi.Product.Id.ToString())
 			.Distinct()
 			.ToList();
 
-			List<string> reviewedProductIds = new List<string>();
-
 			if (productIds != null) {
 				foreach (var productId in productIds)
 				{
-					var reviewed = await _productReviewService.HasUserReviewedProductAsync(userId, productId, id);
-					if (reviewed.Data)
+					var productGuid = Guid.Parse(productId);
+
+					var review = data?.ProductReviews?.FirstOrDefault(pr => pr.UserId == userGuid && pr.ProductId == productGuid && pr.OrderId == orderGuid);
+
+					if (review != null)
 					{
-						reviewedProductIds.Add(productId);
+						reviewedProducts.Add((ProductId: productId, ReviewId: review.Id.ToString(), Comment: review.Comment, Rating: review.Rating));
 					}
 				}
 			}
@@ -123,17 +130,24 @@ namespace ByteMarket.Business.Concrete
 				Address = data.Address,
 				Description = data.Description,
 				CreatedDate = data.CreateDate,
-				BasketItems = data.Basket.BasketItems.Select(bi => new OrderItemDetailDto
+				BasketItems = data.Basket.BasketItems.Select(bi =>
 				{
-					Id = bi.Product.Id.ToString(),
-					Name = bi.Product.Name,
-					ImagePath = bi.Product.ProductImageFiles.FirstOrDefault() != null
-						? bi.Product.ProductImageFiles.FirstOrDefault().Path
-						: null,
-					Price = bi.Price,
-					Quantity = bi.Quantity,
-					IsReviewed = reviewedProductIds.Contains(bi.Product.Id.ToString())
-				}),
+					var productIdStr = bi.Product.Id.ToString();
+					var matchedReview = reviewedProducts.FirstOrDefault(rp => rp.ProductId == productIdStr);
+
+					return new OrderItemDetailDto
+					{
+						Id = productIdStr,
+						Name = bi.Product.Name,
+						ImagePath = bi.Product.ProductImageFiles.FirstOrDefault()?.Path,
+						Price = bi.Price,
+						Quantity = bi.Quantity,
+						IsReviewed = matchedReview.ProductId != null,
+						ReviewId = matchedReview.ReviewId,
+						Comment = matchedReview.Comment,
+						Rating = matchedReview.Rating
+					};
+				}).ToList(),
 				DiscountAmount = data.DiscountAmount,
 				FinalTotalPrice = data.FinalTotalPrice,
 				TotalBasePrice = data.TotalBasePrice

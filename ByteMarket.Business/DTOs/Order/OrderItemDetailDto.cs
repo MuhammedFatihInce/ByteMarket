@@ -9,5 +9,8 @@ namespace ByteMarket.Business.DTOs.Order
 	public class OrderItemDetailDto:OrderItemDto
 	{
 		public bool IsReviewed { get; set; }
+		public string? ReviewId { get; set; }
+		public string? Comment { get; set; }
+		public int? Rating { get; set; }
 	}
 }

@@ -145,6 +145,13 @@ $(document).ready(function () {
         var reviewId = $(this).data("id");
         var reviewCard = $("#review-" + reviewId);
 
+        var reviewsCount = parseInt($('#comment-count').text(), 10);
+
+        var ratingText = $('#average-comment-rating').text().trim().replace(',', '.');
+        var averageCommentRating = parseFloat(ratingText);
+
+        var reviewRating =  parseInt($(this).data("rating"), 10);
+
         Alert.fire({
             title: 'Yorum Silinecek!',
             text: `Bu yorumu silmek istediğinize emin misiniz?`,
@@ -157,6 +164,17 @@ $(document).ready(function () {
                     if (response && response.success) {
                         Alert.toast({ title: response.message, icon: 'success' });
                         reviewCard.fadeOut(500, function () { $(this).remove(); });
+
+                        if (!isNaN(reviewsCount) && !isNaN(averageCommentRating) && !isNaN(reviewRating) && reviewsCount > 0 ) {
+
+                            var totalRating = averageCommentRating * reviewsCount;
+                            var newTotalRating = totalRating - reviewRating;
+                            var newReviewsCount = reviewsCount - 1;
+                            var newAverageRating = (newTotalRating / newReviewsCount).toFixed(1);
+
+                            $('#comment-count').text(newReviewsCount);
+                            $('#average-comment-rating').text(newAverageRating);
+                        }
 
                     } else {
                         Alert.error({ title: "Hata", text: response.message });

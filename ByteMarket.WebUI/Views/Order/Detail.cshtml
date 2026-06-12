@@ -60,21 +60,34 @@
                                         <td class="text-end pe-4">
                                             @if (!item.IsReviewed)
                                             {
-                                                <button type="button" class="btn btn-primary btn-sm text-white btn-outline-white rounded-pill"
+                                                <button type="button" class="btn btn-outline-ty-orange btn-sm rounded-pill"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#productReviewModal"
                                                         data-bs-order-id="@Model.Id"
                                                         data-bs-product-id="@item.Id"
                                                         data-bs-product-name="@item.Name"
                                                         data-bs-product-image="@currentImagePath">
-                                                    <i class="bi bi-pencil-square me-1"></i> Ürünü Değerlendir
+                                                    <i class="fa fa-edit me-1"></i> Ürünü Değerlendir
                                                 </button>
                                             }
                                             else
                                             {
-                                                <button type="button" class="btn btn-secondary btn-sm text-white btn-outline-white rounded-pill">
-                                                    <i class="bi bi-pencil-square me-1"></i> Değerlendirmeyi Düzenle
-                                                </button>
+                                                <div class="d-flex flex-column align-items-end" style="gap:6px">
+                                                    <button type="button" class="btn btn-outline-dark btn-sm rounded-pill fw-bold px-3"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#editReviewModal"
+                                                            data-bs-product-name="@item.Name"
+                                                            data-bs-product-image="@currentImagePath"
+                                                            data-bs-product-review-id="@item.ReviewId"
+                                                            data-bs-product-comment="@item.Comment"
+                                                            data-bs-product-rating="@item.Rating">
+                                                        <i class="fa fa-cog me-1"></i> Değerlendirmeyi Düzenle
+                                                    </button>
+                                                    <button type="button" id="btnDeleteReview" class="btn btn-outline-danger btn-sm rounded-pill fw-bold px-3"
+                                                        data-review-id="@item.ReviewId">
+                                                        <i class="fa fa-trash-alt me-1"></i> Değerlendirmeyi Sil
+                                                    </button>
+                                                </div>
                                             }
                                         </td>
                                     </tr>
@@ -254,6 +267,52 @@
     </div>
 </div>
 
+<div class="modal fade" id="editReviewModal" tabindex="-1" aria-labelledby="editReviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold" id="editReviewModalLabel">Yorumu Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div id="editModelResponseMessage" class="my-3"></div>
+
+                <form id="editReviewForm">
+                    <input type="hidden" id="editReviewId" />
+
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="rounded border p-1" style="width: 80px; height: 80px;">
+                            <img src="" class="img-fluid object-fit-contain h-100 w-100" id="editProductImage"
+                                 alt="" onerror="this.src='@noImageUrl'">
+                        </div>
+                        <h6 class="mb-1 fw-bold text-dark" id="editProductName"></h6>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label d-block fw-medium">Puanınız:</label>
+                        <div class="star-rating edit-stars">
+                            <input type="radio" name="editRating" value="5" id="edit-5"><label for="edit-5">☆</label>
+                            <input type="radio" name="editRating" value="4" id="edit-4"><label for="edit-4">☆</label>
+                            <input type="radio" name="editRating" value="3" id="edit-3"><label for="edit-3">☆</label>
+                            <input type="radio" name="editRating" value="2" id="edit-2"><label for="edit-2">☆</label>
+                            <input type="radio" name="editRating" value="1" id="edit-1"><label for="edit-1">☆</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editComment" class="form-label fw-medium">Yorumunuz:</label>
+                        <textarea class="form-control" id="editComment" rows="4" placeholder="Deneyiminizi güncelleyin..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                <button type="submit" form="editReviewForm" id="btnUpdateReview" class="btn btn-ty-orange text-white px-4">Değişiklikleri Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <style>
     .bg-light {

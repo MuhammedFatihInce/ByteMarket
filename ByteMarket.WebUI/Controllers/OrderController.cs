@@ -163,6 +163,24 @@ namespace ByteMarket.WebUI.Controllers
 			return Json(new { success = result.Success, message = result.Message });
 		}
 
+		[HttpPut("Order/UpdateReview")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> UpdateReview([FromBody] UpdateProductReviewViewModel model)
+		{
+			var result = await _productReviewService.UpdateProductReviewAsync(model);
+
+			return Json(new { success = result.Success, message = result.Message });
+		}
+
+		[HttpDelete("Order/DeleteReview/{id}")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteReview(string id)
+		{
+			var result = await _productReviewService.DeleteProductReviewAsync(id);
+
+			return Json(new { success = result.Success, message = result.Message });
+		}
+
 
 	}
 }
